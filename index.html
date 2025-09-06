@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sidebar-width: 350px;
+            --sidebar-bg-color:  #2c4049;
+            --main-bg-color: #fdf7eb;
+            --box-color-1: #ffd39a;
+            --box-color-2: #c1d5a4;
+            --box-color-3: #E2D9FF;
+            --box-color-4: #99BEBC;
+            --icon-color: #1d64c2;
+            --text-color-dark: #002960;
+        }
+
+        body {
+            width: 100%;
+            background-color: var(--main-bg-color);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: var(--sidebar-bg-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg-color);
+            padding: 10px 0 10px 10px;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        nav .logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-right: 15px;
+        }
+
+        .close-sidebar {
+            display: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        nav .logo-image {
+            width: 45px;
+            height: 90px;
+        }
+
+        nav .logo-image img {
+            width: auto;
+            height: 60px;
+            object-fit: cover;
+            padding-left: 18px;
+            margin-top: 10px;
+        }
+
+        nav .menu-items {
+            font-family: 'Abril Fatface', cursive;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 150px);
+            justify-content: space-between;
+        }
+
+        nav .menu-items li {
+            list-style: none;
+        }
+
+        nav .menu-items li a {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        nav .menu-items li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        nav .menu-items li.active a {
+            border-top-left-radius: 25px;
+            border-bottom-left-radius: 25px;
+            position: relative;
+            background-color: var(--main-bg-color);
+        }
+
+        nav .menu-items li a ion-icon {
+            color: white;
+            font-size: 24px;
+            min-width: 45px;
+        }
+
+        nav .menu-items li a .links {
+            font-size: 18px;
+            color: white;
+            transition: color 0.3s ease;
+        }
+
+        nav .menu-items li.active a:before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            right: 0;
+            top: -40px;
+            border-radius: 50%;
+            box-shadow: 20px 20px var(--main-bg-color);
+            pointer-events: none;
+        }
+
+        nav .menu-items li.active a:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            right: 0;
+            bottom: -40px;
+            border-radius: 50%;
+            box-shadow: 20px -20px var(--main-bg-color);
+            pointer-events: none;
+        }
+
+        nav .menu-items li.active a .links {
+            color: var(--sidebar-bg-color);
+        }
+
+        nav .menu-items li.active a ion-icon {
+            color: var(--sidebar-bg-color);
+        }
+
+        .dashboard {
+            position: relative;
+            left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            background-color: var(--main-bg-color);
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            padding-left: 10px;
+        }
+
+        .container .title {
+            display: flex;
+            align-items: center;
+            margin: 30px 0 30px;
+        }
+
+        .container .title ion-icon {
+            width: 35px;
+            height: 35px;
+            padding: 5px;
+            background-color: var(--icon-color);
+            color: White;
+            border-radius: 6px;
+        }
+
+        .container .title .text {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text-color-dark);
+            margin-left: 10px;
+        }
+
+        .container .boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .container .boxes .box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #9cdef5;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container .boxes .box:hover {
+            transform: translateY(-5px);
+        }
+
+        .boxes .box ion-icon {
+            font-size: 35px;
+            color: black;
+            margin: 5px;
+        }
+
+        .boxes .box .text {
+            font-size: 16px;
+            font-family: 'Abril Fatface', cursive;
+            font-weight: 500;
+            color: black;
+            margin: 5px 0;
+        }
+
+        .boxes .box .number {
+            font-size: 32px;
+            font-weight: 600;
+            color: black;
+        }
+
+        .boxes .box.box1 {
+            background-color: var(--box-color-1);
+        }
+
+        .boxes .box.box2 {
+            background-color: var(--box-color-2);
+        }
+
+        .boxes .box.box3 {
+            background-color: var(--box-color-3);
+        }
+
+        .boxes .box.box4 {
+            background-color: var(--box-color-4);
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Articles section styles */
+        .articles-container {
+            padding: 20px 0;
+        }
+
+        .status-filter {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-filter label {
+            margin-right: 10px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .status-filter select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 14px;
+        }
+
+        .status-group {
+            margin-bottom: 30px;
+        }
+
+        .status-title {
+            color: #1891d1;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e6f2ff;
+            font-weight: 600;
+        }
+
+        .count {
+            color: #666;
+            font-weight: normal;
+            font-size: 0.9em;
+        }
+
+        .article-item {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #1891d1;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .article-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .draft .article-item {
+            border-left-color: #ff9800;
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .article-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #002960;
+            margin: 0;
+            flex: 1;
+        }
+
+        .article-date {
+            color: #666;
+            font-size: 14px;
+            margin-left: 15px;
+            white-space: nowrap;
+        }
+
+        .article-excerpt {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .article-actions button {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .article-actions button ion-icon {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+
+        .btn-edit {
+            background-color: #e6f2ff;
+            color: #1891d1;
+        }
+
+        .btn-edit:hover {
+            background-color: #d4e7ff;
+        }
+
+        .btn-view, .btn-preview {
+            background-color: #f0f9eb;
+            color: #67c23a;
+        }
+
+        .btn-view:hover, .btn-preview:hover {
+            background-color: #e1f3d8;
+        }
+
+        .btn-stats {
+            background-color: #f4f4f5;
+            color: #909399;
+        }
+
+        .btn-stats:hover {
+            background-color: #e9e9eb;
+        }
+
+        .btn-publish {
+            background-color: #f0f9eb;
+            color: #67c23a;
+            font-weight: 500;
+        }
+
+        .btn-publish:hover {
+            background-color: #e1f3d8;
+        }
+
+        .new-article-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn-new-article {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: #1891d1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-new-article:hover {
+            background-color: #1479b3;
+        }
+
+        .btn-new-article ion-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container .boxes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            :root {
+                --sidebar-width: 70px;
+            }
+            
+            nav .logo-image {
+                padding: 0;
+                margin: 0 auto;
+            }
+            
+            nav .logo-image img {
+                padding-left: 0;
+            }
+            
+            nav .menu-items li a .links {
+                display: none;
+            }
+            
+            nav .menu-items li.active a:before,
+            nav .menu-items li.active a:after {
+                display: none;
+            }
+            
+            nav .menu-items li.active a {
+                border-radius: 10px;
+                margin-right: 10px;
+            }
+            
+            .dashboard {
+                            font-family: 'Abril Fatface', cursive;
+
+                left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .close-sidebar {
+                display: block;
+            }
+            
+            nav {
+                transform: translateX(-100%);
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            nav.active {
+                transform: translateX(0);
+            }
+            
+            .dashboard {
+                left: 0;
+                width: 100%;
+            }
+            
+            .container .boxes {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding-left: 0;
+            }
+            
+            .container .title {
+                margin: 20px 0 20px;
+            }
+            
+            .container .title .text {
+                font-size: 20px;
+            }
+            
+            .boxes .box .number {
+                font-size: 28px;
+            }
+            
+            nav .menu-items li a .links {
+                display: block;
+            }
+            
+            nav {
+                width: 250px;
+            }
+            
+            nav .menu-items li.active a {
+                border-radius: 25px 0 0 25px;
+                margin-right: 0;
+            }
+            
+            nav .menu-items li.active a:before,
+            nav .menu-items li.active a:after {
+                display: block;
+            }
+
+            /* Responsive styles for articles */
+            .article-header {
+                flex-direction: column;
+            }
+            
+            .article-date {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+            
+            .article-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .article-actions button {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard {
+                padding: 10px;
+            }
+            
+            .data-table {
+                padding: 15px;
+            }
+            
+            .container .title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .container .title .text {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .boxes .box {
+                padding: 15px;
+            }
+            
+            .boxes .box .text {
+                font-size: 14px;
+            }
+            
+            .boxes .box .number {
+                font-size: 24px;
+            }
+
+            .status-filter {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .status-filter select {
+                margin-top: 8px;
+                width: 100%;
+            }
+            
+            .article-item {
+                padding: 15px;
+            }
+            
+            .article-title {
+                font-size: 16px;
+            }
+        }
+
+        /* Add user form styles - responsive */
+        .addUser {
+            font-family: Helvetica, Arial, sans-serif;
+            margin: 10px 0% 50px;
+        }
+
+        .center{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .addUser-field input[type="text"],
+        .addUser-field input[type="email"],
+        .addUser-field input[type="date"],
+        .addUser-field input[type="tel"],
+        .addUser-field textarea,
+        .addUser-field input[type="password"],
+        .editForm input[type="text"],
+        .editForm select{
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid gray;
+            border-radius: 10px;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .addUser-field input[type="radio"]{
+            margin-top: 11px;
+            margin-left: 10px;
+        }
+
+        .addUser-field label {
+            display: inline-block;
+            margin-left: 5px;
+            color: rgb(79, 79, 79);
+            font-size: 16px;
+        }
+
+        .addUser fieldset {
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .addUser-field input[type="submit"]{
+            width: 100%;
+            padding: 12px;
+            background-color: var(--icon-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .editForm input[type="submit"]{
+            width: 100%;
+            padding: 12px;
+            background-color: var(--icon-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .addUser .inline-input{
+            display: flex;
+            flex-direction: column;
+        }
+
+        .addUser .inline-input .inputs{
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .addUser-field input[type="checkbox"]{
+            margin: 12px 0px 12px 0;
+        }
+
+        .addUser .Address{
+            width: 100%;
+            margin: 0px 0% 10px;
+        }
+
+        .addUser span{
+            font-family: Helvetica, Arial, sans-serif;
+            padding: 20px 0px 30px;
+        }
+
+        @media (min-width: 768px) {
+            .addUser .inline-input{
+                flex-direction: row;
+            }
+            
+            .addUser .inline-input .inputs{
+                margin-left: 5%;
+                width: 50%;
+            }
+            
+            .addUser-field input[type="submit"],
+            .editForm input[type="submit"]{
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile menu button -->
+    <div class="mobile-menu-btn">
+        <ion-icon name="menu-outline"></ion-icon>
+    </div>
+    
+    <nav id="sidebar">
+        <div class="logo">
+            <div class="logo-image">
+                <img src="/papirpelikanlogo2.svg" alt="Logo" width="100" height="100"> 
+            </div>
+            <div class="close-sidebar">
+                <ion-icon name="close-outline"></ion-icon>
+            </div>
+        </div>
+        <div class="menu-items">
+            <ul class="navLinks">
+                <li class="navList active">
+                    <a href="#">
+                        <ion-icon name="home-outline"></ion-icon>
+                        <span class="links">Dashboard</span>
+                    </a>
+                </li>
+                <li class="navList">
+                    <a href="#">
+                        <ion-icon name="folder-outline"></ion-icon>
+                        <span class="links">Cikkeim</span>
+                    </a>
+                </li>
+                <li class="navList">
+                    <a href="#">
+                        <ion-icon name="analytics-outline"></ion-icon>
+                        <span class="links">Analytics</span>
+                    </a>
+                </li>
+                <li class="navList">
+                    <a href="#">
+                        <ion-icon name="heart-outline"></ion-icon>
+                        <span class="links">Likes</span>
+                    </a>
+                </li>
+                <li class="navList">
+                    <a href="#">
+                        <ion-icon name="chatbubbles-outline"></ion-icon>
+                        <span class="links">Comments</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="bottom-link">
+                <li>
+                    <a href="#">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <span class="links">Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <ion-icon name="log-out-outline"></ion-icon>
+                        <span class="links">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard">
+        <div class="container">
+            <div class="overview">
+                <div class="title">
+                    <ion-icon name="speedometer"></ion-icon>
+                    <span class="text">Dashboard</span>
+                </div>
+                <div class="boxes">
+                    <div class="box box1">
+                        <ion-icon name="eye-outline"></ion-icon>
+                        <span class="text">Összes Megtekintés</span>
+                        <span class="number">12,459</span>
+                    </div>
+                    <div class="box box2">
+                        <ion-icon name="people-outline"></ion-icon>
+                        <span class="text">Aktív felhasználó</span>
+                        <span class="number">2,745</span>
+                    </div>
+                    <div class="box box3">
+                        <ion-icon name="chatbubbles-outline"></ion-icon>
+                        <span class="text">Összes tevékenység</span>
+                        <span class="number">1,209</span>
+                    </div>
+                    <div class="box box4">
+                        <ion-icon name="document-text-outline"></ion-icon>
+                        <span class="text">Összes cikk</span>
+                        <span class="number">42</span>
+                    </div>
+                </div> 
+            </div>
+            
+            <!-- Recent Activities -->
+            <div class="data-table activityTable">
+                <div class="title">
+                    <ion-icon name="time-outline"></ion-icon>
+                    <span class="text">Recent Activities</span>
+                </div>
+                
+            </div>
+
+            <!-- Cikkeim -->
+            <div style="display:none" class="data-table userDetailsTable">
+                <div class="title">
+                    <ion-icon name="folder-outline"></ion-icon>
+                    <span class="text">Cikkeim</span>
+                </div>
+                <div class="articles-container">
+                    <!-- Status filter -->
+                    <div class="status-filter">
+                        <label for="status-select">Státusz szűrő:</label>
+                        <select id="status-select">
+                            <option value="all">Összes</option>
+                            <option value="published">Publikált</option>
+                            <option value="draft">Feldolgozás alatt</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Articles list -->
+                    <div class="articles-list">
+                        <!-- Published articles -->
+                        <div class="status-group published">
+                            <h3 class="status-title">Publikált cikkek <span class="count">(3)</span></h3>
+                            <div class="article-item">
+                                <div class="article-header">
+                                    <h4 class="article-title">A papír története és jelentősége</h4>
+                                    <span class="article-date">2023. október 12.</span>
+                                </div>
+                                <p class="article-excerpt">A papír felfedezése forradalmasította az információ tárolását és terjesztését. Napjainkban is nélkülözhetetlen anyag...</p>
+                                <div class="article-actions">
+                                    <button class="btn-edit">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                        Szerkesztés
+                                    </button>
+                                    <button class="btn-view">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                        Megtekintés
+                                    </button>
+                                    <button class="btn-stats">
+                                        <ion-icon name="stats-chart-outline"></ion-icon>
+                                        Statisztika
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="article-item">
+                                <div class="article-header">
+                                    <h4 class="article-title">Hogyan válasszunk megfelelő papírminőséget nyomtatáshoz?</h4>
+                                    <span class="article-date">2023. szeptember 28.</span>
+                                </div>
+                                <p class="article-excerpt">A megfelelő papírminőség kiválasztása döntő szerepet játszik a nyomtatott anyagok megjelenésében és élettartamában...</p>
+                                <div class="article-actions">
+                                    <button class="btn-edit">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                        Szerkesztés
+                                    </button>
+                                    <button class="btn-view">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                        Megtekintés
+                                    </button>
+                                    <button class="btn-stats">
+                                        <ion-icon name="stats-chart-outline"></ion-icon>
+                                        Statisztika
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="article-item">
+                                <div class="article-header">
+                                    <h4 class="article-title">A papír újrahasznosításának környezeti hatásai</h4>
+                                    <span class="article-date">2023. augusztus 15.</span>
+                                </div>
+                                <p class="article-excerpt">A papír újrahasznosítása jelentősen csökkenti a faanyag felhasználását és a környezeti terhelést. Hogyan működik a folyamat...</p>
+                                <div class="article-actions">
+                                    <button class="btn-edit">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                        Szerkesztés
+                                    </button>
+                                    <button class="btn-view">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                        Megtekintés
+                                    </button>
+                                    <button class="btn-stats">
+                                        <ion-icon name="stats-chart-outline"></ion-icon>
+                                        Statisztika
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Draft articles -->
+                        <div class="status-group draft">
+                            <h3 class="status-title">Feldolgozás alatt <span class="count">(2)</span></h3>
+                            <div class="article-item">
+                                <div class="article-header">
+                                    <h4 class="article-title">A papírpelikánok szimbolikus jelentése a kultúrában</h4>
+                                    <span class="article-date">Vázlat • Utolsó módosítás: 2023. november 5.</span>
+                                </div>
+                                <p class="article-excerpt">A papírpelikánok mitológiai és szimbolikus jelentése számos kultúrában megjelenik. Milyen történetek kapcsolódnak hozzájuk...</p>
+                                <div class="article-actions">
+                                    <button class="btn-edit">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                        Szerkesztés
+                                    </button>
+                                    <button class="btn-preview">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                        Előnézet
+                                    </button>
+                                    <button class="btn-publish">
+                                        <ion-icon name="send-outline"></ion-icon>
+                                        Publikálás
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="article-item">
+                                <div class="article-header">
+                                    <h4 class="article-title">Digitális korunkban a papír jövője</h4>
+                                    <span class="article-date">Vázlat • Utolsó módosítás: 2023. november 2.</span>
+                                </div>
+                                <p class="article-excerpt">A digitális technológiák ellenére a papír továbbra is fontos szerepet tölt be. Milyen területeken marad érvényesülő...</p>
+                                <div class="article-actions">
+                                    <button class="btn-edit">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                        Szerkesztés
+                                    </button>
+                                    <button class="btn-preview">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                        Előnézet
+                                    </button>
+                                    <button class="btn-publish">
+                                        <ion-icon name="send-outline"></ion-icon>
+                                        Publikálás
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- New article button -->
+                    <div class="new-article-section">
+                        <button class="btn-new-article">
+                            <ion-icon name="add-circle-outline"></ion-icon>
+                            Új cikk létrehozása
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics -->
+            <div style="display:none" class="data-table EditUserRole">
+                <div class="title">
+                    <ion-icon name="analytics-outline"></ion-icon>
+                    <span class="text">Analytics</span>
+                </div>
+                <div>
+                    <p style="text-align: center; padding: 40px; color: #666;">
+                        Az Analytics rész tartalma hamarosan elérhető lesz.
+                    </p>
+                </div>
+            </div>
+
+            <!--  Likes -->
+            <div style="display:none" class="data-table VehicleDetails">
+                <div class="title">
+                    <ion-icon name="heart-outline"></ion-icon>
+                    <span class="text">Likes</span>
+                </div>
+                <div>
+                    <p style="text-align: center; padding: 40px; color: #666;">
+                        A Likes rész tartalma hamarosan elérhető lesz.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Downloads section -->
+            <div style="display:none" class="data-table downloads">
+                <div class="title">
+                    <ion-icon name="chatbubbles-outline"></ion-icon>
+                    <span class="text">Comments</span>
+                </div>
+                <div>
+                    <p style="text-align: center; padding: 40px; color: #666;">
+                        A Comments rész tartalma hamarosan elérhető lesz.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Menu toggle functionality
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.querySelector('.close-sidebar');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        if (closeSidebar) {
+            closeSidebar.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+            });
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnMenuBtn = mobileMenuBtn.contains(event.target);
+            
+            if (!isClickInsideSidebar && !isClickOnMenuBtn && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Navigation functionality
+        document.querySelectorAll(".navList").forEach(function(element) {
+            element.addEventListener('click', function() {
+                // Close sidebar on mobile after selection
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                }
+              
+                document.querySelectorAll(".navList").forEach(function(e) {
+                    e.classList.remove('active');
+                });
+
+                // Add active class to the clicked navList element
+                this.classList.add('active');
+
+                // Get the index of the clicked navList element
+                var index = Array.from(this.parentNode.children).indexOf(this);
+
+                // Hide all data-table elements
+                document.querySelectorAll(".data-table").forEach(function(table) {
+                    table.style.display = 'none';
+                });
+
+                // Show the corresponding table based on the clicked index
+                var tables = document.querySelectorAll(".data-table");
+                if (tables.length > index) {
+                    tables[index].style.display = 'block';
+                }
+            });
+        });
+
+        // Window resize event to handle responsive behavior
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Status filter functionality
+        const statusSelect = document.getElementById('status-select');
+        if (statusSelect) {
+            statusSelect.addEventListener('change', function() {
+                const value = this.value;
+                const publishedGroup = document.querySelector('.status-group.published');
+                const draftGroup = document.querySelector('.status-group.draft');
+                
+                if (value === 'all') {
+                    publishedGroup.style.display = 'block';
+                    draftGroup.style.display = 'block';
+                } else if (value === 'published') {
+                    publishedGroup.style.display = 'block';
+                    draftGroup.style.display = 'none';
+                } else if (value === 'draft') {
+                    publishedGroup.style.display = 'none';
+                    draftGroup.style.display = 'block';
+                }
+            });
+        }
+    </script>
+    
+    <!-- Sources for icons -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    
+</body>
+
+</html>
