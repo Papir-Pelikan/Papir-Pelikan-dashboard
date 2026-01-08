@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelikán | Cikk előnézet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .preview-header {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo img {
+            height: 40px;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1891d1;
+        }
+        
+        .preview-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #1891d1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1476b0;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .preview-info {
+            background: #e3f2fd;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 1200px;
+            border-radius: 8px;
+            border-left: 4px solid #1891d1;
+        }
+        
+        .preview-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .article-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .article-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .article-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .article-content h2 {
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            color: #2c3e50;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .article-content h3 {
+            font-size: 1.5rem;
+            margin: 30px 0 15px;
+            color: #34495e;
+        }
+        
+        .article-content p {
+            margin-bottom: 20px;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .article-content blockquote {
+            border-left: 4px solid #1891d1;
+            padding: 20px 30px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+        
+        .article-content ul, 
+        .article-content ol {
+            margin: 20px 0 20px 30px;
+        }
+        
+        .article-content li {
+            margin-bottom: 8px;
+        }
+        
+        .article-content pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+        }
+        
+        .article-content code {
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .article-footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+            text-align: center;
+            color: #666;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            color: #666;
+        }
+        
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .preview-container {
+                padding: 10px;
+            }
+            
+            .article-preview {
+                padding: 20px;
+            }
+            
+            .article-title {
+                font-size: 2rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="preview-header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="pelikan2.png" alt="Pelikán Logo">
+                <span class="logo-text">Pelikán - Cikk előnézet</span>
+            </div>
+            <div class="preview-actions">
+                <button class="btn btn-secondary" onclick="printPreview()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z"/>
+                        <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                    </svg>
+                    Nyomtatás
+                </button>
+                <button class="btn btn-primary" onclick="closePreview()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                    </svg>
+                    Bezárás
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="preview-info" id="preview-info">
+        <strong>⚠️ FIGYELEM:</strong> Ez csak egy előnézet! A cikk még nincs publikálva.
+    </div>
+    
+    <div class="preview-container">
+        <div id="loading" class="loading">
+            <h2>Cikk betöltése...</h2>
+            <p>Kérlek várj...</p>
+        </div>
+        
+        <div id="error" class="error" style="display:none">
+            <h2>Hiba történt</h2>
+            <p id="error-message"></p>
+        </div>
+        
+        <div id="article-container" class="article-preview" style="display:none">
+            <!-- Ide töltődik be a cikk tartalma -->
+        </div>
+    </div>
+
+    <script>
+        // URL paraméterek olvasása
+        const urlParams = new URLSearchParams(window.location.search);
+        const previewId = urlParams.get('id');
+        
+        async function loadPreview() {
+            if (!previewId) {
+                showError('Hiányzó előnézet azonosító');
+                return;
+            }
+            
+            try {
+                // Adatok betöltése sessionStorage-ból
+                const previewData = sessionStorage.getItem(previewId);
+                
+                if (!previewData) {
+                    showError('Az előnézet lejárt vagy nem található');
+                    return;
+                }
+                
+                const data = JSON.parse(previewData);
+                
+                // Cikk megjelenítése
+                displayArticle(data);
+                
+            } catch (error) {
+                console.error('Hiba az előnézet betöltése során:', error);
+                showError('Hiba történt az előnézet betöltése során');
+            }
+        }
+        
+        function displayArticle(data) {
+            const container = document.getElementById('article-container');
+            const loading = document.getElementById('loading');
+            
+            // Betöltés elrejtése
+            loading.style.display = 'none';
+            
+            // HTML összeállítása
+            let html = `
+                <div class="article-header">
+                    <h1 class="article-title">${escapeHtml(data.title)}</h1>
+                    <div class="article-meta">
+                        <div class="meta-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                            </svg>
+                            <span>${new Date(data.timestamp).toLocaleDateString('hu-HU', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}</span>
+                        </div>
+                        <div class="meta-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            </svg>
+                            <span>Szerző</span>
+                        </div>
+                        <div class="meta-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                            </svg>
+                            <span>Előnézet</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    ${data.content || `<p>${escapeHtml(data.excerpt)}</p>`}
+                </div>
+                
+                <div class="article-footer">
+                    <p><strong>Megjegyzés:</strong> Ez egy előnézet, a cikk még nem publikált.</p>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            container.style.display = 'block';
+            
+            // Info frissítése
+            document.getElementById('preview-info').innerHTML = `
+                <strong>📝 ELŐNÉZET MODELL:</strong> A cikk elkészült, de még nincs publikálva. 
+                <span style="float:right">Létrehozva: ${new Date(data.timestamp).toLocaleTimeString('hu-HU')}</span>
+            `;
+        }
+        
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function printPreview() {
+            window.print();
+        }
+        
+        function closePreview() {
+            window.close();
+            
+            // Ha nem sikerült bezárni, visszairányítás
+            if (!window.closed) {
+                window.history.back();
+            }
+        }
+        
+        // Billentyűparancsok
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePreview();
+            } else if (e.key === 'p' && (e.ctrlKey || e.metaKey)) {
+                printPreview();
+                e.preventDefault();
+            }
+        });
+        
+        // Betöltés indítása
+        window.addEventListener('load', loadPreview);
+    </script>
+</body>
+</html>

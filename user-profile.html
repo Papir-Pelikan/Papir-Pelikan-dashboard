@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelikán | Felhasználói profil</title>
+    <link rel="stylesheet" href="dashboard.css">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <style>
+        /* Felhasználói profil speciális stílusok */
+        :root {
+            --profile-primary: #1891d1;
+            --profile-secondary: #f8f9fa;
+            --profile-text: #2d3748;
+            --profile-text-light: #6b7280;
+            --profile-border: #e5e7eb;
+            --profile-card-bg: white;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Profil fejléc */
+        .profile-header {
+            background: var(--profile-card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cover-photo-container {
+            height: 350px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cover-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .cover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+        }
+        
+        /* Profil infó a cover photo alatt */
+        .profile-info-section {
+            padding: 20px;
+            padding-top: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .profile-avatar-container {
+            position: relative;
+            margin-top: -80px;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+        
+        .profile-avatar {
+            width: 168px;
+            height: 168px;
+            border-radius: 50%;
+            border: 5px solid var(--profile-card-bg);
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: var(--profile-secondary);
+        }
+        
+        .profile-status {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            background: #10b981;
+            border: 3px solid var(--profile-card-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .profile-name-section {
+            margin-bottom: 15px;
+        }
+        
+        .profile-name {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--profile-text);
+            margin-bottom: 5px;
+        }
+        
+        .profile-username {
+            font-size: 18px;
+            color: var(--profile-text-light);
+            margin-bottom: 10px;
+        }
+        
+        .profile-roles {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--profile-primary);
+            color: white;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            padding: 15px 0;
+            border-top: 1px solid var(--profile-border);
+            border-bottom: 1px solid var(--profile-border);
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--profile-primary);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--profile-text-light);
+        }
+        
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-follow, .btn-message, .btn-more {
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .btn-follow {
+            background: var(--profile-primary);
+            color: white;
+            border: none;
+        }
+        
+        .btn-follow:hover {
+            background: #1474a9;
+        }
+        
+        .btn-message {
+            background: var(--profile-secondary);
+            color: var(--profile-text);
+            border: 1px solid var(--profile-border);
+        }
+        
+        .btn-message:hover {
+            background: #e5e7eb;
+        }
+        
+        .btn-more {
+            background: var(--profile-card-bg);
+            color: var(--profile-text);
+            border: 1px solid var(--profile-border);
+            width: 40px;
+            justify-content: center;
+        }
+        
+        /* Fő tartalom grid */
+        .profile-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 992px) {
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Bal oldal - Posztok */
+        .profile-posts-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Jobb oldal - Információk */
+        .profile-info-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .info-card {
+            background: var(--profile-card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--profile-text);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--profile-border);
+        }
+        
+        /* Bemutatkozás */
+        .about-content {
+            line-height: 1.6;
+            color: var(--profile-text);
+        }
+        
+        .about-empty {
+            color: var(--profile-text-light);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        /* Kapcsolat információk */
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+        
+        .contact-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--profile-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--profile-primary);
+        }
+        
+        .contact-details {
+            flex: 1;
+        }
+        
+        .contact-label {
+            font-size: 12px;
+            color: var(--profile-text-light);
+            margin-bottom: 2px;
+        }
+        
+        .contact-value {
+            font-weight: 500;
+            color: var(--profile-text);
+        }
+        
+        /* Cikkek kártyák */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .post-card {
+            background: var(--profile-card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .post-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .post-content {
+            padding: 20px;
+        }
+        
+        .post-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--profile-primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .post-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--profile-text);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .post-excerpt {
+            color: var(--profile-text-light);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--profile-text-light);
+            padding-top: 15px;
+            border-top: 1px solid var(--profile-border);
+        }
+        
+        .post-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .post-stats {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Empty states */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--profile-text-light);
+        }
+        
+        .empty-state ion-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #d1d5db;
+        }
+        
+        /* Lapszám megjelenítés */
+        .current-issue-banner {
+            background: linear-gradient(135deg, var(--profile-primary), #25a6e9);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(24, 145, 209, 0.3);
+        }
+        
+        .issue-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .issue-number {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0;
+        }
+        
+        .issue-motto {
+            font-style: italic;
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        /* Vissza gomb */
+        .back-navigation {
+            margin-bottom: 20px;
+        }
+        
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--profile-card-bg);
+            color: var(--profile-text);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+        
+        .btn-back:hover {
+            background: var(--profile-secondary);
+            transform: translateX(-2px);
+        }
+        
+        /* Fejléc fixálása */
+        .site-header {
+            background: var(--profile-card-bg);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .site-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--profile-primary);
+            text-decoration: none;
+        }
+        
+        .logo-image {
+            height: 40px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .btn-login {
+            padding: 8px 20px;
+            background: var(--profile-primary);
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .btn-login:hover {
+            background: #1474a9;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .cover-photo-container {
+                height: 250px;
+            }
+            
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .profile-name {
+                font-size: 24px;
+            }
+            
+            .profile-username {
+                font-size: 16px;
+            }
+            
+            .profile-stats {
+                gap: 20px;
+            }
+            
+            .stat-number {
+                font-size: 18px;
+            }
+            
+            .current-issue-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .profile-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .cover-photo-container {
+                height: 200px;
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .profile-stats {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<header class="main-header">
+    <div class="container header-content" style="display: flex; justify-content: center; align-items: center; text-align: center;">
+        <div class="logo">
+
+            <a href="/index.html" style="text-decoration: none; display: flex; flex-direction: column; align-items: center;">
+                <img src="/papirpelikanlogo.svg" alt="Papír-Pelikán" style="width: 320px;">
+                
+            </a>
+            
+          
+        
+        <!-- Dropdown menü -->
+        <div class="profile-dropdown" id="profile-dropdown">
+            <div class="dropdown-content" id="dropdown-content">
+                <!-- Tartalom JavaScript alapján töltődik -->
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<body>
+
+    
+    
+    <div class="profile-container">
+
+        <!-- Vissza navigáció
+        <div class="back-navigation">
+            <a href="javascript:history.back()" class="btn-back">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+                Vissza
+            </a>
+        </div>
+        -->
+
+        
+        <!-- Profil fejléc -->
+        <div class="profile-header">
+            <div class="cover-photo-container">
+                <img id="profile-cover" class="cover-photo" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&auto=format&fit=crop" alt="Profil háttér">
+                <div class="cover-overlay"></div>
+            </div>
+            
+            <div class="profile-info-section">
+                <div class="profile-avatar-container">
+                    <img id="profile-avatar" class="profile-avatar" src="https://ui-avatars.com/api/?name=Guest&background=1891d1&color=fff" alt="Profilkép">
+
+                </div>
+                
+                <div class="profile-name-section">
+                    <h1 id="profile-name" class="profile-name">Felhasználó neve</h1>
+                    <div id="profile-username" class="profile-username">@felhasznalonev</div>
+                    
+                    <div id="profile-roles" class="profile-roles">
+                        <!-- Rangok ide töltődnek -->
+                    </div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span id="articles-count" class="stat-number">0</span>
+                        <span class="stat-label">Cikkek</span>
+                    </div>
+
+                     <!-- 
+                    <div class="stat-item">
+                        <span id="followers-count" class="stat-number">0</span>
+                        <span class="stat-label">Követők</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="views-count" class="stat-number">0</span>
+                        <span class="stat-label">Megtekintések</span>
+                    </div>
+
+                    -->
+                </div>
+                
+                <div class="profile-actions" id="profile-actions">
+                    <!-- Műveletek (követés, üzenet, stb.) -->
+                </div>
+                
+            </div>
+        </div>
+                <!-- Aktuális lapszám banner -->
+        <div class="current-issue-banner" id="current-issue-banner">
+            <div class="issue-info">
+                
+                <p class="issue-number" id="current-issue-number"  style="font-family: 'Abril Fatface';">-</p>
+                <p class="issue-motto" id="current-issue-motto"  style="font-family: 'Abril Fatface';">-</p>
+            </div>
+            <div class="issue-actions">
+                <a href="#" class="btn-follow"  style="font-family: 'Abril Fatface'; text-decoration: none;">Mutasd a lapszámot</a>
+            </div>
+        </div>
+        <!-- Fő tartalom -->
+        <div class="profile-content">
+            <!-- Bal oldal - Posztok -->
+            <div class="profile-posts-section">
+                <div class="info-card">
+                    <h3 style="font-family: 'Abril Fatface';">Legújabb cikkek</h3>
+                    
+                    <div id="posts-container" class="posts-grid">
+                        <div class="empty-state">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                            <p>Még nincsenek publikált cikkek</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- További posztok (paginated) -->
+                <div id="load-more-posts" style="text-align: center; margin-top: 20px; display: none;">
+                    <button class="btn-message" onclick="loadMorePosts()">
+                        <ion-icon name="chevron-down-outline"></ion-icon>
+                        További cikkek betöltése
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Jobb oldal - Információk -->
+            <div class="profile-info-sidebar">
+                <!-- Bemutatkozás -->
+                <div class="info-card">
+                    <h3 style="font-family: 'Abril Fatface';">Bemutatkozás</h3>
+                    <div id="about-content" class="about-content" style="font-family: 'Oswald">
+                        <div class="about-empty">
+                            Ez a felhasználó még nem írt bemutatkozást.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Kapcsolat információk -->
+                <div class="info-card">
+                    <h3 style= "font-family: 'Abril Fatface'">Kapcsolat</h3>
+                    <div id="contact-list" class="contact-list">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <ion-icon name="mail-outline"></ion-icon>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-label" style="font-family: 'Abril Fatface'">Email</div>
+                                <div id="contact-email" class="contact-value"  style="font-family: 'Oswald">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <ion-icon name="logo-discord"></ion-icon>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-label" style="font-family: 'Abril Fatface'">Discord</div>
+                                <div id="contact-discord" class="contact-value"  style="font-family: 'Oswald">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <ion-icon name="logo-youtube"></ion-icon>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-label" style="font-family: 'Abril Fatface';">YouTube</div>
+                                <div id="contact-youtube" class="contact-value"  style="font-family: 'Oswald">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <ion-icon name="logo-instagram"></ion-icon>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-label" style="font-family: 'Abril Fatface';">Instagram</div>
+                                <div id="contact-instagram" class="contact-value"  style="font-family: 'Oswald">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <ion-icon name="book-outline"></ion-icon>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-label" style="font-family: 'Abril Fatface';">Wattpad</div>
+                                <div id="contact-wattpad" class="contact-value"  style="font-family: 'Oswald">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Legnépszerűbb cikk -->
+                <div class="info-card">
+                    <h3 style="font-family: 'Abril Fatface';">Legnépszerűbb cikk</h3>
+                    <div id="popular-post" class="empty-state"  style="font-family: 'Oswald">
+                        <ion-icon name="trending-up-outline"></ion-icon>
+                        <p>Még nincs elérhető adat</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    // Felhasználói profil oldal JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Felhasználói profil oldal betöltve');
+        
+        // URL paraméterek ellenőrzése (uid)
+        const urlParams = new URLSearchParams(window.location.search);
+        const uid = urlParams.get('uid');
+        
+        if (uid) {
+            // Ha van UID paraméter, betöltjük a felhasználó adatait
+            loadUserProfile(uid);
+        } else {
+            // Ha nincs UID, megpróbáljuk a jelenlegi felhasználót betölteni
+            loadCurrentUserProfile();
+        }
+        
+        // Lapszám betöltése
+        loadCurrentIssue();
+        
+        // Alap eseménykezelők
+        setupEventListeners();
+    });
+    
+    function setupEventListeners() {
+        // Vissza gomb
+        document.querySelector('.btn-back').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.history.back();
+        });
+    }
+    
+    async function loadCurrentUserProfile() {
+        console.log('Jelenlegi felhasználó profiljának betöltése...');
+        
+        const token = await getAuthToken();
+        if (!token) {
+            console.log('Nincs token - publikus profil betöltése');
+            // Publikus felhasználó betöltése (pl. alapértelmezett vagy népszerű)
+            loadPublicProfile();
+            return;
+        }
+        
+        try {
+            // Lekérjük a jelenlegi felhasználó UID-ját
+            const userResponse = await fetch('/api/user/get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    get: 'uid, email, first_name, full_name, alias, roles, pfp, description, face, dc, yt, insta, wattpad, created_at'
+                })
+            });
+            
+            if (userResponse.ok) {
+                const userData = await userResponse.json();
+                console.log('Felhasználói adatok:', userData);
+                
+                // Profil megjelenítése
+                displayUserProfile(userData);
+                
+                // Felhasználó cikkeinek betöltése
+                loadUserPosts(userData.uid);
+                
+                // Művelet gombok beállítása (saját profil esetén)
+                setupOwnProfileActions();
+            } else {
+                console.error('Hiba a felhasználói adatok lekérése során');
+                loadPublicProfile();
+            }
+        } catch (error) {
+            console.error('Hiba a profil betöltése során:', error);
+            loadPublicProfile();
+        }
+    }
+    
+    async function loadUserProfile(uid) {
+        console.log(`Felhasználói profil betöltése UID alapján: ${uid}`);
+        
+        try {
+            // GET /api/user/getone?uid=XXX
+            const response = await fetch(`/api/user/getone?uid=${uid}`, {
+                method: 'GET'
+            });
+            
+            if (response.ok) {
+                const userData = await response.json();
+                console.log('Felhasználói adatok:', userData);
+                
+                // Profil megjelenítése
+                displayUserProfile(userData);
+                
+                // Felhasználó cikkeinek betöltése
+                loadUserPosts(uid);
+                
+                // Művelet gombok beállítása (másik felhasználó esetén)
+                setupOtherProfileActions(uid);
+                
+            } else if (response.status === 404) {
+                // Felhasználó nem található
+                showUserNotFound();
+            } else {
+                console.error('Hiba a felhasználói adatok lekérése során:', response.status);
+                showProfileError();
+            }
+        } catch (error) {
+            console.error('Hiba a profil betöltése során:', error);
+            showProfileError();
+        }
+    }
+    
+    function displayUserProfile(userData) {
+        console.log('Profil megjelenítése:', userData);
+        
+        // Alapadatok
+        const profileName = document.getElementById('profile-name');
+        const profileUsername = document.getElementById('profile-username');
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profileEmail = document.getElementById('contact-email');
+        
+        // Név megjelenítése
+        let displayName = 'Felhasználó';
+        let username = '';
+        
+        if (userData.alias && userData.alias.trim() !== '') {
+            displayName = userData.alias;
+            username = `@${userData.alias.toLowerCase().replace(/\s+/g, '')}`;
+        } else if (userData.full_name && userData.full_name.trim() !== '') {
+            displayName = userData.full_name;
+            username = userData.email ? userData.email.split('@')[0] : '';
+        } else if (userData.first_name && userData.first_name.trim() !== '') {
+            displayName = userData.first_name;
+            username = userData.email ? userData.email.split('@')[0] : '';
+        }
+        
+        if (profileName) profileName.textContent = displayName;
+        if (profileUsername) profileUsername.textContent = username;
+        
+        // Email (csak saját profil esetén vagy ha nyilvános)
+        if (profileEmail) {
+            profileEmail.textContent = userData.email || '-';
+        }
+        
+if (userData.pfp && userData.pfp.trim() !== '' && 
+        userData.pfp !== 'null' && userData.pfp !== 'undefined') {
+        
+        // Ellenőrizzük, hogy Base64-e vagy URL-e
+        if (userData.pfp.startsWith('data:image/')) {
+            // Base64 kép - közvetlenül használható
+            profileAvatar.src = userData.pfp;
+        } else if (userData.pfp.startsWith('http://') || userData.pfp.startsWith('https://')) {
+            // Külső URL
+            profileAvatar.src = userData.pfp;
+        } else if (userData.pfp.startsWith('/')) {
+            // Relatív útvonal (szerveren lévő kép)
+            profileAvatar.src = userData.pfp;
+        } else {
+            // Valószínűleg csak egy fájlnév vagy elérési út
+            profileAvatar.src = '/uploads/profiles/' + userData.pfp;
+        }
+    } else {
+        // Generált avatar ha nincs profilkép
+        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=1891d1&color=fff&size=168`;
+        profileAvatar.src = avatarUrl;
+    }
+        
+        // Rangok megjelenítése
+        displayProfileRoles(userData.roles);
+        
+        // Bemutatkozás
+        displayAboutSection(userData.description);
+        
+        // Kapcsolati információk
+        displayContactInfo(userData);
+        
+        // Dátum formázása
+        if (userData.created_at) {
+            const joinedDate = new Date(userData.created_at);
+            const formattedDate = joinedDate.toLocaleDateString('hu-HU', {
+                year: 'numeric',
+                month: 'long'
+            });
+            document.getElementById('joined-date').textContent = formattedDate;
+        }
+    }
+    
+    function displayProfileRoles(rolesString) {
+        const container = document.getElementById('profile-roles');
+        if (!container) return;
+        
+        let rolesArray = [];
+        
+        if (rolesString) {
+            try {
+                if (typeof rolesString === 'string') {
+                    rolesArray = JSON.parse(rolesString);
+                } else if (Array.isArray(rolesString)) {
+                    rolesArray = rolesString;
+                }
+            } catch (e) {
+                console.error('Hiba a rangok parse-olása során:', e);
+                rolesArray = rolesString.split(',').map(r => r.trim());
+            }
+        }
+        
+        if (rolesArray.length === 0) {
+            container.innerHTML = '<span class="role-badge" style="background: #6b7280;">Felhasználó</span>';
+            return;
+        }
+        
+        let html = '';
+        rolesArray.forEach(role => {
+            const roleLower = role.toLowerCase();
+            let roleColor = '#1891d1'; // Alap szín
+            
+            if (roleLower.includes('writer')) roleColor = '#1e40af';
+            else if (roleLower.includes('lector')) roleColor = '#92400e';
+            else if (roleLower.includes('director')) roleColor = '#9d174d';
+            else if (roleLower.includes('frontend')) roleColor = '#166534';
+            else if (roleLower.includes('backend')) roleColor = '#6b21a8';
+            else if (role === '*') roleColor = '#854d0e';
+            
+            html += `<span class="role-badge" style="background: ${roleColor}">${role}</span>`;
+        });
+        
+        container.innerHTML = html;
+    }
+    
+    function displayAboutSection(description) {
+        const container = document.getElementById('about-content');
+        if (!container) return;
+        
+        if (description && description.trim() !== '') {
+            container.innerHTML = `<p>${description}</p>`;
+        } else {
+            container.innerHTML = `
+                <div class="about-empty">
+                    Ez a felhasználó még nem írt bemutatkozást.
+                </div>
+            `;
+        }
+    }
+    
+    function displayContactInfo(userData) {
+        // Discord
+        const discord = document.getElementById('contact-discord');
+        if (discord && userData.dc) {
+            discord.textContent = userData.dc;
+        } else if (discord) {
+            discord.textContent = '-';
+        }
+        
+        // YouTube
+        const youtube = document.getElementById('contact-youtube');
+        if (youtube && userData.yt) {
+            youtube.textContent = userData.yt;
+            youtube.innerHTML = `<a href="https://youtube.com${userData.yt}" target="_blank" style="color: #1891d1; text-decoration: none;">${userData.yt}</a>`;
+        } else if (youtube) {
+            youtube.textContent = '-';
+        }
+        
+        // Instagram
+        const instagram = document.getElementById('contact-instagram');
+        if (instagram && userData.insta) {
+            instagram.textContent = userData.insta;
+            instagram.innerHTML = `<a href="https://instagram.com/${userData.insta.replace('@', '')}" target="_blank" style="color: #1891d1; text-decoration: none;">${userData.insta}</a>`;
+        } else if (instagram) {
+            instagram.textContent = '-';
+        }
+        
+        // Wattpad
+        const wattpad = document.getElementById('contact-wattpad');
+        if (wattpad && userData.wattpad) {
+            wattpad.textContent = userData.wattpad;
+            wattpad.innerHTML = `<a href="https://wattpad.com/user/${userData.wattpad}" target="_blank" style="color: #1891d1; text-decoration: none;">${userData.wattpad}</a>`;
+        } else if (wattpad) {
+            wattpad.textContent = '-';
+        }
+    }
+    
+    async function loadUserPosts(uid) {
+        console.log(`Felhasználó cikkeinek betöltése: ${uid}`);
+        
+        const container = document.getElementById('posts-container');
+        if (!container) return;
+        
+        try {
+            // Publikus cikkek lekérése a felhasználótól
+            const response = await fetch(`/api/post/get/user?uid=${uid}&published=true`, {
+                method: 'GET'
+            });
+            
+            if (response.ok) {
+                const posts = await response.json();
+                console.log('Felhasználó cikkei:', posts);
+                
+                if (posts && Object.keys(posts).length > 0) {
+                    displayUserPosts(posts);
+                    
+                    // Statisztika frissítése
+                    document.getElementById('articles-count').textContent = Object.keys(posts).length;
+                    
+                    // Legnépszerűbb cikk
+                    findPopularPost(posts);
+                    
+                } else {
+                    showNoPosts();
+                }
+            } else {
+                showNoPosts();
+            }
+        } catch (error) {
+            console.error('Hiba a cikkek betöltése során:', error);
+            showNoPosts();
+        }
+    }
+    
+    function displayUserPosts(posts) {
+        const container = document.getElementById('posts-container');
+        if (!container) return;
+        
+        let html = '';
+        Object.entries(posts).forEach(([pid, post]) => {
+            const postDate = new Date(post.created || new Date());
+            const formattedDate = postDate.toLocaleDateString('hu-HU', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            
+            const excerpt = post.minimal_desc || 
+                           (post.desc ? post.desc.substring(0, 150) + '...' : 'Nincs leírás...');
+            
+            // Kép URL vagy alapértelmezett
+            const imageUrl = post.image && post.image.trim() !== '' ? 
+                           post.image : 'https://images.unsplash.com/photo-1581276879432-15e50529f34b?w=800&auto=format&fit=crop';
+            
+            html += `
+                <div class="post-card">
+                    <img src="${imageUrl}" alt="${post.title}" class="post-image">
+                    <div class="post-content">
+                        <span class="post-category">${post.category || 'Általános'}</span>
+                        <h4 class="post-title">${post.title || 'Cím nélkül'}</h4>
+                        <p class="post-excerpt">${excerpt}</p>
+                        <div class="post-meta">
+                            <div class="post-date">
+                                <ion-icon name="calendar-outline"></ion-icon>
+                                <span>${formattedDate}</span>
+                            </div>
+                            <div class="post-stats">
+                                <div class="stat">
+                                    <ion-icon name="eye-outline"></ion-icon>
+                                    <span>${post.views || 0}</span>
+                                </div>
+                                <div class="stat">
+                                    <ion-icon name="heart-outline"></ion-icon>
+                                    <span>${post.likes || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        
+        // Több cikk betöltése gomb
+        if (Object.keys(posts).length >= 5) {
+            document.getElementById('load-more-posts').style.display = 'block';
+        }
+    }
+    
+    function findPopularPost(posts) {
+        let popularPost = null;
+        let maxViews = 0;
+        
+        Object.entries(posts).forEach(([pid, post]) => {
+            const views = post.views || 0;
+            if (views > maxViews) {
+                maxViews = views;
+                popularPost = post;
+            }
+        });
+        
+        if (popularPost) {
+            displayPopularPost(popularPost);
+        }
+    }
+    
+    function displayPopularPost(post) {
+        const container = document.getElementById('popular-post');
+        if (!container) return;
+        
+        const postDate = new Date(post.created || new Date());
+        const formattedDate = postDate.toLocaleDateString('hu-HU', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+        
+        const excerpt = post.minimal_desc || 
+                       (post.desc ? post.desc.substring(0, 100) + '...' : '');
+        
+        container.innerHTML = `
+            <div style="background: #f8f9fa; border-radius: 8px; padding: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <div style="font-size: 24px; color: #ef4444;">🔥</div>
+                    <div>
+                        <div style="font-weight: 600; color: #2d3748;">${post.title || 'Cím nélkül'}</div>
+                        <div style="font-size: 12px; color: #6b7280;">${formattedDate}</div>
+                    </div>
+                </div>
+                <p style="font-size: 14px; color: #4b5563; margin-bottom: 10px;">${excerpt}</p>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6b7280;">
+                    <span><ion-icon name="eye-outline"></ion-icon> ${post.views || 0} megtekintés</span>
+                    <span><ion-icon name="heart-outline"></ion-icon> ${post.likes || 0} like</span>
+                </div>
+                <a href="/post/${Object.keys(post)[0]}" style="display: inline-block; margin-top: 10px; padding: 6px 12px; background: #1891d1; color: white; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: 600;">
+                    Olvasom
+                </a>
+            </div>
+        `;
+    }
+    
+    function showNoPosts() {
+        const container = document.getElementById('posts-container');
+        if (!container) return;
+        
+        container.innerHTML = `
+            <div class="empty-state"  style="font-family: 'Oswald">
+                <ion-icon name="document-text-outline"></ion-icon>
+                <p>Még nincsenek publikált cikkek</p>
+            </div>
+        `;
+    }
+    
+    function setupOwnProfileActions() {
+        const container = document.getElementById('profile-actions');
+        if (!container) return;
+        
+        container.innerHTML = `
+<a href="profile.html" class="btn-follow" style="font-family: 'Abril Fatface'; text-decoration: none;">
+    <ion-icon name="create-outline"></ion-icon>
+    Profil szerkesztése
+</a>
+<a href="dashboard.html" class="btn-message" style="font-family: 'Abril Fatface'; text-decoration: none;">
+    <ion-icon name="grid-outline"></ion-icon>
+    Dashboard
+</a>
+<button class="btn-more">
+    <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+</button>
+        `;
+        
+        // Dropdown menü a "több" gombhoz
+        const moreBtn = container.querySelector('.btn-more');
+        moreBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showProfileDropdown(this);
+        });
+    }
+    
+    function setupOtherProfileActions(uid) {
+        const container = document.getElementById('profile-actions');
+        if (!container) return;
+        
+        container.innerHTML = `
+
+            <button class="btn-more">
+                <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
+            </button>
+        `;
+        
+        // Követés állapot ellenőrzése
+        checkFollowStatus(uid);
+        
+        // Dropdown menü
+        const moreBtn = container.querySelector('.btn-more');
+        moreBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showProfileDropdown(this, uid);
+        });
+    }
+    
+    async function checkFollowStatus(uid) {
+        try {
+            const token = await getAuthToken();
+            if (!token) return;
+            
+            const response = await fetch(`/api/user/following/${uid}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const followBtn = document.getElementById('follow-btn');
+                
+                if (data.following) {
+                    followBtn.innerHTML = `
+                        <ion-icon name="checkmark-outline"></ion-icon>
+                        Követve
+                    `;
+                    followBtn.style.background = '#6b7280';
+                    followBtn.onclick = () => toggleFollow(uid);
+                }
+            }
+        } catch (error) {
+            console.error('Hiba a követés állapot ellenőrzése során:', error);
+        }
+    }
+    
+    function toggleFollow(uid) {
+        // TODO: Követés API implementáció
+        console.log(`Követés váltás: ${uid}`);
+        
+        const followBtn = document.getElementById('follow-btn');
+        const isFollowing = followBtn.textContent.includes('Követve');
+        
+        if (isFollowing) {
+            followBtn.innerHTML = `<ion-icon name="person-add-outline"></ion-icon> Követés`;
+            followBtn.style.background = '';
+            showNotification('Követés megszüntetve', 'info');
+        } else {
+            followBtn.innerHTML = `<ion-icon name="checkmark-outline"></ion-icon> Követve`;
+            followBtn.style.background = '#6b7280';
+            showNotification('Követve', 'success');
+        }
+    }
+    
+    function sendMessage(uid) {
+        // TODO: Üzenetküldés implementáció
+        console.log(`Üzenet küldés: ${uid}`);
+        showNotification('Üzenet funkció hamarosan elérhető!', 'info');
+    }
+    
+    function showProfileDropdown(button, uid = null) {
+        // Dropdown létrehozása
+        const dropdown = document.createElement('div');
+        dropdown.className = 'profile-dropdown-menu';
+        dropdown.style.cssText = `
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            z-index: 1000;
+            min-width: 200px;
+        `;
+        
+        let dropdownHTML = `
+<div class="dropdown-item" onclick="reportUser(${uid})" style="font-family: 'Abril Fatface';">
+    <ion-icon name="flag-outline" style="font-family: inherit !important;"></ion-icon>
+    Jelentés
+</div>
+<div class="dropdown-item" onclick="blockUser(${uid})" style="font-family: 'Abril Fatface';">
+    <ion-icon name="ban-outline" style="font-family: inherit !important;"></ion-icon>
+    Letiltás
+</div>
+        `;
+        
+        if (uid) {
+            // Másik felhasználó
+            dropdownHTML = `
+<div class="dropdown-item" onclick="shareProfile(${uid})" style="font-family: 'Abril Fatface';">
+    <ion-icon name="share-outline" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;"></ion-icon>
+    Megosztás
+</div>
+<div class="dropdown-item" onclick="copyProfileLink(${uid})" style="font-family: 'Abril Fatface';">
+    <ion-icon name="link-outline" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;"></ion-icon>
+    Link másolása
+</div>
+<div class="dropdown-divider"></div>
+${dropdownHTML}
+            `;
+        } else {
+            // Saját profil
+            dropdownHTML = 
+            
+            
+            `
+
+           
+                <div class="dropdown-item" onclick="window.location.href='settings.html'" style="font-family: 'Abril Fatface';>
+                    <ion-icon name="settings-outline"></ion-icon>
+                    Beállítások
+                </div>
+                <div class="dropdown-item" onclick="window.location.href='profile.html'" style="font-family: 'Abril Fatface'; >
+                    <ion-icon name="person-outline"></ion-icon>
+                    Profil szerkesztése
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item" onclick="logout()" style="color: #ef4444; font-family: 'Abril Fatface';" >
+                    <ion-icon name="log-out-outline"></ion-icon>
+                    Kijelentkezés
+                </div>
+
+               
+            `;
+        }
+        
+        dropdown.innerHTML = dropdownHTML;
+        
+        // Stílus a dropdown elemekhez
+        const style = document.createElement('style');
+        style.textContent = `
+            .dropdown-item {
+                padding: 10px 16px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+                transition: background 0.2s;
+                font-size: 14px;
+                color: #2d3748;
+            }
+            .dropdown-item:hover {
+                background: #f3f4f6;
+            }
+            .dropdown-divider {
+                height: 1px;
+                background: #e5e7eb;
+                margin: 4px 0;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Pozícionálás
+        const rect = button.getBoundingClientRect();
+        dropdown.style.top = `${rect.bottom + window.scrollY + 5}px`;
+        dropdown.style.left = `${rect.left + window.scrollX}px`;
+        
+        document.body.appendChild(dropdown);
+        
+        // Kattintás kívülre bezárja
+        function closeDropdown(e) {
+            if (!dropdown.contains(e.target) && e.target !== button) {
+                dropdown.remove();
+                document.removeEventListener('click', closeDropdown);
+            }
+        }
+        
+        setTimeout(() => {
+            document.addEventListener('click', closeDropdown);
+        }, 100);
+    }
+    
+    function shareProfile(uid) {
+        const profileUrl = `${window.location.origin}/user-profile.html?uid=${uid}`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Pelikán - Felhasználói profil',
+                text: 'Nézd meg ezt a profilt a Pelikán oldalon!',
+                url: profileUrl
+            });
+        } else {
+            // Fallback
+            navigator.clipboard.writeText(profileUrl);
+            showNotification('Profil link másolva!', 'success');
+        }
+    }
+    
+    function copyProfileLink(uid) {
+        const profileUrl = `${window.location.origin}/user-profile.html?uid=${uid}`;
+        navigator.clipboard.writeText(profileUrl);
+        showNotification('Profil link másolva!', 'success');
+    }
+    
+    function reportUser(uid) {
+        // TODO: Jelentés implementáció
+        console.log(`Felhasználó jelentése: ${uid}`);
+        showNotification('Jelentés elküldve', 'info');
+    }
+    
+    function blockUser(uid) {
+        // TODO: Letiltás implementáció
+        console.log(`Felhasználó letiltása: ${uid}`);
+        showNotification('Felhasználó letiltva', 'success');
+    }
+    
+    async function loadCurrentIssue() {
+        try {
+            const response = await fetch('/api/number/front', {
+                method: 'GET'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const numberElement = document.getElementById('current-issue-number');
+                const mottoElement = document.getElementById('current-issue-motto');
+                
+                if (numberElement) numberElement.textContent = "Jelenlegi lapszám: " + (data.number || '-');
+                if (mottoElement) mottoElement.textContent = data.text || '-';
+            }
+        } catch (error) {
+            console.error('Hiba a lapszám betöltése során:', error);
+        }
+    }
+    
+    function loadPublicProfile() {
+        // Alapértelmezett publikus profil betöltése
+        console.log('Publikus profil betöltése');
+        
+        // Lehetőségek:
+        // 1. Legnépszerűbb felhasználó
+        // 2. Alapértelmezett demo profil
+        // 3. Hibaüzenet
+        
+        showProfileError();
+    }
+    
+    function showProfileError() {
+        const container = document.querySelector('.profile-container');
+        if (!container) return;
+        
+        container.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 72px; color: #d1d5db; margin-bottom: 20px;">😕</div>
+                <h2 style="color: #2d3748; margin-bottom: 15px; font-family: 'Abril Fatface'">Profil nem található</h2>
+                <p style="color: #6b7280; margin-bottom: 30px; max-width: 400px; margin-left: auto; margin-right: auto; font-family: 'Oswald">
+                    A keresett felhasználói profil nem található, vagy nincs publikus információja.
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center; font-family: 'Abril Fatface';">
+    <a href="/" class="btn-back" style="text-decoration: none;">
+        <ion-icon name="home-outline"></ion-icon>
+        Főoldal
+    </a>
+    <a href="dashboard.html" class="btn-follow" style="text-decoration: none;">
+        <ion-icon name="grid-outline"></ion-icon>
+        Dashboard
+    </a>
+</div>
+            </div>
+        `;
+    }
+    
+    function showUserNotFound() {
+        const container = document.querySelector('.profile-container');
+        if (!container) return;
+        
+        container.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 72px; color: #d1d5db; margin-bottom: 20px;">🔍</div>
+                <h2 style="color: #2d3748; margin-bottom: 15px;">Felhasználó nem található</h2>
+                <p style="color: #6b7280; margin-bottom: 30px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                    A megadott azonosítóval nem található felhasználó.
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <a href="/" class="btn-back">
+                        <ion-icon name="home-outline"></ion-icon>
+                        Főoldal
+                    </a>
+                    <a href="dashboard.html" class="btn-follow">
+                        <ion-icon name="grid-outline"></ion-icon>
+                        Dashboard
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+    
+    function showNotification(message, type = 'info') {
+        // Egyszerű értesítés
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+        
+        // Animáció CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    async function getAuthToken() {
+        const tokenSources = {
+            'localStorage': localStorage.getItem('secret'),
+            'sessionStorage': sessionStorage.getItem('secret'),
+            'URL paraméter': new URLSearchParams(window.location.search).get('token')
+        };
+        
+        let token = tokenSources['URL paraméter'];
+        
+        if (!token && tokenSources['localStorage']) {
+            token = tokenSources['localStorage'];
+        }
+        
+        if (!token && tokenSources['sessionStorage']) {
+            token = tokenSources['sessionStorage'];
+        }
+        
+        if (tokenSources['URL paraméter'] && !tokenSources['localStorage']) {
+            localStorage.setItem('secret', tokenSources['URL paraméter']);
+            const newUrl = window.location.pathname + window.location.search;
+            window.history.replaceState({}, document.title, newUrl.split('?')[0]);
+        }
+        
+        return token;
+    }
+    
+    function logout() {
+        localStorage.removeItem('secret');
+        sessionStorage.removeItem('secret');
+        window.location.href = '/logout.php';
+    }
+    
+    // Publikus API endpoint-ok mockolása (jelenleg nem létező végpontok)
+    // Ezeket később a backend implementálja
+    function mockAPIs() {
+        // Ez a rész csak fejlesztéshez, később törölhető
+        console.log('Mock API endpoint-ok inicializálva');
+    }
+    
+    // Oldal betöltésekor mock API-k inicializálása
+    mockAPIs();
+    </script>
+</body>
+</html>

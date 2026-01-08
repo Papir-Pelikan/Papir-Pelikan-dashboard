@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelikán Kezelőpult | Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+    <!-- Oldalsáv -->
+    <div class="mobile-menu-btn"><ion-icon name="menu-outline"></ion-icon></div>
+    <nav id="sidebar">
+        <div class="logo">
+            <div class="logo-image">
+                <img src="pelikan2.png" alt="Logo">
+                <span class="logo-text">Pelikán Dashboard</span>
+            </div>
+            <div class="close-sidebar"><ion-icon name="close-outline"></ion-icon></div>
+        </div>
+        <div class="menu-items">
+            <ul class="navLinks">
+                <li class="navList active" data-target="dashboard">
+                    <a href="#">
+                        <ion-icon name="home-outline"></ion-icon>
+                        <span class="links">Dashboard</span>
+                    </a>
+                </li>
+                <li class="navList" data-target="create-post">
+                    <a href="#">
+                        <ion-icon name="create-outline"></ion-icon>
+                        <span class="links">Poszt létrehozása</span>
+                    </a>
+                </li>
+                <!-- A "Hozzászólások" alatt helyezzük el -->
+<li id="reviews-nav-placeholder"></li>
+                <li class="navList" data-target="articles">
+                    <a href="#">
+                        <ion-icon name="folder-outline"></ion-icon>
+                        <span class="links">Cikkeim</span>
+                        <span class="notification-badge">3</span>
+                    </a>
+                </li>
+                <li class="navList" data-target="analytics">
+                    <a href="#">
+                        <ion-icon name="analytics-outline"></ion-icon>
+                        <span class="links">Analytics</span>
+                    </a>
+                </li>
+                <li class="navList" data-target="comments">
+                    <a href="#">
+                        <ion-icon name="chatbubble-outline"></ion-icon>
+                        <span class="links">Hozzászólások</span>
+                        <span class="notification-badge">12</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="bottom-link">
+                <li>
+                    <a href="profile.html">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <span class="links">Profil</span>
+                    </a>
+                </li>
+                                <li>
+                    <a href="settings.html">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <span class="links">Beállítások</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../logout.php">
+                        <ion-icon name="log-out-outline"></ion-icon>
+                        <span class="links">Kijelentkezés</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Tartalom -->
+    <section class="dashboard">
+        <div class="container">
+            <!-- Fejléc -->
+            <div class="dashboard-header">
+                <div class="header-left">
+                    <h1>Üdvözlünk, <span class="user-name" id="user-display-name">Vendég</span>!</h1>
+                    <p class="page-description">Íme a mai összefoglaló (még nincs behozva)</p>
+                </div>
+                <!-- Fejléc jobb oldali rész -->
+<div class="header-right">
+    <div class="search-box">
+        <ion-icon name="search-outline"></ion-icon>
+        <input type="text" placeholder="Keresés...">
+    </div>
+    
+    <!-- Profil terület -->
+    <div class="user-profile">
+        <div class="profile-img" id="profile-toggle-btn">
+            <img id="user-profile-image" src="https://ui-avatars.com/api/?name=Guest&background=666&color=fff" alt="Profil">
+        </div>
+        
+        <!-- Dropdown menü -->
+        <div class="profile-dropdown" id="profile-dropdown">
+            <div class="dropdown-content" id="dropdown-content">
+                <!-- Tartalom JavaScript alapján töltődik -->
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="overview" id="dashboard">
+                <div class="title"><ion-icon name="speedometer"></ion-icon><span class="text">Dashboard</span></div>
+                <div class="boxes">
+                    <div class="box box1">
+                        <div class="box-icon">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </div>
+                        <div class="box-content">
+                            <span class="number">2,847</span>
+                            <span class="text">Összes Megtekintés</span>
+                            <span class="trend positive">+12%</span>
+                        </div>
+                    </div>
+                    <div class="box box2">
+                        <div class="box-icon">
+                            <ion-icon name="people-outline"></ion-icon>
+                        </div>
+                        <div class="box-content">
+                            <span class="number">1,234</span>
+                            <span class="text">Aktív felhasználó</span>
+                            <span class="trend positive">+5%</span>
+                        </div>
+                    </div>
+                    <div class="box box3">
+                        <div class="box-icon">
+                            <ion-icon name="chatbubbles-outline"></ion-icon>
+                        </div>
+                        <div class="box-content">
+                            <span class="number">568</span>
+                            <span class="text">Összes tevékenység</span>
+                            <span class="trend negative">-2%</span>
+                        </div>
+                    </div>
+                    <div class="box box4">
+                        <div class="box-icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </div>
+                        <div class="box-content">
+                            <span class="number">42</span>
+                            <span class="text">Összes cikk</span>
+                            <span class="trend positive">+8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafikon és legfrissebb cikkek -->
+                <div class="dashboard-content">
+                    <div class="chart-container">
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3>Megtekintések (elmúlt 7 nap)</h3>
+                                <div class="chart-actions">
+                                    <button class="btn-chart active">7 nap</button>
+                                    <button class="btn-chart">30 nap</button>
+                                    <button class="btn-chart">1 év</button>
+                                </div>
+                            </div>
+                            <div class="chart-placeholder">
+                                <div class="chart-visual">
+                                    <div class="chart-bar" style="height: 30%"></div>
+                                    <div class="chart-bar" style="height: 60%"></div>
+                                    <div class="chart-bar" style="height: 45%"></div>
+                                    <div class="chart-bar" style="height: 80%"></div>
+                                    <div class="chart-bar" style="height: 65%"></div>
+                                    <div class="chart-bar" style="height: 50%"></div>
+                                    <div class="chart-bar" style="height: 75%"></div>
+                                </div>
+                                <div class="chart-labels">
+                                    <span>H</span>
+                                    <span>K</span>
+                                    <span>Sze</span>
+                                    <span>Cs</span>
+                                    <span>P</span>
+                                    <span>Szo</span>
+                                    <span>V</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-articles">
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3>Legfrissebb cikkek</h3>
+                                <a href="#" class="view-all">Összes megtekintése</a>
+                            </div>
+                            <div class="articles-list">
+                                <div class="article-item">
+                                    <div class="article-info">
+                                        <h4>A digitális átállás kihívásai 2023-ban</h4>
+                                        <span class="article-date">2023. október 12.</span>
+                                    </div>
+                                    <div class="article-stats">
+                                        <span class="stat"><ion-icon name="eye-outline"></ion-icon> 1,245</span>
+                                        <span class="stat"><ion-icon name="chatbubble-outline"></ion-icon> 32</span>
+                                    </div>
+                                </div>
+                                <div class="article-item">
+                                    <div class="article-info">
+                                        <h4>Mesterséges intelligencia a mindennapokban</h4>
+                                        <span class="article-date">2023. október 5.</span>
+                                    </div>
+                                    <div class="article-stats">
+                                        <span class="stat"><ion-icon name="eye-outline"></ion-icon> 892</span>
+                                        <span class="stat"><ion-icon name="chatbubble-outline"></ion-icon> 18</span>
+                                    </div>
+                                </div>
+                                <div class="article-item">
+                                    <div class="article-info">
+                                        <h4>Fenntartható városfejlesztési modellek</h4>
+                                        <span class="article-date">2023. szeptember 28.</span>
+                                    </div>
+                                    <div class="article-stats">
+                                        <span class="stat"><ion-icon name="eye-outline"></ion-icon> 1,567</span>
+                                        <span class="stat"><ion-icon name="chatbubble-outline"></ion-icon> 45</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Poszt létrehozása -->
+<div class="data-table" id="create-post" style="display:none">
+    <div class="table-header">
+        <div class="title"><ion-icon name="create-outline"></ion-icon><span class="text">Új poszt létrehozása</span></div>
+    </div>
+                    <label for="post-content">Tartalom - Építsd fel blokkokból a cikked!</label>
+
+    <div class="create-post-form">
+        <!-- ⭐⭐⭐ ALAPVETŒ SZABÁLYOK MEGJELENÍTÉSE ⭐⭐⭐ -->
+        <div class="post-rules" style="
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        ">
+            <h4 style="margin-top: 0; color: #1565c0; display: flex; align-items: center; gap: 8px;">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                Fontos szabályok
+            </h4>
+            <ul style="margin: 10px 0; padding-left: 20px; color: #0d47a1;">
+                <li><strong>Az első blokk mindig a címed!</strong></li>
+                <li>Használd a "Címsor" blokkot az első blokknak</li>
+                <li>Legalább egy blokknak lennie kell a posztban</li>
+                <li>A többi blokk alkotja a poszt tartalmát</li>
+            </ul>
+        </div>
+        
+        <!-- ⭐⭐⭐ AUTOMATIKUS CÍM ELŐNÉZET ⭐⭐⭐ -->
+        <div class="title-preview-container" style="
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #9c27b0;
+        ">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h4 style="margin: 0; color: #7b1fa2; display: flex; align-items: center; gap: 8px;">
+                    <ion-icon name="text-outline"></ion-icon>
+                    Poszt címe
+                </h4>
+                <span id="title-source-badge" style="
+                    background: #9c27b0;
+                    color: white;
+                    padding: 4px 8px;
+                    border-radius: 12px;
+                    font-size: 12px;
+                    font-weight: 500;
+                ">(első blokkból)</span>
+            </div>
+            
+            <div id="title-preview" style="
+                font-size: 24px;
+                font-weight: 600;
+                color: #4a148c;
+                padding: 12px;
+                background: white;
+                border-radius: 6px;
+                border: 2px dashed #ba68c8;
+                min-height: 60px;
+                display: flex;
+                align-items: center;
+            ">
+                <span id="title-placeholder" style="color: #aaa; font-style: italic;">
+                    Rakj egy címsor blokkot az elejére...
+                </span>
+                <span id="actual-title" style="display: none;"></span>
+            </div>
+            
+            <div style="margin-top: 10px; font-size: 13px; color: #6a1b9a;">
+                <ion-icon name="help-circle-outline"></ion-icon>
+                A cím automatikusan az első "Címsor" blokkból kerül kiválasztásra.
+            </div>
+        </div>
+           <input type="hidden" id="post-title" name="title">
+                <input type="hidden" id="post-excerpt" name="excerpt">
+                <input type="hidden" id="post-html-content" name="html_content">
+                <input type="hidden" id="post-blocks-json" name="blocks_json">
+            
+            <!-- Blokk szerkesztő (lentebb ugyanúgy marad) -->
+            <div class="form-group">
+                
+                <!-- Blokk szerkesztő eszköztár -->
+                <div class="block-editor-toolbar">
+                    <div class="block-toolbar-section">
+                        <span class="section-label">Alap blokkok:</span>
+                        <div class="block-buttons">
+                            <button type="button" class="block-toolbar-btn" data-block-type="paragraph">
+                                <ion-icon name="document-text-outline"></ion-icon>
+                                <span>Bekezdés</span>
+                            </button>
+                            <button type="button" class="block-toolbar-btn" data-block-type="heading">
+                                <ion-icon name="text-outline"></ion-icon>
+                                <span>Címsor</span>
+                            </button>
+                            <button type="button" class="block-toolbar-btn" data-block-type="image">
+                                <ion-icon name="image-outline"></ion-icon>
+                                <span>Kép</span>
+                            </button>
+                            <button type="button" class="block-toolbar-btn" data-block-type="quote">
+                                <ion-icon name="quote-outline"></ion-icon>
+                                <span>Idézet</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="block-toolbar-section">
+                        <span class="section-label">További elemek:</span>
+                        <div class="block-buttons">
+                            <button type="button" class="block-toolbar-btn" data-block-type="list">
+                                <ion-icon name="list-outline"></ion-icon>
+                                <span>Lista</span>
+                            </button>
+                            <button type="button" class="block-toolbar-btn" data-block-type="code">
+                                <ion-icon name="code-outline"></ion-icon>
+                                <span>Kód</span>
+                            </button>
+                            <button type="button" class="block-toolbar-btn" data-block-type="divider">
+                                <ion-icon name="remove-outline"></ion-icon>
+                                <span>Elválasztó</span>
+                            </button>
+                            <button type="button" class="block-toolbar-btn" data-block-type="embed">
+                                <ion-icon name="logo-youtube"></ion-icon>
+                                <span>Beágyazás</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="block-toolbar-actions">
+                        <button type="button" class="btn-secondary btn-sm" id="preview-content">
+                            <ion-icon name="eye-outline"></ion-icon>
+                           <span style="font-family: 'Abril Fatface';">Előnézet</span> 
+                        </button>
+                        <button type="button" class="btn-secondary btn-sm" id="import-blocks">
+                            <ion-icon name="download-outline"></ion-icon>
+                            <span style="font-family: 'Abril Fatface';">Importálás kódból</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Blokk szerkesztő konténer -->
+               <div class="special-block-buttons" style="
+                        background: #fff8e1;
+                        padding: 15px;
+                        border-radius: 8px;
+                        margin: 15px 0;
+                        border: 1px solid #ffd54f;
+                    ">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <ion-icon name="star-outline" style="color: #ff9800; font-size: 20px;"></ion-icon>
+                            <span style="font-weight: 500; color: #e65100;">Kezdd a címmel!</span>
+                        </div>
+                        <button type="button" class="btn-primary" id="add-title-block-btn" style="
+                            background: linear-gradient(135deg, #ff9800, #ff5722);
+                            border: none;
+                            color: white;
+                            padding: 12px 20px;
+                            border-radius: 6px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            transition: transform 0.2s;
+                        ">
+                            <ion-icon name="add-circle-outline"></ion-icon>
+                            <span style="font-family: 'Abril Fatface'; font-size: 18px">Címsor blokk hozzáadása</span>
+                        </button>
+                        <div style="margin-top: 8px; font-size: 13px; color: #ff6f00;">
+                            <ion-icon name="arrow-down-outline"></ion-icon>
+                            Ez lesz a posztod címe
+                        </div>
+                    </div>
+                    
+                    <!-- BLOCK EDITOR CONTAINER -->
+                    <div class="block-editor-container" id="block-editor-container">
+                        
+                    </div>
+                </div>
+                
+                <!-- HTML előnézet (rejtett) -->
+                <div class="html-preview" id="html-preview" style="display: none; margin-top: 20px;">
+                    <h4>HTML Előnézet:</h4>
+                    <pre id="preview-output" style="background: #f8f9fa; padding: 15px; border-radius: 8px; max-height: 300px; overflow-y: auto;"></pre>
+                </div>
+
+                
+                
+                <!-- Rejtett mező a végső HTML-nek -->
+                <input type="hidden" id="post-content" name="content">
+            </div>
+            
+                        
+                        <!-- A form-row div után, az "authors" div-et beszúrni -->
+<div class="form-row">
+<!-- A kategória mezőt így módosítsd: -->
+<div class="form-group">
+    <label>Rovat kiválasztása</label>
+    <!-- Ide fognak betöltődni a kiválasztott kategória chip-ek -->
+    <div id="selected-categories-container" style="
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        min-height: 50px;
+    ">
+    <div>
+    <ion-icon name="book-outline" style="font-size: 20px;"></ion-icon>
+    <span style="color: #666; font-family: 'Oswald'; font-style: italic; ">Nincs kiválasztott rovattípus</span>
+
+    </div>
+    </div>
+    
+    <!-- Kategória választó gomb -->
+    <button type="button" class="btn-select-authors" id="select-category-btn" style="margin-top: 10px;">
+        <ion-icon name="folder-outline"></ion-icon>
+        <span style="font-family: 'Abril Fatface';">Rovattípus(ok) kiválasztása</span>
+    </button>
+    <small style="color: #666; font-size: 12px; display: block; margin-top: 8px;">
+            Kattints a gombra a rovatok listájából való kiválasztáshoz
+        </small>
+    <!-- Rejtett input a kiválasztott kategóriák tárolására -->
+    <input type="hidden" id="post-categories" name="categories">
+</div>
+<!--
+    <div class="form-group">
+        <label for="post-tags">Címkék</label>
+        <input type="text" id="post-tags" placeholder="Vesszővel elválasztva...">
+    </div>
+</div>
+
+-->
+
+
+<!-- IDEGEN SZERZŐK - MÓDOSÍTOTT RÉSZ -->
+<div class="form-row">
+    <div class="form-group">
+        <label for="post-authors">További szerzők</label>
+        
+        <!-- Kiválasztott szerzők megjelenítése -->
+        <div class="selected-authors-container" id="selected-authors-container">
+            <!-- Ide jönnek a kiválasztott szerzők címkéi -->
+            <div class="no-authors-message" id="no-authors-message">
+                <ion-icon name="people-outline"></ion-icon>
+                <span style="color: #666; font-family: 'Oswald'; font-style: italic;">Nincsenek kiválasztott szerzők</span>
+            </div>
+        </div>
+        
+        <!-- Rejtett mező a szerző UID-ek tárolására -->
+        <input type="hidden" id="post-authors" name="authors">
+        
+        <!-- Szerzőválasztó gomb -->
+        <button type="button" class="btn-select-authors" id="select-authors-btn">
+            <ion-icon name="person-add-outline"></ion-icon>
+            <span style="font-family: 'Abril Fatface';">Szerzők kiválasztása</span>
+        </button>
+        
+        <small style="color: #666; font-size: 12px; display: block; margin-top: 8px;">
+            Kattints a gombra a szerzők listájából való kiválasztáshoz
+        </small>
+    </div>
+    
+    <!--
+    <div class="form-group">
+        <label for="post-status">Státusz</label>
+        <select id="post-status">
+            <option value="draft">Vázlat</option>
+            <option value="published">Publikálva</option>
+        </select>
+    </div>
+
+    -->
+</div>
+<!-- IDEGEN SZERZŐK VÉGE
+
+<div class="form-row">
+    <div class="form-group">
+        <label for="post-featured">Kiemelt kép</label>
+        <div class="file-upload">
+            <input type="file" id="post-featured" accept="image/*">
+            <label for="post-featured" class="upload-btn">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                <span>Kép feltöltése</span>
+            </label>
+        </div>
+    </div>
+</div>
+                            
+                            <div class="form-group">
+                                <label for="post-featured">Kiemelt kép</label>
+                                <div class="file-upload">
+                                    <input type="file" id="post-featured" accept="image/*">
+                                    <label for="post-featured" class="upload-btn">
+                                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                                        <span>Kép feltöltése</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            -->
+                        </div>
+                        
+                       <div class="form-actions">
+ <!--   
+      <button type="button" class="btn-secondary">Mentés vázlatként</button>
+
+ -->
+    <button type="button" class="btn-preview" id="preview-article-btn" style="font-family: 'Abril Fatface';">
+        <ion-icon name="eye-outline"></ion-icon>
+        Oldal előnézete
+    </button>
+    <button type="submit" class="btn-primary" style="font-family: 'Abril Fatface';">
+        
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        Poszt elküldése a lektornak</button>
+</div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Cikkek -->
+<!-- dashboard.html - Cikkeim szekció rész -->
+<div class="data-table" id="articles" style="display:none">
+    <div class="table-header">
+        <div class="title"><ion-icon name="folder-outline"></ion-icon><span class="text">Cikkeim</span></div>
+        <button class="btn-primary" id="new-article-btn"><ion-icon name="add-outline"></ion-icon> Új cikk</button>
+    </div>
+    
+    <div class="articles-filter">
+        <button class="filter-btn active" data-filter="all">Összes</button>
+        <button class="filter-btn" data-filter="published">Publikált</button>
+        <button class="filter-btn" data-filter="draft">Vázlat</button>
+        <button class="filter-btn" data-filter="pending">Ellenőrzés alatt</button>
+    </div>
+    
+    <div class="articles-container" id="articles-container">
+        <!-- Ide töltődnek be a cikkek JavaScript alapján -->
+        <div class="loading-state" id="articles-loading">
+            <ion-icon name="sync-outline" class="loading-icon"></ion-icon>
+            <p>Cikkek betöltése...</p>
+        </div>
+    </div>
+</div>
+
+            <!-- Analytics -->
+            <div class="data-table" id="analytics" style="display:none">
+                <div class="table-header">
+                    <div class="title"><ion-icon name="analytics-outline"></ion-icon><span class="text">Analytics</span></div>
+                    <div class="analytics-period">
+                        <select>
+                            <option>Elmúlt 7 nap</option>
+                            <option>Elmúlt 30 nap</option>
+                            <option>Elmúlt 3 hónap</option>
+                            <option>Elmúlt év</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="analytics-content">
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h4>Audience Overview</h4>
+                            <div class="analytics-placeholder">
+                                <div class="chart-placeholder large">
+                                    <div class="chart-visual">
+                                        <div class="chart-bar" style="height: 40%"></div>
+                                        <div class="chart-bar" style="height: 70%"></div>
+                                        <div class="chart-bar" style="height: 55%"></div>
+                                        <div class="chart-bar" style="height: 85%"></div>
+                                        <div class="chart-bar" style="height: 60%"></div>
+                                        <div class="chart-bar" style="height: 45%"></div>
+                                        <div class="chart-bar" style="height: 75%"></div>
+                                    </div>
+                                    <div class="chart-labels">
+                                        <span>H</span>
+                                        <span>K</span>
+                                        <span>Sze</span>
+                                        <span>Cs</span>
+                                        <span>P</span>
+                                        <span>Szo</span>
+                                        <span>V</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Top Tartalmak</h4>
+                            <div class="top-content-list">
+                                <div class="top-item">
+                                    <div class="item-rank">1</div>
+                                    <div class="item-info">
+                                        <div class="item-title">A digitális átállás kihívásai</div>
+                                        <div class="item-stats">1,245 megtekintés</div>
+                                    </div>
+                                </div>
+                                <div class="top-item">
+                                    <div class="item-rank">2</div>
+                                    <div class="item-info">
+                                        <div class="item-title">Fenntartható városfejlesztés</div>
+                                        <div class="item-stats">1,056 megtekintés</div>
+                                    </div>
+                                </div>
+                                <div class="top-item">
+                                    <div class="item-rank">3</div>
+                                    <div class="item-info">
+                                        <div class="item-title">Mesterséges intelligencia</div>
+                                        <div class="item-stats">892 megtekintés</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">64%</div>
+                            <div class="stat-label">Visszatérő látogatók</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">2:45</div>
+                            <div class="stat-label">Átlagos idő oldalon</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">42%</div>
+                            <div class="stat-label">Kattintási ráta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Lektorálás -->
+<div class="data-table" id="reviews" style="display:none">
+    <div class="table-header">
+        <div class="title">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <span class="text">Lektorálás</span>
+        </div>
+        <div class="review-actions">
+            <button class="btn-secondary" id="refresh-reviews-btn">
+                <ion-icon name="refresh-outline"></ion-icon>
+                Frissítés
+            </button>
+        </div>
+    </div>
+    
+    
+    <!-- Szűrők -->
+   <div class="reviews-filter">
+        <button class="filter-btn active" data-filter="pending">Függőben lévők</button>
+        <button class="filter-btn" data-filter="edited">Szerkesztések</button>
+        <button class="filter-btn" data-filter="all">Összes</button>
+    </div>
+    
+    <!-- Tartalom konténer -->
+    <div class="reviews-container" id="reviews-container">
+        <div class="loading-state" id="reviews-loading">
+            <ion-icon name="sync-outline" class="loading-icon"></ion-icon>
+            <p>Lektorálási lista betöltése...</p>
+        </div>
+    </div>
+</div>
+
+
+            <!-- Hozzászólások -->
+            <div class="data-table" id="comments" style="display:none">
+                <div class="table-header">
+                    <div class="title"><ion-icon name="chatbubble-outline"></ion-icon><span class="text">Hozzászólások</span></div>
+                    <div class="comments-filter">
+                        <button class="btn-filter active">Összes</button>
+                        <button class="btn-filter">Függőben</button>
+                        <button class="btn-filter">Jóváhagyott</button>
+                        <button class="btn-filter">Elutasított</button>
+                    </div>
+                </div>
+                <div class="comments-list">
+                    <div class="comment-item pending">
+                        <div class="comment-avatar">
+                            <img src="https://ui-avatars.com/api/?name=Kata+Kiss&background=1891d1&color=fff" alt="Avatar">
+                        </div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <div class="comment-author">Kata Kiss</div>
+                                <div class="comment-date">2023. október 15. 14:23</div>
+                            </div>
+                            <p class="comment-text">Nagyon informatív cikk, köszönöm a részletes elemzést! Egyetértek azzal, hogy a digitális átállás egyik legnagyobb kihívása a személyes kapcsolatok fenntartása.</p>
+                            <div class="comment-article">
+                                <ion-icon name="document-text-outline"></ion-icon>
+                                <a href="#">A digitális átállás kihívásai 2023-ban</a>
+                            </div>
+                            <div class="comment-actions">
+                                <button class="btn-success">Jóváhagyás</button>
+                                <button class="btn-danger">Elutasítás</button>
+                                <button class="btn-secondary">Válasz</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comment-item approved">
+                        <div class="comment-avatar">
+                            <img src="https://ui-avatars.com/api/?name=Peter+Nagy&background=20c997&color=fff" alt="Avatar">
+                        </div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <div class="comment-author">Péter Nagy</div>
+                                <div class="comment-date">2023. október 14. 09:12</div>
+                            </div>
+                            <p class="comment-text">A cikkben említett fenntarthatósági modellek nagyon hasznosak lehetnek a városunk fejlesztéséhez. Megosztom a helyi önkormányzattal!</p>
+                            <div class="comment-article">
+                                <ion-icon name="document-text-outline"></ion-icon>
+                                <a href="#">Fenntartható városfejlesztési modellek</a>
+                            </div>
+                            <div class="comment-actions">
+                                <button class="btn-danger">Elutasítás</button>
+                                <button class="btn-secondary">Válasz</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- container zárása -->
+    </section> <!-- dashboard zárása -->
+
+    <script src="dashboard.js"></script>
+    <script src="profildropdown.js"></script>
+    <script src="category-selector.js"></script>
+    
+
+
+
+
+<script>
+// Ez a kód megoldja a blokk szerkesztő problémáját
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Blokk szerkesztő fix betöltve');
+    
+    // Várj egy kicsit, hogy minden betöltődjön
+    setTimeout(function() {
+        // Ellenőrizzük, hogy működik-e a blokk szerkesztő
+        const container = document.getElementById('block-editor-container');
+        
+        if (container && container.children.length === 0) {
+            // Ha üres a konténer, akkor még nincsenek blokkok
+            container.innerHTML = `
+                <div class="no-blocks-message">
+                    <ion-icon name="document-text-outline" style="font-size: 48px; margin-bottom: 16px;"></ion-icon>
+                    <h3 style="color: #666;">Nincs egyetlen blokk sem</h3>
+                    <p style="margin-bottom: 20px;">Kezdd el a blokkok hozzáadását a fenti eszköztárból!</p>
+                    <p style="font-size: 14px; color: #f44336;">
+                        <ion-icon name="warning-outline"></ion-icon>
+                        <strong>Figyelem:</strong> Legalább egy blokknak lennie kell!
+                    </p>
+                </div>
+            `;
+        }
+    }, 500);
+});
+</script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard betöltve - profil kezelés inicializálása');
+    
+    const profileToggleBtn = document.getElementById('profile-toggle-btn');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    
+    if (profileToggleBtn) {
+        profileToggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            console.log('Profil ikonra kattintottak');
+            profileDropdown.classList.toggle('active');
+        });
+    }
+    
+    document.addEventListener('click', function(e) {
+        if (profileToggleBtn && !profileToggleBtn.contains(e.target) && 
+            profileDropdown && !profileDropdown.contains(e.target)) {
+            profileDropdown.classList.remove('active');
+        }
+    });
+    
+    loadUserProfile();
+});
+
+// Remeljuk betolti a profilt
+async function loadUserProfile() {
+    console.log('===== FELHASZNÁLÓI PROFIL BETÖLTÉSE =====');
+    
+    // Token lekérése
+    const token = getAuthToken();
+    console.log('Token állapot:', token ? 'Megvan' : 'Nincs');
+    
+    if (!token) {
+        console.log('Nincs token - felhasználó nincs bejelentkezve vagy token hiányzik');
+        showGuestProfile();
+        return;
+    }
+    
+    console.log('Token első 10 karaktere:', token.substring(0, 10) + '...');
+    
+    try {
+        console.log('API hívás indítása...');
+        const userData = await fetchUserProfile(token);
+        
+        if (userData && Object.keys(userData).length > 0) {
+            console.log('Sikeresen megérkeztek a felhasználói adatok:', userData);
+            updateProfileDisplay(userData);
+            updateDropdownContent(userData);
+        } else {
+            console.log('API válasz üres vagy hibás');
+            showGuestProfile();
+        }
+    } catch (error) {
+        console.error('Hiba történt a profil betöltése során:', error);
+        showGuestProfile();
+    }
+}
+
+
+async function fetchUserProfile(token) {
+    console.log('fetchUserProfile hívása token:', token.substring(0, 10) + '...');
+    
+    try {
+        const response = await fetch('/api/user/get', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                get: 'email, first_name, full_name, alias, roles, pfp'
+            })
+        });
+        
+        console.log('API válasz státusz:', response.status);
+        
+        if (!response.ok) {
+            console.error('API hiba:', response.status, response.statusText);
+          
+            if (response.status === 401 || response.status === 403) {
+                clearAuth();
+                return null;
+            }
+            return null;
+        }
+        
+        const data = await response.json();
+        console.log('API válasz:', data);
+        
+        return data;
+        
+    } catch (error) {
+        console.error('Hálózati hiba:', error);
+        return null;
+    }
+}
+function showGuestProfile() {
+    console.log('Vendég profil megjelenítése');
+    
+    const userProfileImage = document.getElementById('user-profile-image');
+    const userDisplayName = document.getElementById('user-display-name');
+    
+    if (userDisplayName) {
+        userDisplayName.textContent = 'kérünk, jelentkezz be a kezdéshez';
+    }
+    
+    if (userProfileImage) {
+        userProfileImage.src = 'https://ui-avatars.com/api/?name=Vendég&background=1891d1&color=fff';
+        userProfileImage.alt = 'Vendég';
+    }
+    
+    updateDropdownContent(null);
+}
+
+// Profil megjelenítés frissítése
+// Profil kép betöltés javítása
+function updateProfileDisplay(userData) {
+    console.log('Profil megjelenítés frissítése:', userData);
+    
+    const userProfileImage = document.getElementById('user-profile-image');
+    const userDisplayName = document.getElementById('user-display-name');
+    
+    if (!userData || Object.keys(userData).length === 0) {
+        console.log('Nincs felhasználói adat - vendég mód');
+        showGuestProfile();
+        return;
+    }
+    
+    let displayName = 'Felhasználó';
+    
+    if (userData.alias && userData.alias.trim() !== '') {
+        displayName = userData.alias;
+    } else if (userData.full_name && userData.full_name.trim() !== '') {
+        displayName = userData.full_name;
+    } else if (userData.first_name && userData.first_name.trim() !== '') {
+        displayName = userData.first_name;
+    } else if (userData.email) {
+        displayName = userData.email.split('@')[0];
+    }
+    
+    if (userDisplayName) {
+        userDisplayName.textContent = displayName;
+    }
+    
+    if (userProfileImage) {
+        if (userData.pfp && 
+            userData.pfp.trim() !== '' && 
+            userData.pfp !== 'null' && 
+            userData.pfp !== 'undefined' &&
+            (userData.pfp.startsWith('http://') || userData.pfp.startsWith('https://'))) {
+            
+            const img = new Image();
+            img.onload = function() {
+                userProfileImage.src = userData.pfp;
+                userProfileImage.alt = displayName;
+                console.log('Profilkép betöltve:', userData.pfp);
+            };
+            img.onerror = function() {
+                createAvatar(displayName, userProfileImage);
+            };
+            img.src = userData.pfp;
+        } else {
+            createAvatar(displayName, userProfileImage);
+        }
+    }
+}
+
+function createAvatar(name, imgElement) {
+    const nameForAvatar = name.replace(/\s+/g, '+').substring(0, 20);
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(nameForAvatar)}&background=1891d1&color=fff&bold=true&size=128`;
+    imgElement.src = avatarUrl;
+    imgElement.alt = name;
+    console.log('Avatar generálva:', avatarUrl);
+}
+
+function updateDropdownContent(userData) {
+    console.log('Dropdown tartalom frissítése');
+    
+    const dropdownContent = document.getElementById('dropdown-content');
+    if (!dropdownContent) {
+        console.error('Dropdown content elem nem található!');
+        return;
+    }
+    
+    if (userData && Object.keys(userData).length > 0) {
+        console.log('Bejelentkezett felhasználó dropdown tartalom');
+        
+        let rolesText = 'Nincs';
+        if (userData.roles) {
+            try {
+                if (typeof userData.roles === 'string') {
+                    const roles = JSON.parse(userData.roles);
+                    rolesText = Array.isArray(roles) ? roles.join(', ') : roles;
+                } else if (Array.isArray(userData.roles)) {
+                    rolesText = userData.roles.join(', ');
+                }
+            } catch (e) {
+                console.error('Hiba a rangok feldolgozásában:', e);
+            }
+        }
+        
+        const displayName = userData.alias || userData.full_name || userData.first_name || 'Felhasználó';
+        const email = userData.email || '';
+        
+        dropdownContent.innerHTML = `
+            <div class="dropdown-header">
+                <div class="dropdown-user-info">
+                    <div class="dropdown-user-name">${displayName}</div>
+                    <div class="dropdown-user-email">${email}</div>
+                    <div class="dropdown-user-roles" style="font-size: 10px; margin-top: 4px; color: #666;">Rangok: ${rolesText}</div>
+                </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" id="view-profile-btn">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>Profil megtekintése</span>
+            </a>
+            <a href="settings.html" class="dropdown-item" id="edit-profile-btn">
+                <ion-icon name="create-outline"></ion-icon>
+                <span>Profil szerkesztése</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item logout" id="logout-btn">
+                <ion-icon name="log-out-outline"></ion-icon>
+                <span>Kijelentkezés</span>
+            </a>
+        `;
+        
+        // 
+        setTimeout(() => {
+            document.getElementById('view-profile-btn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                showProfileDetails(userData);
+            });
+            
+            document.getElementById('edit-profile-btn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                editProfile(userData);
+            });
+            
+            document.getElementById('logout-btn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }, 10);
+        
+    } else {
+        console.log('Nem bejelentkezett felhasználó dropdownja');
+        
+        dropdownContent.innerHTML = `
+            <div class="dropdown-header">
+                <div class="dropdown-user-info">
+                    <div class="dropdown-user-name">Nincs bejelentkezve.</div>
+                    <div class="dropdown-user-email">Jelentkezz be a funkciók használatához</div>
+                </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" id="login-btn">
+                <ion-icon name="log-in-outline"></ion-icon>
+                <span>Bejelentkezés Google fiókkal</span>
+            </a>
+        `;
+        
+        setTimeout(() => {
+            document.getElementById('login-btn')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                const currentPath = window.location.pathname + window.location.search;
+                window.location.href = `/api/login/google?redirect=${encodeURIComponent(currentPath)}`;
+            });
+        }, 10);
+    }
+}
+
+function getAuthToken() {
+    console.log('=== TOKEN KERESÉS ELINDUL ===');
+    
+    const tokenSources = {
+        'localStorage': localStorage.getItem('secret'),
+        'sessionStorage': sessionStorage.getItem('secret'),
+        'URL paraméter': new URLSearchParams(window.location.search).get('token')
+    };
+    
+    console.log('Token innen::', tokenSources);
+    
+    let token = tokenSources['URL paraméter'];
+    
+    if (!token && tokenSources['localStorage']) {
+        token = tokenSources['localStorage'];
+    }
+    
+    if (!token && tokenSources['sessionStorage']) {
+        token = tokenSources['sessionStorage'];
+    }
+    
+    if (tokenSources['URL paraméter'] && !tokenSources['localStorage']) {
+        localStorage.setItem('secret', tokenSources['URL paraméter']);
+        console.log('Token mentve localStorage-ba');
+        
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+    
+    if (token) {
+        console.log('Token megtalálva:', token.substring(0, 10) + '...');
+        return token;
+    }
+    
+    console.log('Token NEM található sehol!');
+    return null;
+}
+
+function checkUrlForToken() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    
+    if (token) {
+        console.log('Token található URL-ben');
+        
+        localStorage.setItem('secret', token);
+        
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+        
+        loadUserProfile();
+        
+        return true;
+    }
+    
+    return false;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard oldal betöltve');
+    
+    if (!checkUrlForToken()) {
+        loadUserProfile();
+    }
+});
+
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    console.log('Összes cookie:', cookies);
+    
+    for (let cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.trim().split('=');
+        if (cookieName === name) {
+            console.log(`Cookie "${name}" megtalálva:`, cookieValue ? 'van érték' : 'üres');
+            return cookieValue || '';
+        }
+    }
+    
+    console.log(`Cookie "${name}" nem található`);
+    return null;
+}
+
+function clearAuth() {
+    console.log('Auth adatok törlése...');
+    
+    // localStorage
+    localStorage.removeItem('secret');
+    console.log('localStorage törölve');
+    
+    // sessionStorage
+    sessionStorage.removeItem('secret');
+    console.log('sessionStorage törölve');
+    
+    // Cookies
+    document.cookie = 'secret=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'secret=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+    console.log('Cookies törölve');
+}
+
+// Kijelentkezés
+function logout() {
+    console.log('Kijelentkezés...');
+    clearAuth();
+    window.location.href = '/logout.php';
+}
+
+function showProfileDetails(userData) {
+    console.log('Profil részletek megjelenítése');
+    
+    let rolesText = 'Nincs';
+    if (userData.roles) {
+        try {
+            if (typeof userData.roles === 'string') {
+                const roles = JSON.parse(userData.roles);
+                rolesText = Array.isArray(roles) ? roles.join(', ') : roles;
+            } else if (Array.isArray(userData.roles)) {
+                rolesText = userData.roles.join(', ');
+            }
+        } catch (e) {
+            console.error('Hiba a rangok feldolgozásában:', e);
+        }
+    }
+    
+    const detailsHTML = `
+        <div style="line-height: 1.6;">
+            <strong>Profil adatok</strong><br><br>
+            <strong>Név:</strong> ${userData.full_name || userData.first_name || 'N/A'}<br>
+            <strong>Alias:</strong> ${userData.alias || 'N/A'}<br>
+            <strong>Email:</strong> ${userData.email || 'N/A'}<br>
+            <strong>Rangok:</strong> ${rolesText}<br>
+            <strong>UID:</strong> ${userData.uid || 'N/A'}<br>
+            <strong>Profilkép URL:</strong> ${userData.pfp || 'Nincs'}<br>
+        </div>
+    `;
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; padding: 25px; border-radius: 12px; max-width: 500px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <h3 style="margin: 0; color: #1891d1;">Profil adatok</h3>
+                <button id="close-modal" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+            </div>
+            ${detailsHTML}
+            <div style="margin-top: 25px; text-align: right; border-top: 1px solid #eee; padding-top: 15px;">
+                <button id="close-modal-btn" style="padding: 10px 20px; background: #1891d1; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">Bezárás</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    document.getElementById('close-modal').addEventListener('click', () => {
+        console.log('Modal bezárva');
+        modal.remove();
+    });
+    
+    document.getElementById('close-modal-btn').addEventListener('click', () => {
+        console.log('Modal bezárva gombbal');
+        modal.remove();
+    });
+    
+    // Kattintás a modalon kívül
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            console.log('Modal bezárva kattintással kívül');
+            modal.remove();
+        }
+    });
+    
+    // ESC billentyű
+    document.addEventListener('keydown', function closeOnEsc(e) {
+        if (e.key === 'Escape') {
+            console.log('Modal bezárva ESC billentyűvel');
+            modal.remove();
+            document.removeEventListener('keydown', closeOnEsc);
+        }
+    });
+}
+
+function editProfile(userData) {
+    alert('Profil szerkesztése hamarosan elérhető lesz.\n\nFelhasználó: ' + (userData.alias || userData.full_name || userData.first_name || 'Ismeretlen'));
+}
+
+window.testProfileLoad = function() {
+    console.log('=== MANUÁLIS PROFIL TESZT ===');
+    loadUserProfile();
+};
+
+setTimeout(() => {
+    console.log('Automatikus újrapróbálkozás...');
+    loadUserProfile();
+}, 2000);
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Új poszt gomb
+    document.getElementById('new-article-btn')?.addEventListener('click', function() {
+        // Form reset
+        const form = document.getElementById('post-form');
+        if (form) {
+            form.reset();
+            form.style.display = 'block';
+            document.querySelector('.success-message')?.remove();
+            document.getElementById('edit-pid')?.remove();
+        }
+    });
+    
+    // Cikkeim oldal betöltése
+    if (window.location.hash === '#articles') {
+        setTimeout(() => {
+            document.querySelector('[data-target="articles"]').click();
+        }, 500);
+    }
+});
+
+
+
+
+
+        async function displayAuthors(authorIds) {
+            const container = document.getElementById('authors-container');
+            
+            if (!authorIds || !Array.isArray(authorIds) || authorIds.length === 0) {
+                container.innerHTML = `
+                    <div style="color: #718096; font-style: italic;">
+                        Nincsenek szerzők
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            // Minden szerzőhöz
+            for (const authorId of authorIds) {
+                const authorInfo = allUsers[authorId];
+                let displayName = `UID: ${authorId}`;
+                let isCurrentUser = false;
+                
+                // Ha van felhasználó adat
+                if (authorInfo) {
+                    displayName = authorInfo.alias || authorInfo.full_name || authorInfo.email || displayName;
+                    
+                    // Ellenőrizzük, hogy ez a jelenlegi felhasználó-e
+                    if (currentUser && currentUser.uid == authorId) {
+                        isCurrentUser = true;
+                    }
+                }
+                
+                html += `
+                    <div class="author-chip ${isCurrentUser ? 'current-author' : ''}">
+                        <ion-icon name="person-outline"></ion-icon>
+                        ${displayName}
+                        ${isCurrentUser ? '<small style="margin-left: 5px; opacity: 0.9;">(én)</small>' : ''}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szavazó Felület</title>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            font-family: 'Times New Roman', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .poll-container {
+            background: linear-gradient(145deg, #ffffff, #f5f5f5);
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+                        0 0 0 1px rgba(223, 133, 105, 0.1);
+            padding: 35px;
+            width: 900px;
+            max-width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .poll-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(223, 133, 105, 0.2);
+        }
+
+        .poll-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-family: 'Abril Fatface', cursive;
+            text-align: center;
+            flex-grow: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 1px;
+        }
+
+        .back-button {
+            background: linear-gradient(135deg, #448542, #2c6c2a);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-family: 'Abril Fatface', cursive;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(68, 133, 66, 0.3);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(68, 133, 66, 0.4);
+            background: linear-gradient(135deg, #3a7b38, #255923);
+        }
+
+        .back-button i {
+            font-size: 20px;
+        }
+
+        .options-container {
+            margin-bottom: 25px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid #e8e8e8;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: #df8569;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #df8569;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(223, 133, 105, 0.15);
+        }
+
+        .option:hover::before {
+            transform: scaleY(1);
+        }
+
+        .option.selected {
+            border-color: #df8569;
+            background: linear-gradient(135deg, #fff8f6, #fff0ed);
+            box-shadow: 0 12px 30px rgba(223, 133, 105, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .option.selected::before {
+            transform: scaleY(1);
+            background: #df8569;
+        }
+
+        /* Vezető opciók kiemelése */
+        .option.leader-1 {
+            border: 3px solid #ffd700;
+            background: linear-gradient(135deg, #fff9e6, #fff4d1);
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.25);
+        }
+
+        .option.leader-1 .radio-button {
+            border-color: #ffd700;
+        }
+
+        .option.leader-1 .radio-button.selected::after {
+            background-color: #ffd700;
+        }
+
+        .option.leader-1 .rank-badge {
+            background: linear-gradient(135deg, #ffd700, #ffcc00);
+            color: #333;
+            font-weight: bold;
+        }
+
+        .option.leader-2 {
+            border: 3px solid #c0c0c0;
+            background: linear-gradient(135deg, #f8f8f8, #f0f0f0);
+            box-shadow: 0 12px 30px rgba(192, 192, 192, 0.2);
+        }
+
+        .option.leader-2 .radio-button {
+            border-color: #c0c0c0;
+        }
+
+        .option.leader-2 .radio-button.selected::after {
+            background-color: #c0c0c0;
+        }
+
+        .option.leader-2 .rank-badge {
+            background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+            color: white;
+        }
+
+        .option.leader-3 {
+            border: 3px solid #cd7f32;
+            background: linear-gradient(135deg, #f8f0e6, #f0e0cc);
+            box-shadow: 0 10px 25px rgba(205, 127, 50, 0.15);
+        }
+
+        .option.leader-3 .radio-button {
+            border-color: #cd7f32;
+        }
+
+        .option.leader-3 .radio-button.selected::after {
+            background-color: #cd7f32;
+        }
+
+        .option.leader-3 .rank-badge {
+            background: linear-gradient(135deg, #cd7f32, #a6692a);
+            color: white;
+        }
+
+        .radio-button {
+            margin-right: 20px;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .radio-button.selected::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background-color: #df8569;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .option-content {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            min-width: 0;
+        }
+
+        .option-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .option-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-family: 'Times New Roman', serif;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .rank-badge {
+            background: linear-gradient(135deg, #df8569, #c9745d);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 8px rgba(223, 133, 105, 0.2);
+        }
+
+        .rank-badge i {
+            font-size: 12px;
+        }
+
+        .vote-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+            min-width: 200px;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            min-width: 150px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e8e8e8;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #df8569, #ffa07a);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .vote-numbers {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            min-width: 80px;
+        }
+
+        .percentage {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-family: 'Abril Fatface', cursive;
+            line-height: 1;
+        }
+
+        .vote-count {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 4px;
+        }
+
+        .vote-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #df8569, #c9745d);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            font-family: 'Abril Fatface', cursive;
+            font-size: 22px;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(223, 133, 105, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vote-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            transition: left 0.5s;
+        }
+
+        .vote-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(223, 133, 105, 0.4);
+            background: linear-gradient(135deg, #c9745d, #b5634e);
+        }
+
+        .vote-button:hover::after {
+            left: 100%;
+        }
+
+        .vote-button:disabled {
+            background: linear-gradient(135deg, #cccccc, #aaaaaa);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .vote-button:disabled:hover {
+            transform: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #EA4335);
+            background-size: 400% 400%;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            font-family: 'Abril Fatface', cursive;
+            font-size: 22px;
+            letter-spacing: 1px;
+            animation: gradientAnimation 3s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 10px 25px rgba(66, 133, 244, 0.3);
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .login-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(66, 133, 244, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-family: 'Abril Fatface', serif;
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .login-message {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            background: linear-gradient(135deg, #df8569, #c9745d);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-family: 'Abril Fatface', serif;
+            box-shadow: 0 8px 20px rgba(223, 133, 105, 0.3);
+        }
+
+        .user-info {
+            text-align: center;
+            padding: 15px;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-size: 18px;
+            font-family: 'Abril Fatface', serif;
+            border: 2px solid rgba(223, 133, 105, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info strong {
+            color: #df8569;
+        }
+
+        .instructions {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-top: 20px;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 22px;
+            font-family: 'Abril Fatface', cursive;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #fff8f6, #fff0ed);
+            border-radius: 12px;
+            border: 2px dashed #df8569;
+        }
+
+        .medal-icon {
+            font-size: 20px;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .poll-container {
+                padding: 20px;
+                width: 95%;
+            }
+            
+            .poll-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .poll-title {
+                font-size: 24px;
+            }
+            
+            .option-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .vote-stats {
+                width: 100%;
+                min-width: unset;
+            }
+            
+            .back-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Holtverseny kezelése - új osztályok */
+.tie-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.tie-group .option {
+    flex: 1 1 calc(50% - 15px);
+    min-width: 300px;
+    margin-bottom: 0;
+}
+
+.tie-info {
+    text-align: center;
+    color: #df8569;
+    font-weight: bold;
+    font-family: 'Abril Fatface', cursive;
+    margin: 10px 0;
+    padding: 10px;
+    background: linear-gradient(135deg, #fff8f6, #fff0ed);
+    border-radius: 12px;
+    border: 2px dashed #df8569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 18px;
+}
+
+.tie-info i {
+    font-size: 18px;
+}
+
+/* Holtverseny esetén elrejtjük a százalékot */
+.tie-group .percentage {
+    display: none !important;
+}
+
+.tie-group .vote-count {
+    font-size: 16px !important;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Telefonos nézet a holtversenyhez */
+@media (max-width: 768px) {
+    .tie-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .tie-group .option {
+        flex: 1 1 100%;
+        min-width: 100%;
+        width: 100%;
+    }
+    
+    .option-content {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+    }
+    
+    .vote-stats {
+        width: 100% !important;
+        min-width: unset !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+    
+    .progress-container {
+        width: 100% !important;
+    }
+    
+    .vote-numbers {
+        width: 100% !important;
+        align-items: flex-start !important;
+    }
+    
+    .tie-info {
+        font-size: 16px;
+        padding: 8px;
+        flex-wrap: wrap;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .tie-group .option {
+        min-width: 100%;
+    }
+    
+    .option-title {
+        flex-wrap: wrap;
+        gap: 10px !important;
+    }
+    
+    .rank-badge {
+        order: 2;
+    }
+    
+    .tie-info {
+        font-size: 14px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="poll-container">
+        <div class="poll-header">
+            <div class="poll-title">Melyik írás tetszett a legjobban?</div>
+            <a href="/alkotas.html" class="back-button" id="back-button">
+                Írások megtekintése
+                                <i class="fas fa-arrow-right"></i>
+
+            </a>
+        </div>
+        
+        <div id="user-info-container"></div>
+        
+        <div id="options-container">
+            <div class="loading">Könyvek betöltése...</div>
+        </div>
+        
+        <button style="font-family: 'Abril Fatface'; font-size: medium;" class="vote-button" disabled>
+            <i class="fas fa-vote-yea"></i>
+            Szavazat leadása
+        </button>
+        
+        <button class="login-button" id="login-button" style="display: none;">
+            <i class="fab fa-google"></i>
+            Bejelentkezés a szavazáshoz
+        </button>
+        
+
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const optionsContainer = document.getElementById('options-container');
+        const voteButton = document.querySelector('.vote-button');
+        const loginButton = document.getElementById('login-button');
+        const userInfoContainer = document.getElementById('user-info-container');
+        
+        const apiUrl = '/api/book/get';
+        const voteApiUrl = '/api/book/vote';
+        const userApiUrl = '/api/user/get';
+        const loginUrl = '/api/login/google?redirect=/vote.html';
+
+        let selectedOption = null;
+        let books = [];
+        let votes = {}; 
+        let isLoggedIn = false;
+        let userData = null;
+
+        function checkLoginStatus() {
+            fetch(userApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("secret")
+                },
+                body: JSON.stringify({ get: "first_name" })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Hiba! státusz: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Felhasználó adatok:', data);
+                if (data && data.first_name) {
+                    isLoggedIn = true;
+                    userData = data;
+                    updateUIForLoggedInUser();
+                } else {
+                    isLoggedIn = false;
+                    updateUIForLoggedOutUser();
+                }
+                loadBooks();
+            })
+            .catch(error => {
+                console.error('Hiba történt a bejelentkezési állapot ellenőrzésekor:', error);
+                isLoggedIn = false;
+                updateUIForLoggedOutUser();
+                loadBooks();
+            });
+        }
+
+        function updateUIForLoggedInUser() {
+            userInfoContainer.innerHTML = `
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    Bejelentkezve mint: <strong>${userData.full_name || 'Felhasználó'}</strong>
+                </div>
+            `;
+            loginButton.style.display = 'none';
+            voteButton.style.display = 'block';
+        }
+
+        function updateUIForLoggedOutUser() {
+            userInfoContainer.innerHTML = `
+                <div class="login-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    A szavazáshoz be kell jelentkezned iskolai fiókoddal!
+                </div>
+            `;
+            loginButton.style.display = 'block';
+            voteButton.style.display = 'none';
+        }
+
+        function loadBooks() {
+            optionsContainer.innerHTML = '<div class="loading">Könyvek betöltése...</div>';
+            
+            fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP hiba! státusz: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('API válasz:', data); 
+                if (data && Array.isArray(data)) {
+                    books = data;
+                   
+                    books.forEach(book => {
+                        votes[book.bid] = book.votes;
+                    });
+                    renderOptions();
+                    updatePercentages();  
+                } else {
+                    throw new Error('Érvénytelen adat formátum');
+                }
+            })
+            .catch(error => {
+                console.error('Hiba történt:', error);
+                showError(`Nem sikerült betölteni az adatokat: ${error.message}`);
+            });
+        }
+
+        function showError(message) {
+            optionsContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    ${message}
+                    <br><br>
+                    <small>Próbáld meg frissíteni az oldalt, vagy próbáld később.</small>
+                </div>
+            `;
+        }
+
+        function renderOptions() {
+            if (!books || books.length === 0) {
+                showError('Nincsenek elérhető könyvek.');
+                return;
+            }
+
+            optionsContainer.innerHTML = '';
+            
+            // Létrehozunk egy vezetőket kiemelő fejlécet
+            const leaderboardHeader = document.createElement('div');
+            leaderboardHeader.className = 'leaderboard-header';
+            leaderboardHeader.innerHTML = `
+                <i class="fas fa-trophy medal-icon" style="color: #ffd700;"></i>
+                Vezető írások (szavazni 2025.12.08-ig tudsz.)
+                <i class="fas fa-trophy medal-icon" style="color: #ffd700;"></i>
+            `;
+            optionsContainer.appendChild(leaderboardHeader);
+            
+            // Rendezzük a könyveket szavazatok szerint csökkenő sorrendben
+            const sortedBooks = [...books].sort((a, b) => (b.votes || 0) - (a.votes || 0));
+            
+            // Holtverseny csoportok kezelése
+            let currentIndex = 0;
+            
+            while (currentIndex < sortedBooks.length) {
+                const currentBook = sortedBooks[currentIndex];
+                const currentVotes = currentBook.votes || 0;
+                
+                // Keresünk összes olyan könyvet, ami ugyanannyi szavazattal rendelkezik
+                let tieGroup = [currentBook];
+                
+                for (let j = currentIndex + 1; j < sortedBooks.length; j++) {
+                    if (sortedBooks[j].votes === currentVotes) {
+                        tieGroup.push(sortedBooks[j]);
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Rendereljük a csoportot
+                if (tieGroup.length > 1) {
+                    // Holtverseny csoport
+                    renderTieGroup(tieGroup, currentIndex + 1);
+                } else {
+                    // Egyedi elem
+                    renderSingleBook(currentBook, currentIndex + 1);
+                }
+                
+                currentIndex += tieGroup.length;
+            }
+        }
+
+        function renderTieGroup(tieBooks, groupRank) {
+            // Holtverseny jelző
+            const tieInfo = document.createElement('div');
+           
+            optionsContainer.appendChild(tieInfo);
+            
+            // Holtverseny konténer - FLEXBOX
+            const tieContainer = document.createElement('div');
+            tieContainer.className = 'tie-container';
+            tieContainer.style.display = 'flex';
+            tieContainer.style.flexWrap = 'wrap';
+            tieContainer.style.gap = '15px';
+            tieContainer.style.marginBottom = '20px';
+            
+            tieBooks.forEach((book, index) => {
+                const option = createBookOption(book, groupRank, true);
+                // Minden opció egyenlő szélességű legyen
+                option.style.flex = '1';
+                option.style.minWidth = '300px';
+                tieContainer.appendChild(option);
+            });
+            
+            optionsContainer.appendChild(tieContainer);
+            
+            // Mobilnézet javítása
+            const mediaQuery = window.matchMedia('(max-width: 768px)');
+            function handleMobileView(e) {
+                if (e.matches) {
+                    tieContainer.style.flexDirection = 'column';
+                    tieContainer.querySelectorAll('.option').forEach(opt => {
+                        opt.style.minWidth = '100%';
+                        opt.style.width = '100%';
+                    });
+                } else {
+                    tieContainer.style.flexDirection = 'row';
+                    tieContainer.querySelectorAll('.option').forEach(opt => {
+                        opt.style.minWidth = '300px';
+                    });
+                }
+            }
+            
+            // Alkalmazd az állapotot
+            handleMobileView(mediaQuery);
+            
+            // Figyeld a változásokat
+            mediaQuery.addEventListener('change', handleMobileView);
+        }
+
+        function renderSingleBook(book, rank) {
+            const option = createBookOption(book, rank, false);
+            optionsContainer.appendChild(option);
+        }
+
+        function createBookOption(book, rank, isInTieGroup) {
+            const option = document.createElement('div');
+            option.className = 'option';
+            option.setAttribute('data-bid', book.bid);
+            
+            // A rang alapján kiemelés
+            if (rank === 1) {
+                option.classList.add('leader-1');
+            } else if (rank === 2) {
+                option.classList.add('leader-2');
+            } else if (rank === 3) {
+                option.classList.add('leader-3');
+            }
+            
+            // Holtverseny esetén külön osztály
+            if (isInTieGroup) {
+                option.classList.add('tie-option');
+            }
+            
+            // Rangsor jelző - holtverseny esetén nem jelenítjük meg minden elemnél
+            let rankBadge = '';
+            let rankIcon = '';
+            
+            if (!isInTieGroup) {
+                if (rank === 1) {
+                    rankBadge = `<span class="rank-badge"><i class="fas fa-trophy"></i> 1. hely</span>`;
+                    rankIcon = '<i class="fas fa-crown" style="color: #ffd700;"></i>';
+                } else if (rank === 2) {
+                    rankBadge = `<span class="rank-badge"><i class="fas fa-medal"></i> 2. hely</span>`;
+                    rankIcon = '<i class="fas fa-award" style="color: #c0c0c0;"></i>';
+                } else if (rank === 3) {
+                    rankBadge = `<span class="rank-badge"><i class="fas fa-medal"></i> 3. hely</span>`;
+                    rankIcon = '<i class="fas fa-award" style="color: #cd7f32;"></i>';
+                } else {
+                    rankBadge = `<span class="rank-badge">${rank}. hely</span>`;
+                }
+            }
+            
+            // Holtverseny esetén más szöveget jelenítünk meg
+            const voteText = isInTieGroup ? 
+                `<div class="vote-count" style="font-size: 16px; font-weight: bold; color: #2c3e50; margin-top: 5px;">${book.votes || 0} szavazat</div>` :
+                `<div class="percentage">0%</div>
+                 <div class="vote-count">0 szavazat</div>`;
+            
+            option.innerHTML = `
+                <div class="radio-button"></div>
+                <div class="option-content">
+                    <div class="option-info">
+                        <div class="option-title" style="${isInTieGroup ? 'justify-content: center; text-align: center;' : ''}">
+                            ${rankIcon ? rankIcon : ''}
+                            ${book.title}
+                            ${rankBadge}
+                        </div>
+                    </div>
+                    <div class="vote-stats">
+                        <div class="progress-container" ${isInTieGroup ? 'style="display: none;"' : ''}>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="vote-numbers">
+                            ${voteText}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (isLoggedIn) {
+                option.addEventListener('click', function() {
+                    if (selectedOption) {
+                        selectedOption.classList.remove('selected');
+                        selectedOption.querySelector('.radio-button').classList.remove('selected');
+                    }
+
+                    this.classList.add('selected');
+                    this.querySelector('.radio-button').classList.add('selected');
+
+                    voteButton.disabled = false;
+                    selectedOption = this;
+                });
+            } else {
+                option.style.cursor = 'not-allowed';
+                option.style.opacity = '0.7';
+                option.title = 'A szavazáshoz be kell jelentkezned iskolai fiókoddal';
+            }
+            
+            return option;
+        }
+
+        function updatePercentages() {
+            const totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
+            
+            books.forEach(book => {
+                const option = document.querySelector(`.option[data-bid="${book.bid}"]`);
+                if (option) {
+                    const voteCount = votes[book.bid] || 0;
+                    const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
+                    
+                    const progressFill = option.querySelector('.progress-fill');
+                    const percentageText = option.querySelector('.percentage');
+                    const voteCountText = option.querySelector('.vote-count');
+                    
+                    // Csak akkor frissítjük a százalékot, ha nem holtverseny
+                    if (!option.classList.contains('tie-option')) {
+                        // Animált progress bar
+                        setTimeout(() => {
+                            if (progressFill) {
+                                progressFill.style.width = `${percentage}%`;
+                            }
+                        }, 100);
+                        
+                        if (percentageText) {
+                            percentageText.textContent = `${percentage}%`;
+                        }
+                        
+                        if (voteCountText) {
+                            voteCountText.textContent = `${voteCount} szavazat`;
+                        }
+                    } else {
+                        // Holtverseny esetén csak a szavazatszámot frissítjük
+                        const tieVoteCount = option.querySelector('.vote-count');
+                        if (tieVoteCount) {
+                            tieVoteCount.textContent = `${voteCount} szavazat`;
+                        }
+                    }
+                    
+                    option.setAttribute('data-percentage', percentage);
+                }
+            });
+        }
+
+        voteButton.addEventListener('click', function() {
+            if (selectedOption && isLoggedIn) {
+                const selectedBid = selectedOption.getAttribute('data-bid');
+                const selectedTitle = selectedOption.querySelector('.option-title').textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+                
+                fetch(voteApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem("secret")
+                    },
+                    body: JSON.stringify({ bid: selectedBid })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.hiba || `Hiba! státusz: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Sikeres szavazat:', data);
+                    
+                    // Szép popup helyett egy alert (de ezt később lehet csinálni modal dialoggal)
+                    alert(`🎉 Köszönjük a szavazatot!\n\nVálasztottad: ${selectedTitle}\n\nA szavazás sikeresen rögzítésre került!`);
+                    
+                    // Frissítjük a szavazatokat
+                    votes[selectedBid] = (votes[selectedBid] || 0) + 1;
+                    updatePercentages();
+                    
+                    // Visszaállítjuk a kiválasztást
+                    if (selectedOption) {
+                        selectedOption.classList.remove('selected');
+                        selectedOption.querySelector('.radio-button').classList.remove('selected');
+                    }
+                    
+                    // Újrarendereljük az opciókat az új sorrenddel
+                    renderOptions();
+                    updatePercentages();
+                    
+                    selectedOption = null;
+                    voteButton.disabled = true;
+                })
+                .catch(error => {
+                    console.error('Hiba történt a szavazat leadásakor:', error);
+                    if (error.message.includes("már szavaztál") || error.message.includes("already voted") || error.message.includes("vote already")) {
+                        alert('❌ Már leadtad a szavazatod! Csak egy szavazat leadása lehetséges.');
+                    } else {
+                        alert('❌ Hiba történt a szavazat leadása során: ' + error.message);
+                    }
+                });
+            }
+        });
+
+        loginButton.addEventListener('click', function() {
+            window.location.href = loginUrl;
+        });
+
+        checkLoginStatus();
+    });
+</script>
+</body>
+</html>

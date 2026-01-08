@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelikán Admin | Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+        <style>
+        body {
+            background-color: #000;
+            font-family: 'Times New Roman', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .poll-container {
+            background-color: white;
+            border-radius: 22px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .poll-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .poll-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-family: 'Abril Fatface', cursive;
+        }
+
+        .info-icon {
+            cursor: pointer;
+            color: #df8569;
+            font-size: 20px;
+            transition: transform 0.2s ease;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .info-icon:hover {
+            transform: scale(1.1);
+            color: #df8569;
+        }
+
+        .info-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .option.selected {
+            border: 2px solid #df8569;
+            background-color: #f0f0ff;
+        }
+
+        .radio-button {
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radio-button.selected::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: #df8569;
+            border-radius: 50%;
+        }
+
+        .option-label {
+            flex-grow: 1;
+            margin-right: 10px;
+            font-family: 'Times New Roman', serif;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-label strong {
+            flex-grow: 1;
+        }
+
+        .option-label .info-icon {
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            flex-grow: 1;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #df8569;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .percentage {
+            font-weight: bold;
+            min-width: 40px;
+            text-align: right;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .vote-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #df8569;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.2s ease;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .vote-button:hover {
+            background-color: #df8569;
+        }
+
+        .vote-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 15px;
+            color: #ffeaea;
+            background-color: #e74c3c;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-family: 'Abril Fatface', serif;
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%;
+            max-width: 1300px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .popup-overlay.active .popup-content {
+            transform: translateY(0);
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .popup-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            font-family: 'Abril Fatface', cursive;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+            transition: color 0.2s ease;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .close-button:hover {
+            color: #333;
+        }
+
+        .popup-text {
+            line-height: 1.6;
+            color: #444;
+            font-size: 16px;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .login-message {
+            text-align: center;
+            padding: 15px;
+            color: #ffeaea;
+            background-color: #df8569;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-family: 'Abril Fatface', serif;
+        }
+        .login-button {
+            width: 100%;
+            padding: 12px;
+    background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #EA4335);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.2s ease;
+            font-family: 'Times New Roman', serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-button:hover {
+            background-color: #3367d6;
+        }
+
+        .user-info {
+            text-align: center;
+            padding: 10px;
+            color: #666;
+            font-size: 14px;
+            font-family: 'Abril Fatface', serif;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+    <!-- Oldalsáv -->
+    <div class="mobile-menu-btn"><ion-icon name="menu-outline"></ion-icon></div>
+    <nav id="sidebar">
+        <div class="logo">
+            <div class="logo-image">
+                <img src="/pelikan2.png" alt="Logo">
+                <span class="logo-text">Pelikán Admin</span>
+            </div>
+            <div class="close-sidebar"><ion-icon name="close-outline"></ion-icon></div>
+        </div>
+        <div class="menu-items">
+            <ul class="navLinks">
+                <li class="navList active" data-target="dashboard">
+                    <a href="#">
+                        <ion-icon name="home-outline"></ion-icon>
+                        <span class="links">Dashboard</span>
+                    </a>
+                </li>
+                <li class="navList" data-target="create-post">
+                    <a href="#">
+                        <ion-icon name="create-outline"></ion-icon>
+                        <span class="links">Poszt létrehozása</span>
+                    </a>
+                </li>
+                <li class="navList" data-target="articles">
+                    <a href="#">
+                        <ion-icon name="folder-outline"></ion-icon>
+                        <span class="links">Cikkeim</span>
+                        <span class="notification-badge">3</span>
+                    </a>
+                </li>
+                <li class="navList" data-target="analytics">
+                    <a href="#">
+                        <ion-icon name="analytics-outline"></ion-icon>
+                        <span class="links">Analytics</span>
+                    </a>
+                </li>
+                <li class="navList" data-target="comments">
+                    <a href="#">
+                        <ion-icon name="chatbubble-outline"></ion-icon>
+                        <span class="links">Hozzászólások</span>
+                        <span class="notification-badge">12</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="bottom-link">
+                <li>
+                    <a href="#">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <span class="links">Profil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../logout.php">
+                        <ion-icon name="log-out-outline"></ion-icon>
+                        <span class="links">Kijelentkezés</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Tartalom -->
+    <section class="dashboard">
+        <div class="container">
+            <!-- Fejléc - Minden oldalon megjelenik -->
+<!-- A dashboard.html fejléc részének módosítása -->
+<div class="dashboard-header">
+    <div class="header-left">
+        <h1>Üdvözöljük, <span class="user-name" id="user-display-name">Admin</span>!</h1>
+        <p class="page-description">Íme a mai összefoglaló</p>
+    </div>
+    <div class="header-right">
+        <div class="search-box">
+            <ion-icon name="search-outline"></ion-icon>
+            <input type="text" placeholder="Keresés...">
+        </div>
+        <div class="user-profile">
+            <div class="profile-img">
+                <img id="user-profile-image" src="https://ui-avatars.com/api/?name=Admin&background=1891d1&color=fff" alt="Profil">
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- Dashboard -->
+            <div class="overview" id="dashboard">
+                <div class="title"><ion-icon name="speedometer"></ion-icon><span class="text">Dashboard</span></div>
+                <div class="boxes">
+                    <div class="box box1">
+                        <div class="box-icon">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </div>
+                        <div class="box-content">
+                            <span class="number">2,847</span>
+                            <span class="text">Összes Megtekintés</span>
+                            <span class="trend positive">+12%</span>
+                        </div>
+                    </div>
+                    <div class="box box2">
+                        <div class="box-icon">
+                            <ion-icon name="people-outline"></ion-icon>
+                        </div>
+                        <div class="box-content">
+                            <span class="number">1,234</span>
+                            <span class="text">Aktív felhasználó</span>
+                            <span class="trend positive">+5%</span>
+                        </div>
+                    </div>
+                    <div class="box box3">
+                        <div class="box-icon">
+                            <ion-icon name="chatbubbles-outline"></ion-icon>
+                        </div>
+                        <div class="box-content">
+                            <span class="number">568</span>
+                            <span class="text">Összes tevékenység</span>
+                            <span class="trend negative">-2%</span>
+                        </div>
+                    </div>
+                    <div class="box box4">
+                        <div class="box-icon">
+                            <ion-icon name="document-text-outline"></ion-icon>
+                        </div>
+                        <div class="box-content">
+                            <span class="number">42</span>
+                            <span class="text">Összes cikk</span>
+                            <span class="trend positive">+8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafikon és legfrissebb cikkek -->
+                <div class="dashboard-content">
+                    <div class="chart-container">
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3>Megtekintések (elmúlt 7 nap)</h3>
+                                <div class="chart-actions">
+                                    <button class="btn-chart active">7 nap</button>
+                                    <button class="btn-chart">30 nap</button>
+                                    <button class="btn-chart">1 év</button>
+                                </div>
+                            </div>
+                            <div class="chart-placeholder">
+                                <!-- Grafikon helye - később valós implementációval -->
+                                <div class="chart-visual">
+                                    <div class="chart-bar" style="height: 30%"></div>
+                                    <div class="chart-bar" style="height: 60%"></div>
+                                    <div class="chart-bar" style="height: 45%"></div>
+                                    <div class="chart-bar" style="height: 80%"></div>
+                                    <div class="chart-bar" style="height: 65%"></div>
+                                    <div class="chart-bar" style="height: 50%"></div>
+                                    <div class="chart-bar" style="height: 75%"></div>
+                                </div>
+                                <div class="chart-labels">
+                                    <span>H</span>
+                                    <span>K</span>
+                                    <span>Sze</span>
+                                    <span>Cs</span>
+                                    <span>P</span>
+                                    <span>Szo</span>
+                                    <span>V</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-articles">
+                        <div class="data-table">
+                            <div class="table-header">
+                                <h3>Legfrissebb cikkek</h3>
+                                <a href="#" class="view-all">Összes megtekintése</a>
+                            </div>
+                            <div class="articles-list">
+                                <div class="article-item">
+                                    <div class="article-info">
+                                        <h4>A digitális átállás kihívásai 2023-ban</h4>
+                                        <span class="article-date">2023. október 12.</span>
+                                    </div>
+                                    <div class="article-stats">
+                                        <span class="stat"><ion-icon name="eye-outline"></ion-icon> 1,245</span>
+                                        <span class="stat"><ion-icon name="chatbubble-outline"></ion-icon> 32</span>
+                                    </div>
+                                </div>
+                                <div class="article-item">
+                                    <div class="article-info">
+                                        <h4>Mesterséges intelligencia a mindennapokban</h4>
+                                        <span class="article-date">2023. október 5.</span>
+                                    </div>
+                                    <div class="article-stats">
+                                        <span class="stat"><ion-icon name="eye-outline"></ion-icon> 892</span>
+                                        <span class="stat"><ion-icon name="chatbubble-outline"></ion-icon> 18</span>
+                                    </div>
+                                </div>
+                                <div class="article-item">
+                                    <div class="article-info">
+                                        <h4>Fenntartható városfejlesztési modellek</h4>
+                                        <span class="article-date">2023. szeptember 28.</span>
+                                    </div>
+                                    <div class="article-stats">
+                                        <span class="stat"><ion-icon name="eye-outline"></ion-icon> 1,567</span>
+                                        <span class="stat"><ion-icon name="chatbubble-outline"></ion-icon> 45</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Poszt létrehozása -->
+            <div class="data-table" id="create-post" style="display:none">
+                <div class="table-header">
+                    <div class="title"><ion-icon name="create-outline"></ion-icon><span class="text">Új poszt létrehozása</span></div>
+                </div>
+                <div class="create-post-form">
+                    <form id="post-form">
+                        <div class="form-group">
+                            <label for="post-title">Cím</label>
+                            <input type="text" id="post-title" placeholder="Adja meg a poszt címét..." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="post-excerpt">Rövid leírás</label>
+                            <textarea id="post-excerpt" placeholder="Rövid leírás a posztról..." rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="post-content">Tartalom</label>
+                            <div class="editor-toolbar">
+                                <button type="button" class="toolbar-btn" data-command="bold"><strong>B</strong></button>
+                                <button type="button" class="toolbar-btn" data-command="italic"><em>I</em></button>
+                                <button type="button" class="toolbar-btn" data-command="insertUnorderedList">• Lista</button>
+                                <button type="button" class="toolbar-btn" data-command="createLink">🔗 Link</button>
+                            </div>
+                            <textarea id="post-content" placeholder="Írja ide a poszt tartalmát..." rows="15"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="post-category">Kategória</label>
+                                <select id="post-category">
+                                    <option value="">Válasszon kategóriát...</option>
+                                    <option value="tech">Technológia</option>
+                                    <option value="business">Üzlet</option>
+                                    <option value="lifestyle">Életmód</option>
+                                    <option value="education">Oktatás</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="post-tags">Címkék</label>
+                                <input type="text" id="post-tags" placeholder="Vesszővel elválasztva...">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="post-status">Státusz</label>
+                                <select id="post-status">
+                                    <option value="draft">Vázlat</option>
+                                    <option value="published">Publikálva</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="post-featured">Kiemelt kép</label>
+                                <div class="file-upload">
+                                    <input type="file" id="post-featured" accept="image/*">
+                                    <label for="post-featured" class="upload-btn">
+                                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                                        <span>Kép feltöltése</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary">Mentés vázlatként</button>
+                            <button type="submit" class="btn-primary">Poszt közzététele</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Cikkek -->
+            <div class="data-table" id="articles" style="display:none">
+                <div class="table-header">
+                    <div class="title"><ion-icon name="folder-outline"></ion-icon><span class="text">Cikkeim</span></div>
+                    <button class="btn-primary" id="new-article-btn"><ion-icon name="add-outline"></ion-icon> Új cikk</button>
+                </div>
+                
+                <div class="articles-filter">
+                    <button class="filter-btn active">Összes</button>
+                    <button class="filter-btn">Publikált</button>
+                    <button class="filter-btn">Vázlat</button>
+                    <button class="filter-btn">Archivált</button>
+                </div>
+                
+                <div class="articles-container">
+                    <div class="articles-table">
+                        <div class="table-header-row">
+                            <div class="table-col">Cím</div>
+                            <div class="table-col">Státusz</div>
+                            <div class="table-col">Létrehozva</div>
+                            <div class="table-col">Megtekintések</div>
+                            <div class="table-col">Műveletek</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="table-col">
+                                <div class="article-title">A digitális átállás kihívásai 2023-ban</div>
+                            </div>
+                            <div class="table-col">
+                                <span class="status-badge published">Publikálva</span>
+                            </div>
+                            <div class="table-col">2023. október 12.</div>
+                            <div class="table-col">1,245</div>
+                            <div class="table-col">
+                                <div class="action-buttons">
+                                    <button class="btn-action" title="Szerkesztés">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                    </button>
+                                    <button class="btn-action" title="Megtekintés">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                    </button>
+                                    <button class="btn-action" title="Törlés">
+                                        <ion-icon name="trash-outline"></ion-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="table-col">
+                                <div class="article-title">Mesterséges intelligencia a mindennapokban</div>
+                            </div>
+                            <div class="table-col">
+                                <span class="status-badge published">Publikálva</span>
+                            </div>
+                            <div class="table-col">2023. október 5.</div>
+                            <div class="table-col">892</div>
+                            <div class="table-col">
+                                <div class="action-buttons">
+                                    <button class="btn-action" title="Szerkesztés">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                    </button>
+                                    <button class="btn-action" title="Megtekintés">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                    </button>
+                                    <button class="btn-action" title="Törlés">
+                                        <ion-icon name="trash-outline"></ion-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="table-col">
+                                <div class="article-title">Fenntartható városfejlesztési modellek</div>
+                            </div>
+                            <div class="table-col">
+                                <span class="status-badge draft">Vázlat</span>
+                            </div>
+                            <div class="table-col">2023. szeptember 28.</div>
+                            <div class="table-col">-</div>
+                            <div class="table-col">
+                                <div class="action-buttons">
+                                    <button class="btn-action" title="Szerkesztés">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                    </button>
+                                    <button class="btn-action" title="Előnézet">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                    </button>
+                                    <button class="btn-action" title="Törlés">
+                                        <ion-icon name="trash-outline"></ion-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="data-table" id="analytics" style="display:none">
+                <div class="table-header">
+                    <div class="title"><ion-icon name="analytics-outline"></ion-icon><span class="text">Analytics</span></div>
+                    <div class="analytics-period">
+                        <select>
+                            <option>Elmúlt 7 nap</option>
+                            <option>Elmúlt 30 nap</option>
+                            <option>Elmúlt 3 hónap</option>
+                            <option>Elmúlt év</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="analytics-content">
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h4>Audience Overview</h4>
+                            <div class="analytics-placeholder">
+                                <div class="chart-placeholder large">
+                                    <div class="chart-visual">
+                                        <div class="chart-bar" style="height: 40%"></div>
+                                        <div class="chart-bar" style="height: 70%"></div>
+                                        <div class="chart-bar" style="height: 55%"></div>
+                                        <div class="chart-bar" style="height: 85%"></div>
+                                        <div class="chart-bar" style="height: 60%"></div>
+                                        <div class="chart-bar" style="height: 45%"></div>
+                                        <div class="chart-bar" style="height: 75%"></div>
+                                    </div>
+                                    <div class="chart-labels">
+                                        <span>H</span>
+                                        <span>K</span>
+                                        <span>Sze</span>
+                                        <span>Cs</span>
+                                        <span>P</span>
+                                        <span>Szo</span>
+                                        <span>V</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Top Tartalmak</h4>
+                            <div class="top-content-list">
+                                <div class="top-item">
+                                    <div class="item-rank">1</div>
+                                    <div class="item-info">
+                                        <div class="item-title">A digitális átállás kihívásai</div>
+                                        <div class="item-stats">1,245 megtekintés</div>
+                                    </div>
+                                </div>
+                                <div class="top-item">
+                                    <div class="item-rank">2</div>
+                                    <div class="item-info">
+                                        <div class="item-title">Fenntartható városfejlesztés</div>
+                                        <div class="item-stats">1,056 megtekintés</div>
+                                    </div>
+                                </div>
+                                <div class="top-item">
+                                    <div class="item-rank">3</div>
+                                    <div class="item-info">
+                                        <div class="item-title">Mesterséges intelligencia</div>
+                                        <div class="item-stats">892 megtekintés</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">64%</div>
+                            <div class="stat-label">Visszatérő látogatók</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">2:45</div>
+                            <div class="stat-label">Átlagos idő oldalon</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">42%</div>
+                            <div class="stat-label">Kattintási ráta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+    <div class="poll-container">
+        <div class="poll-header">
+            <div class="poll-title">Melyik könyvet szereted a legjobban?</div>
+            <div class="info-icon" id="info-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+            </div>
+        </div>
+        <div id="user-info-container"></div>
+        <div id="options-container">
+            <div class="loading">Könyvek betöltése...</div>
+        </div>
+        <button class="vote-button" disabled> Szavazás leadása </button>
+        <button class="login-button" id="login-button" style="display: none;">
+
+                        <div class="poll-title">Bejelentkezés a szavazáshoz: 
+
+            <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+            </svg>
+        </button>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <div class="popup-title" id="popup-title">Könyv részletei</div>
+                <button class="close-button" id="close-popup">&times;</button>
+            </div>
+            <div class="popup-text" id="popup-text"></div>
+        </div>
+    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const optionsContainer = document.getElementById('options-container');
+        const voteButton = document.querySelector('.vote-button');
+        const loginButton = document.getElementById('login-button');
+        const infoIcon = document.getElementById('info-icon');
+        const popupOverlay = document.getElementById('popup-overlay');
+        const popupTitle = document.getElementById('popup-title');
+        const popupText = document.getElementById('popup-text');
+        const closePopup = document.getElementById('close-popup');
+        const userInfoContainer = document.getElementById('user-info-container');
+        
+        const apiUrl = '/api/book/get';
+        const voteApiUrl = '/api/book/vote';
+        const userApiUrl = '/api/user/get';
+        const loginUrl = '/api/login/google?redirect=/dashboard.html';
+
+        let selectedOption = null;
+        let books = [];
+        let votes = {}; 
+        let isLoggedIn = false;
+        let userData = null;
+
+        function checkLoginStatus() {
+            fetch(userApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("secret")
+                },
+                body: JSON.stringify({ get: "full_name" })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Hiba! státusz: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Felhasználó adatok:', data);
+                if (data && data.full_name) {
+                    isLoggedIn = true;
+                    userData = data;
+                    updateUIForLoggedInUser();
+                } else {
+                    isLoggedIn = false;
+                    updateUIForLoggedOutUser();
+                }
+                loadBooks();
+            })
+            .catch(error => {
+                console.error('Hiba történt a bejelentkezési állapot ellenőrzésekor:', error);
+                isLoggedIn = false;
+                updateUIForLoggedOutUser();
+                loadBooks();
+            });
+        }
+
+        function updateUIForLoggedInUser() {
+            userInfoContainer.innerHTML = `
+                <div class="user-info">
+                    Bejelentkezve mint: <strong>${userData.full_name || 'Felhasználó'}</strong>
+                </div>
+            `;
+            loginButton.style.display = 'none';
+            voteButton.style.display = 'block';
+        }
+
+        function updateUIForLoggedOutUser() {
+            userInfoContainer.innerHTML = `
+                <div class="login-message">
+                    A szavazáshoz be kell jelentkezned!
+                </div>
+            `;
+            loginButton.style.display = 'block';
+            voteButton.style.display = 'none';
+        }
+
+        function loadBooks() {
+            optionsContainer.innerHTML = '<div class="loading">Könyvek betöltése...</div>';
+            
+            fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP hiba! státusz: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('API válasz:', data); 
+                if (data && Array.isArray(data)) {
+                    books = data;
+                   
+                    books.forEach(book => {
+                        votes[book.bid] = book.votes;
+                    });
+                    renderOptions();
+                    updatePercentages();  
+                } else {
+                    throw new Error('Érvénytelen adat formátum');
+                }
+            })
+            .catch(error => {
+                console.error('Hiba történt:', error);
+                showError(`Nem sikerült betölteni az adatokat: ${error.message}`);
+            });
+        }
+
+        function showError(message) {
+            optionsContainer.innerHTML = `
+                <div class="error-message">
+                    ${message}
+                    <br><br>
+                    <small>Próbáld meg frissíteni az oldalt, vagy próbáld később.</small>
+                </div>
+            `;
+        }
+
+        function renderOptions() {
+            if (!books || books.length === 0) {
+                showError('Nincsenek elérhető könyvek.');
+                return;
+            }
+
+            optionsContainer.innerHTML = '';
+            
+            books.forEach(book => {
+                const option = document.createElement('div');
+                option.className = 'option';
+                option.setAttribute('data-bid', book.bid);
+                
+                const viewIcon = `
+                    <div class="info-icon" style="margin-left: 10px; display: inline-flex;">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </div>
+                `;
+                
+                option.innerHTML = `
+                    <div class="radio-button"></div>
+                    <div class="option-label">
+                        <strong>${book.title}</strong>
+                        ${viewIcon}
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="percentage">0%</div>
+                `;
+                
+                const iconElement = option.querySelector('.info-icon');
+                iconElement.addEventListener('click', function(e) {
+                    e.stopPropagation(); 
+                    showBookDetails(book);
+                });
+                
+                if (isLoggedIn) {
+                    option.addEventListener('click', function() {
+                        if (selectedOption) {
+                            selectedOption.classList.remove('selected');
+                            selectedOption.querySelector('.radio-button').classList.remove('selected');
+                        }
+
+                        this.classList.add('selected');
+                        this.querySelector('.radio-button').classList.add('selected');
+
+                        voteButton.disabled = false;
+                        selectedOption = this;
+                    });
+                } else {
+                    option.style.cursor = 'not-allowed';
+                    option.style.opacity = '0.7';
+                    option.title = 'A szavazáshoz be kell jelentkezned';
+                }
+                
+                optionsContainer.appendChild(option);
+            });
+        }
+
+
+        function updatePercentages() {
+            const totalVotes = Object.values(votes).reduce((sum, count) => sum + count, 0);
+            
+            books.forEach(book => {
+                const option = document.querySelector(`.option[data-bid="${book.bid}"]`);
+                if (option) {
+                    const voteCount = votes[book.bid];
+                    const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
+                    
+                    const progressFill = option.querySelector('.progress-fill');
+                    const percentageText = option.querySelector('.percentage');
+                    
+                    progressFill.style.width = `${percentage}%`;
+                    percentageText.textContent = `${percentage}%`;
+                    
+                    option.setAttribute('data-percentage', percentage);
+                }
+            });
+        }
+
+        function showBookDetails(book) {
+            popupTitle.textContent = book.title;
+            popupText.textContent = book.text;
+            popupOverlay.classList.add('active');
+        }
+
+        function closePopupHandler() {
+            popupOverlay.classList.remove('active');
+        }
+
+voteButton.addEventListener('click', function() {
+    if (selectedOption && isLoggedIn) {
+        const selectedBid = selectedOption.getAttribute('data-bid');
+        const selectedTitle = selectedOption.querySelector('.option-label strong').textContent;
+        
+        fetch(voteApiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("secret")
+            },
+            body: JSON.stringify({ bid: selectedBid })
+        })
+        .then(response => {
+if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.hiba || `Hiba! státusz: ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Sikeres szavazat:', data);
+
+            
+            alert(`Köszönjük a szavazatot!\nVálasztottad: ${selectedTitle}`);
+                        location.reload();
+
+            console.log(`Szavazat leadva: ${selectedTitle} (ID: ${selectedBid})`);
+            console.log('Aktuális szavazatok:', votes);
+            
+            selectedOption.classList.remove('selected');
+            selectedOption.querySelector('.radio-button').classList.remove('selected');
+            selectedOption = null;
+            voteButton.disabled = true;
+        })
+        .catch(error => {
+            console.error('Hiba történt a szavazat leadásakor:', error);
+                        if (error.message.includes("már szavaztál") || error.message.includes("already voted") || error.message.includes("vote already")) {
+                alert('Már leadtad a szavazatod! Csak egy szavazat leadása lehetséges.');
+            } else {
+                alert('Hiba történt a szavazat leadása során: ' + error.message);
+            }
+        });
+    }
+});
+
+        loginButton.addEventListener('click', function() {
+            window.location.href = loginUrl;
+        });
+
+        infoIcon.addEventListener('click', function() {
+            popupTitle.textContent = 'Könyv választás - Információ';
+            let allBooksText = '';
+            books.forEach((book, index) => {
+                allBooksText += `<h3>${index + 1}. ${book.title}</h3><p>${book.text}</p><hr>`;
+            });
+            popupText.innerHTML = allBooksText;
+            popupOverlay.classList.add('active');
+        });
+
+        closePopup.addEventListener('click', closePopupHandler);
+        popupOverlay.addEventListener('click', function(e) {
+            if (e.target === popupOverlay) {
+                closePopupHandler();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && popupOverlay.classList.contains('active')) {
+                closePopupHandler();
+            }
+        });
+
+        checkLoginStatus();
+    });
+</script>
+
+        </div>
+    </section>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

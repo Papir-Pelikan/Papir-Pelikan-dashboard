@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lektorálás - Poszt szerkesztése</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <style>
+        /* Alap stílusok */
+        .review-editor-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .editor-header h1 {
+            color: #1891d1;
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .editor-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        .editor-main {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .editor-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .info-card, .history-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .info-card h3, .history-card h3 {
+            color: #1891d1;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 18px;
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            color: #333;
+            font-size: 15px;
+        }
+        
+        /* Űrlap stílusok */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 15px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #1891d1;
+            box-shadow: 0 0 0 3px rgba(24, 145, 209, 0.1);
+            background: white;
+        }
+        
+        textarea.form-control {
+            min-height: 250px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        /* Kategória chip-ek */
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            background: #1891d1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .category-chip ion-icon {
+            margin-right: 6px;
+            font-size: 16px;
+        }
+        
+        /* Szerzők stílusok */
+        .author-chip {
+            display: inline-flex;
+            align-items: center;
+            background: #4a6cf7;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .author-chip ion-icon {
+            margin-right: 6px;
+            font-size: 16px;
+        }
+        
+        .current-author {
+            background: #20c997;
+        }
+        
+        /* Toolbar */
+        .editor-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .toolbar-btn {
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .toolbar-btn:hover {
+            background: #1891d1;
+            color: white;
+            border-color: #1891d1;
+        }
+        
+        /* Diff view */
+        .diff-view {
+            margin-top: 30px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .diff-header {
+            background: #f8f9fa;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .diff-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+        
+        .diff-line {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .diff-added {
+            background: #d4edda;
+            color: #155724;
+            padding: 4px 6px;
+            border-radius: 4px;
+            margin: 2px 0;
+        }
+        
+        .diff-removed {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 4px 6px;
+            text-decoration: line-through;
+            border-radius: 4px;
+            margin: 2px 0;
+        }
+        
+        /* Gombok */
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .action-buttons button {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: #1891d1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1477ad;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #20c997;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1aa179;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        /* Gyors műveletek */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .quick-actions button {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .quick-actions .btn-view {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .quick-actions .btn-view:hover {
+            background: #138496;
+        }
+        
+        /* Betöltés */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .loading ion-icon {
+            font-size: 48px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+            color: #1891d1;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Reszponzív */
+        @media (max-width: 992px) {
+            .editor-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .editor-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            
+            .editor-actions {
+                width: 100%;
+            }
+            
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .editor-main, .info-card, .history-card {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .review-editor-container {
+                padding: 15px;
+            }
+            
+            .editor-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="review-editor-container">
+        <!-- Fejléc -->
+        <div class="editor-header">
+            <div>
+                <h1 id="editor-title">Poszt szerkesztése</h1>
+                <p id="editor-subtitle" style="color: #718096; margin-top: 8px; font-size: 14px;">
+                    ID: <span id="post-id" style="font-weight: 500;">...</span> • 
+                    <span id="post-status-badge" style="background: #ffc107; color: #856404; padding: 4px 8px; border-radius: 12px; font-size: 12px;">
+                        Függőben
+                    </span>
+                </p>
+            </div>
+            <div class="editor-actions">
+                <a href="dashboard.html#reviews" class="back-btn">
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                    Vissza a lektoráláshoz
+                </a>
+            </div>
+        </div>
+        
+        <!-- Tartalom -->
+        <div class="editor-content">
+            <!-- Bal oldal: Szerkesztő -->
+            <div class="editor-main">
+                <!-- Betöltés állapot -->
+                <div class="loading" id="loading" style="display: none;">
+                    <ion-icon name="sync-outline"></ion-icon>
+                    <p>Adatok betöltése...</p>
+                </div>
+                
+                <!-- Űrlap -->
+                <form id="review-edit-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="edit-title">Cím</label>
+                        <input type="text" id="edit-title" class="form-control" placeholder="Poszt címe..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Kategória</label>
+                        <div id="category-display" style="
+                            padding: 15px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            border: 1px solid #e2e8f0;
+                            min-height: 50px;
+                            display: flex;
+                            flex-wrap: wrap;
+                            align-items: center;
+                            gap: 8px;
+                        ">
+                            <div style="color: #718096; font-style: italic;">
+                                Kategória betöltése...
+                            </div>
+                        </div>
+                        <input type="hidden" id="edit-category">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-excerpt">Rövid leírás</label>
+                        <textarea id="edit-excerpt" class="form-control" rows="3" 
+                                  placeholder="Rövid összefoglaló a posztról..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-content">Tartalom</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="toolbar-btn" onclick="formatText('bold')">
+                                <strong>B</strong> Félkövér
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatText('italic')">
+                                <em>I</em> Dőlt
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertList()">
+                                <ion-icon name="list-outline"></ion-icon> Lista
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertLink()">
+                                <ion-icon name="link-outline"></ion-icon> Link
+                            </button>
+                        </div>
+                        <textarea id="edit-content" class="form-control" rows="15" 
+                                  placeholder="Írd ide a poszt tartalmát..."></textarea>
+                    </div>
+                    
+                    <!-- Változtatások -->
+                    <div class="diff-view" id="diff-container" style="display: none;">
+                        <div class="diff-header">
+                            <ion-icon name="git-compare-outline"></ion-icon>
+                            Változtatások összehasonlítása
+                        </div>
+                        <div class="diff-content" id="diff-content">
+                            <!-- Diff tartalom jön ide -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-notes">Megjegyzések a szerkesztéshez (opcionális)</label>
+                        <textarea id="edit-notes" class="form-control" rows="3" 
+                                  placeholder="Ide írhatod a szerkesztéssel kapcsolatos megjegyzéseidet..."></textarea>
+                    </div>
+                    
+                    <!-- Műveleti gombok -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn-danger" onclick="rejectPost()">
+                            <ion-icon name="close-outline"></ion-icon>
+                            Elutasítás
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="saveDraft()">
+                            <ion-icon name="save-outline"></ion-icon>
+                            Mentés vázlatként
+                        </button>
+                        <button type="submit" class="btn-success">
+                            <ion-icon name="checkmark-outline"></ion-icon>
+                            Mentés és elfogadás
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Jobb oldal: Információk -->
+            <div class="editor-sidebar">
+                <!-- Poszt információk -->
+                <div class="info-card">
+                    <h3>Poszt információk</h3>
+                    <div class="info-item">
+                        <span class="info-label">Lapszám:</span>
+                        <span class="info-value" id="info-number">...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Státusz:</span>
+                        <span class="info-value">
+                            <span id="info-status" style="
+                                background: #ffc107; 
+                                color: #856404; 
+                                padding: 4px 12px; 
+                                border-radius: 20px;
+                                font-size: 13px;
+                                font-weight: 500;
+                            ">Függőben</span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Létrehozva:</span>
+                        <span class="info-value" id="info-created">...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Utolsó szerkesztés:</span>
+                        <span class="info-value" id="info-last-edited">Még nem</span>
+                    </div>
+                </div>
+                
+                <!-- Szerzők -->
+                <div class="info-card">
+                    <h3>Szerzők</h3>
+                    <div id="authors-container" style="
+                        padding: 15px;
+                        background: #f8f9fa;
+                        border-radius: 8px;
+                        border: 1px solid #e2e8f0;
+                        min-height: 50px;
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 8px;
+                    ">
+                        <div style="color: #718096; font-style: italic;">
+                            Szerzők betöltése...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gyors műveletek -->
+                <div class="info-card">
+                    <h3>Gyors műveletek</h3>
+                    <div class="quick-actions">
+
+                        <button type="button" class="btn-danger" onclick="deletePost()">
+                            <ion-icon name="trash-outline"></ion-icon>
+                            Poszt törlése
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // URL paraméterek
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('pid');
+        const reviewType = urlParams.get('type') || 'pending';
+        
+        // Globális változók
+        let originalPost = null;
+        let currentUser = null;
+        let allUsers = {}; // Összes felhasználó adatai
+        let allCategories = []; // Összes kategória
+        
+        // Betöltés után
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Review editor betöltve');
+            console.log('Post ID:', postId);
+            console.log('Review type:', reviewType);
+            
+            if (!postId) {
+                alert('Nincs poszt ID megadva!');
+                window.location.href = 'dashboard.html#reviews';
+                return;
+            }
+            
+            // Betöltés megjelenítése
+            showLoading(true);
+            
+            // Beállítjuk a címben a poszt ID-t
+            document.getElementById('post-id').textContent = postId;
+            
+            try {
+                // 1. Felhasználó betöltése
+                await loadCurrentUser();
+                
+                // 2. Összes felhasználó betöltése (szerzők neveihez)
+                await loadAllUsers();
+                
+                // 3. Kategóriák betöltése
+                await loadCategories();
+                
+                // 4. Poszt betöltése
+                await loadPostData();
+                
+                // 5. Űrlap eseménykezelő
+                document.getElementById('review-edit-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    await saveAndApprove();
+                });
+                
+                // Űrlap megjelenítése
+                document.getElementById('review-edit-form').style.display = 'block';
+                showLoading(false);
+                
+            } catch (error) {
+                console.error('Hiba a betöltés során:', error);
+                alert(`Hiba történt: ${error.message}`);
+                window.location.href = 'dashboard.html#reviews';
+            }
+        });
+        
+        // Felhasználó betöltése
+        async function loadCurrentUser() {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                const response = await fetch('/api/user/get', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        get: 'uid, email, alias, full_name, roles'
+                    })
+                });
+                
+                if (response.ok) {
+                    currentUser = await response.json();
+                    console.log('Felhasználó betöltve:', currentUser);
+                } else {
+                    throw new Error('Nem sikerült betölteni a felhasználói adatokat');
+                }
+            } catch (error) {
+                console.error('Hiba a felhasználó betöltése során:', error);
+                throw error;
+            }
+        }
+        
+        // Összes felhasználó betöltése (szerzők neveihez)
+        async function loadAllUsers() {
+            try {
+                const token = getAuthToken();
+                if (!token) return;
+                
+                const response = await fetch('/api/user/getall', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    allUsers = await response.json();
+                    console.log('Összes felhasználó betöltve:', allUsers);
+                }
+            } catch (error) {
+                console.error('Hiba a felhasználók betöltése során:', error);
+            }
+        }
+        
+        // Kategóriák betöltése
+        async function loadCategories() {
+            try {
+                // Itt a kategóriákat kellene betölteni
+                // Jelenleg minta adatokat használunk
+                allCategories = [
+                    'Hírek', 'Programozás', 'Tudomány', 'Művészet',
+                    'Sport', 'Technológia', 'Egészség', 'Oktatás'
+                ];
+                
+                console.log('Kategóriák betöltve:', allCategories);
+            } catch (error) {
+                console.error('Hiba a kategóriák betöltése során:', error);
+            }
+        }
+        
+        // Poszt adatok betöltése
+        async function loadPostData() {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                // Lekérjük a poszt tartalmát (szerkesztett verziót ha kell)
+                const edited = reviewType === 'edited';
+                const response = await fetch('/api/post/get/contents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        post: parseInt(postId),
+                        edited: edited
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Hiba a poszt betöltése során: ${response.status}`);
+                }
+                
+                const postData = await response.json();
+                console.log('Poszt adatok:', postData);
+                
+                // Elmentjük az eredeti adatokat
+                originalPost = { ...postData };
+                
+                // Kitöltjük az űrlapot
+                populateForm(postData);
+                
+                // Kitöltjük az információkat
+                await populateInfo(postData);
+                
+                // Diff betöltése (ha van)
+                if (edited) {
+                    await loadDiff();
+                }
+                
+            } catch (error) {
+                console.error('Hiba a poszt betöltése során:', error);
+                throw error;
+            }
+        }
+        
+        // Űrlap kitöltése
+        function populateForm(postData) {
+            document.getElementById('edit-title').value = postData.title || '';
+            document.getElementById('edit-excerpt').value = postData.minimal_desc || '';
+            document.getElementById('edit-content').value = postData.desc || '';
+            
+            // Kategória megjelenítése
+            displayCategory(postData.category);
+        }
+        
+        // Kategória megjelenítése chip-ként
+        function displayCategory(categoryName) {
+            const container = document.getElementById('category-display');
+            const hiddenInput = document.getElementById('edit-category');
+            
+            if (!categoryName || categoryName.trim() === '') {
+                container.innerHTML = `
+                    <div style="color: #718096; font-style: italic;">
+                        Nincs kategória megadva
+                    </div>
+                `;
+                hiddenInput.value = '';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="category-chip">
+                    <ion-icon name="folder-outline"></ion-icon>
+                    ${categoryName}
+                </div>
+            `;
+            hiddenInput.value = categoryName;
+        }
+        
+        // Információk kitöltése
+        async function populateInfo(postData) {
+            document.getElementById('info-number').textContent = postData.number || 'N/A';
+            document.getElementById('info-created').textContent = formatDate(postData.created) || 'N/A';
+            
+            if (postData.last_edited) {
+                document.getElementById('info-last-edited').textContent = formatDate(postData.last_edited);
+            }
+            
+            // Szerzők megjelenítése
+            await displayAuthors(postData.authors);
+        }
+        
+        // Szerzők megjelenítése chip-ekként
+        async function displayAuthors(authorIds) {
+            const container = document.getElementById('authors-container');
+            
+            if (!authorIds || !Array.isArray(authorIds) || authorIds.length === 0) {
+                container.innerHTML = `
+                    <div style="color: #718096; font-style: italic;">
+                        Nincsenek szerzők
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            // Minden szerzőhöz
+            for (const authorId of authorIds) {
+                const authorInfo = allUsers[authorId];
+                let displayName = `UID: ${authorId}`;
+                let isCurrentUser = false;
+                
+                // Ha van felhasználó adat
+                if (authorInfo) {
+                    displayName = authorInfo.alias || authorInfo.full_name || authorInfo.email || displayName;
+                    
+                    // Ellenőrizzük, hogy ez a jelenlegi felhasználó-e
+                    if (currentUser && currentUser.uid == authorId) {
+                        isCurrentUser = true;
+                    }
+                }
+                
+                html += `
+                    <div class="author-chip ${isCurrentUser ? 'current-author' : ''}">
+                        <ion-icon name="person-outline"></ion-icon>
+                        ${displayName}
+                        ${isCurrentUser ? '<small style="margin-left: 5px; opacity: 0.9;">(én)</small>' : ''}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Diff betöltése
+        async function loadDiff() {
+            try {
+                const token = getAuthToken();
+                if (!token) return;
+                
+                // Lekérjük az eredeti verziót is
+                const originalResponse = await fetch('/api/post/get/contents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        post: parseInt(postId),
+                        edited: false
+                    })
+                });
+                
+                if (originalResponse.ok) {
+                    const originalData = await originalResponse.json();
+                    showDiff(originalData, originalPost);
+                }
+                
+            } catch (error) {
+                console.error('Hiba a diff betöltése során:', error);
+            }
+        }
+        
+        // Diff megjelenítése
+        function showDiff(original, edited) {
+            const diffContainer = document.getElementById('diff-container');
+            const diffContent = document.getElementById('diff-content');
+            
+            diffContainer.style.display = 'block';
+            
+            let diffHTML = '';
+            
+            // Cím változások
+            if (original.title !== edited.title) {
+                diffHTML += `
+                    <div class="diff-line">
+                        <strong style="color: #2d3748;">Cím:</strong><br>
+                        <span class="diff-removed">${original.title || '(üres)'}</span><br>
+                        <span class="diff-added">${edited.title || '(üres)'}</span>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
+                `;
+            }
+            
+            // Kategória változások
+            if (original.category !== edited.category) {
+                diffHTML += `
+                    <div class="diff-line">
+                        <strong style="color: #2d3748;">Kategória:</strong><br>
+                        <span class="diff-removed">${original.category || '(nincs)'}</span><br>
+                        <span class="diff-added">${edited.category || '(nincs)'}</span>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
+                `;
+            }
+            
+            // Leírás változások (csak első 100 karakter)
+            const origExcerpt = original.minimal_desc || '';
+            const editExcerpt = edited.minimal_desc || '';
+            if (origExcerpt !== editExcerpt) {
+                diffHTML += `
+                    <div class="diff-line">
+                        <strong style="color: #2d3748;">Rövid leírás:</strong><br>
+                        <span class="diff-removed">${origExcerpt.substring(0, 100)}${origExcerpt.length > 100 ? '...' : ''}</span><br>
+                        <span class="diff-added">${editExcerpt.substring(0, 100)}${editExcerpt.length > 100 ? '...' : ''}</span>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
+                `;
+            }
+            
+            // Tartalom változások (csak első 300 karakter)
+            const origDesc = original.desc || '';
+            const editDesc = edited.desc || '';
+            if (origDesc !== editDesc) {
+                diffHTML += `
+                    <div class="diff-line">
+                        <strong style="color: #2d3748;">Tartalom (részlet):</strong><br>
+                        <span class="diff-removed">${origDesc.substring(0, 300)}${origDesc.length > 300 ? '...' : ''}</span><br>
+                        <span class="diff-added">${editDesc.substring(0, 300)}${editDesc.length > 300 ? '...' : ''}</span>
+                    </div>
+                `;
+            }
+            
+            diffContent.innerHTML = diffHTML || '<p style="color: #718096; text-align: center;">Nincsenek változtatások</p>';
+        }
+        
+        // Mentés és elfogadás
+        async function saveAndApprove() {
+            if (!confirm('Biztosan szeretnéd menteni és elfogadni a szerkesztéseket?')) {
+                return;
+            }
+            
+            try {
+                showLoading(true);
+                
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                // Összeállítjuk a frissítendő adatokat
+                const updateData = {
+                    post: parseInt(postId)
+                };
+                
+                // Csak azokat a mezőket adjuk hozzá, amik változtak
+                const title = document.getElementById('edit-title').value;
+                const category = document.getElementById('edit-category').value;
+                const excerpt = document.getElementById('edit-excerpt').value;
+                const content = document.getElementById('edit-content').value;
+                const notes = document.getElementById('edit-notes').value;
+                
+                if (title !== originalPost.title) updateData.title = title;
+                if (category !== originalPost.category) updateData.category = category;
+                if (excerpt !== originalPost.minimal_desc) updateData.minimal_desc = excerpt;
+                if (content !== originalPost.desc) updateData.desc = content;
+                
+                if (Object.keys(updateData).length <= 1) {
+                    alert('Nincs változás a szerkesztésben!');
+                    showLoading(false);
+                    return;
+                }
+                
+                // Ha vannak megjegyzések, hozzáadjuk
+                if (notes.trim() !== '') {
+                    updateData.notes = notes;
+                }
+                
+                console.log('Frissítési adatok:', updateData);
+                
+                // Küldjük a szerkesztési kérelmet
+                const editResponse = await fetch('/api/post/edit', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                if (!editResponse.ok) {
+                    const errorText = await editResponse.text();
+                    throw new Error(`Szerkesztési hiba: ${errorText}`);
+                }
+                
+                // Ha lektor vagy direktor vagyunk, azonnal elfogadjuk
+                const roles = currentUser?.roles || [];
+                let isEditor = false;
+                
+                if (typeof roles === 'string') {
+                    try {
+                        const parsedRoles = JSON.parse(roles);
+                        isEditor = Array.isArray(parsedRoles) && 
+                            (parsedRoles.includes('lector') || parsedRoles.includes('director') || parsedRoles.includes('*'));
+                    } catch (e) {
+                        // Ha nem JSON, akkor sima stringként kezeljük
+                        isEditor = roles.includes('lector') || roles.includes('director') || roles.includes('*');
+                    }
+                } else if (Array.isArray(roles)) {
+                    isEditor = roles.includes('lector') || roles.includes('director') || roles.includes('*');
+                }
+                
+                if (isEditor) {
+                    const approveResponse = await fetch('/api/post/approve', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ post: parseInt(postId) })
+                    });
+                    
+                    if (approveResponse.ok) {
+                        alert('Szerkesztés sikeresen mentve és a poszt elfogadva!');
+                        window.location.href = 'dashboard.html#reviews';
+                    } else {
+                        const errorText = await approveResponse.text();
+                        throw new Error(`Elfogadási hiba: ${errorText}`);
+                    }
+                } else {
+                    alert('Szerkesztés sikeresen mentve, elfogadásra vár!');
+                    window.location.href = 'dashboard.html#reviews';
+                }
+                
+            } catch (error) {
+                console.error('Hiba a mentés során:', error);
+                alert(`Hiba történt: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Vázlat mentése
+        async function saveDraft() {
+            try {
+                showLoading(true);
+                
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                const updateData = {
+                    post: parseInt(postId),
+                    title: document.getElementById('edit-title').value,
+                    category: document.getElementById('edit-category').value,
+                    minimal_desc: document.getElementById('edit-excerpt').value,
+                    desc: document.getElementById('edit-content').value
+                };
+                
+                const notes = document.getElementById('edit-notes').value;
+                if (notes.trim() !== '') {
+                    updateData.notes = notes;
+                }
+                
+                const response = await fetch('/api/post/edit', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                if (response.ok) {
+                    alert('Vázlat sikeresen mentve!');
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(`Mentési hiba: ${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('Hiba a vázlat mentése során:', error);
+                alert(`Hiba történt: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Poszt elutasítása
+        async function rejectPost() {
+            if (!confirm('Biztosan elutasítod ezt a posztot? Ez a művelet visszavonhatatlan!')) {
+                return;
+            }
+            
+            try {
+                showLoading(true);
+                
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                // Töröljük a posztot
+                const response = await fetch('/api/post/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ post: parseInt(postId) })
+                });
+                
+                if (response.ok) {
+                    alert('Poszt sikeresen elutasítva és törölve!');
+                    window.location.href = 'dashboard.html#reviews';
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(`Elutasítási hiba: ${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('Hiba az elutasítás során:', error);
+                alert(`Hiba történt: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Poszt törlése
+        async function deletePost() {
+            if (!confirm('Biztosan törlöd ezt a posztot? Ez VÉGLEGES és visszavonhatatlan!')) {
+                return;
+            }
+            
+            try {
+                showLoading(true);
+                
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                const response = await fetch('/api/post/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ post: parseInt(postId) })
+                });
+                
+                if (response.ok) {
+                    alert('Poszt sikeresen törölve!');
+                    window.location.href = 'dashboard.html#reviews';
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(`Törlési hiba: ${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('Hiba a törlés során:', error);
+                alert(`Hiba történt: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Eredeti poszt megtekintése
+        function viewOriginalPost() {
+            window.open(`/post/${postId}`, '_blank');
+        }
+        
+        // Segédfüggvények
+        function getAuthToken() {
+            return localStorage.getItem('secret') || sessionStorage.getItem('secret');
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('hu-HU', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+        
+        function showLoading(show) {
+            const loadingElement = document.getElementById('loading');
+            const formElement = document.getElementById('review-edit-form');
+            
+            if (show) {
+                loadingElement.style.display = 'flex';
+                if (formElement) formElement.style.display = 'none';
+            } else {
+                loadingElement.style.display = 'none';
+                if (formElement) formElement.style.display = 'block';
+            }
+        }
+        
+        // Text formázó függvények
+        function formatText(command) {
+            const textarea = document.getElementById('edit-content');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            let newText = '';
+            let selectionLength = 0;
+            
+            switch(command) {
+                case 'bold':
+                    newText = `**${selectedText}**`;
+                    selectionLength = 2;
+                    break;
+                case 'italic':
+                    newText = `*${selectedText}*`;
+                    selectionLength = 1;
+                    break;
+                case 'underline':
+                    newText = `<u>${selectedText}</u>`;
+                    selectionLength = 3;
+                    break;
+            }
+            
+            textarea.value = textarea.value.substring(0, start) + 
+                           newText + 
+                           textarea.value.substring(end);
+            
+            textarea.focus();
+            textarea.setSelectionRange(start + selectionLength, end + selectionLength);
+        }
+        
+        function insertList() {
+            const textarea = document.getElementById('edit-content');
+            const start = textarea.selectionStart;
+            const newText = '\n- ';
+            
+            textarea.value = textarea.value.substring(0, start) + 
+                           newText + 
+                           textarea.value.substring(start);
+            
+            textarea.focus();
+            textarea.setSelectionRange(start + newText.length, start + newText.length);
+        }
+        
+        function insertLink() {
+            const url = prompt('Add meg a URL-t:', 'https://');
+            if (!url) return;
+            
+            const text = prompt('Add meg a link szövegét:', 'link');
+            if (text === null) return;
+            
+            const textarea = document.getElementById('edit-content');
+            const start = textarea.selectionStart;
+            const linkText = `[${text}](${url})`;
+            
+            textarea.value = textarea.value.substring(0, start) + 
+                           linkText + 
+                           textarea.value.substring(textarea.selectionEnd);
+            
+            textarea.focus();
+            textarea.setSelectionRange(start + linkText.length, start + linkText.length);
+        }
+    </script>
+</body>
+</html>
