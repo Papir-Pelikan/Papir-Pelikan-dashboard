@@ -131,6 +131,7 @@ async function showCategorySelector() {
                                 padding: 12px 12px 12px 40px;
                                 border: 1px solid #ddd;
                                 border-radius: 8px;
+                                font-family: 'Abril Fatface';
                                 font-size: 14px;
                                 outline: none;
                             ">
@@ -173,6 +174,7 @@ async function showCategorySelector() {
                             border: none;
                             border-radius: 6px;
                             cursor: pointer;
+                            font-family: 'Abril Fatface';
                             font-size: 14px;
                         ">Kiválasztás</button>
                     </div>

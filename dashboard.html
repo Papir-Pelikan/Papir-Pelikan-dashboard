@@ -247,7 +247,7 @@
     </div>
                     <label for="post-content">Tartalom - Építsd fel blokkokból a cikked!</label>
 
-    <div class="create-post-form">
+    <form id="post-form" class="create-post-form">
         <!-- ⭐⭐⭐ ALAPVETŒ SZABÁLYOK MEGJELENÍTÉSE ⭐⭐⭐ -->
         <div class="post-rules" style="
             background: #e3f2fd;
@@ -544,18 +544,17 @@
                             </div>
 
                             -->
-                        </div>
-                        
-                       <div class="form-actions">
+
+                        <div class="form-actions">
  <!--   
       <button type="button" class="btn-secondary">Mentés vázlatként</button>
 
  -->
-    <button type="button" class="btn-preview" id="preview-article-btn" style="font-family: 'Abril Fatface';">
+    <button type="button" class="btn-preview" id="preview-article-btn" style="font-family: 'Abril Fatface'; font-size: 18px">
         <ion-icon name="eye-outline"></ion-icon>
         Oldal előnézete
     </button>
-    <button type="submit" class="btn-primary" style="font-family: 'Abril Fatface';">
+    <button type="submit" class="btn-primary" style="font-family: 'Abril Fatface'; font-size: 18px;">
         
         <ion-icon name="checkmark-circle-outline"></ion-icon>
         Poszt elküldése a lektornak</button>
@@ -569,14 +568,14 @@
 <div class="data-table" id="articles" style="display:none">
     <div class="table-header">
         <div class="title"><ion-icon name="folder-outline"></ion-icon><span class="text">Cikkeim</span></div>
-        <button class="btn-primary" id="new-article-btn"><ion-icon name="add-outline"></ion-icon> Új cikk</button>
+        <button class="btn-primary" id="new-article-btn" style="font-family: 'Abril Fatface';"><ion-icon name="add-outline"></ion-icon> Új cikk</button>
     </div>
     
     <div class="articles-filter">
-        <button class="filter-btn active" data-filter="all">Összes</button>
-        <button class="filter-btn" data-filter="published">Publikált</button>
-        <button class="filter-btn" data-filter="draft">Vázlat</button>
-        <button class="filter-btn" data-filter="pending">Ellenőrzés alatt</button>
+        <button class="filter-btn active" data-filter="all" style="font-family: 'Abril Fatface'">Összes</button>
+        <button class="filter-btn" data-filter="published" style="font-family: 'Abril Fatface'">Publikált</button>
+        <button class="filter-btn" data-filter="draft" style="font-family: 'Abril Fatface'">Vázlat</button>
+        <button class="filter-btn" data-filter="pending" style="font-family: 'Abril Fatface'">Ellenőrzés alatt</button>
     </div>
     
     <div class="articles-container" id="articles-container">
@@ -684,7 +683,7 @@
         <div class="review-actions">
             <button class="btn-secondary" id="refresh-reviews-btn">
                 <ion-icon name="refresh-outline"></ion-icon>
-                Frissítés
+                <span style="font-family: 'Abril Fatface'">Frissítés</span>
             </button>
         </div>
     </div>
@@ -692,9 +691,9 @@
     
     <!-- Szűrők -->
    <div class="reviews-filter">
-        <button class="filter-btn active" data-filter="pending">Függőben lévők</button>
-        <button class="filter-btn" data-filter="edited">Szerkesztések</button>
-        <button class="filter-btn" data-filter="all">Összes</button>
+        <button class="filter-btn active" data-filter="pending" style="font-family: 'Abril Fatface'">Függőben lévők</button>
+        <button class="filter-btn" data-filter="edited" style="font-family: 'Abril Fatface'">Szerkesztések</button>
+        <button class="filter-btn" data-filter="all" style="font-family: 'Abril Fatface'">Összes</button>
     </div>
     
     <!-- Tartalom konténer -->
@@ -1304,7 +1303,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     }
 });
-
 
 
 

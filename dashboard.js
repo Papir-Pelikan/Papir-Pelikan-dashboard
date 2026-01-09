@@ -40,6 +40,8 @@ fetch('get_articles.php')
   });
 
 async function checkUserPermissions() {
+    console.log('===== JOGOSULTSÁGOK ELLENŐRZÉSE =====');
+    
     const token = await getAuthToken();
     if (!token) {
         console.error('Nincs token a jogosultságok ellenőrzéséhez');
@@ -58,28 +60,63 @@ async function checkUserPermissions() {
             })
         });
         
+        console.log('Jogosultság API válasz státusz:', response.status);
+        
         if (!response.ok) {
             console.error('Hiba a jogosultságok lekérése során:', response.status);
             return false;
         }
         
         const data = await response.json();
-        console.log('Felhasználó jogosultságai:', data);
+        console.log('API válasz teljes:', data);
         
-        if (data && data.roles) {
-            const roles = typeof data.roles === 'string' ? JSON.parse(data.roles) : data.roles;
-            
-            // Szükséges jogosultságok
-            const requiredRoles = ['writer', 'director', 'lector', '*'];
-            
-            // Ellenőrizzük, hogy van-e valamelyik szükséges jogosultság
-            const hasPermission = roles.some(role => requiredRoles.includes(role));
-            
-            console.log('Van jogosultság poszt létrehozásához?', hasPermission);
-            return hasPermission;
+        let rolesArray = [];
+        
+        // 1. Ha a roles már tömb formátumban van
+        if (Array.isArray(data.roles)) {
+            rolesArray = data.roles;
+        } 
+        // 2. Ha a roles stringként van (JSON string)
+        else if (typeof data.roles === 'string') {
+            try {
+                // Először próbáljuk meg parse-olni JSON-ként
+                const parsed = JSON.parse(data.roles);
+                
+                // Ha tömb, akkor jó
+                if (Array.isArray(parsed)) {
+                    rolesArray = parsed;
+                } 
+                // Ha nem tömb, akkor vesszővel elválasztott string
+                else {
+                    console.log('A parse-olt érték nem tömb, vesszővel elválasztott stringként kezeljük');
+                    rolesArray = data.roles.split(',').map(role => role.trim());
+                }
+            } catch (e) {
+                console.log('JSON parse hiba, vesszővel elválasztott stringként kezeljük:', e);
+                rolesArray = data.roles.split(',').map(role => role.trim());
+            }
+        }
+        // 3. Ha a roles nem szerepel, de van user 
+        else if (data.user && data.user.roles) {
+            rolesArray = Array.isArray(data.user.roles) ? data.user.roles : data.user.roles.split(',');
         }
         
-        return false;
+        console.log('Feldolgozott rangok:', rolesArray);
+        
+        if (rolesArray.length === 0) {
+            console.log('Nincs rang definiálva a felhasználónak');
+            return false;
+        }
+        
+        // Ellenőrizzük, hogy van-e valamelyik szükséges jogosultság
+        const requiredRoles = ['writer', 'director', 'lector', '*'];
+        const hasPermission = rolesArray.some(role => requiredRoles.includes(role));
+        
+        console.log('Szükséges rangok:', requiredRoles);
+        console.log('Felhasználó rangjai:', rolesArray);
+        console.log('Van jogosultság poszt létrehozásához?', hasPermission);
+        
+        return hasPermission;
         
     } catch (error) {
         console.error('Hiba a jogosultságok ellenőrzése során:', error);
@@ -135,7 +172,6 @@ async function checkUserPermissions() {
     }
 }
 
-// Adj hozzá egy függvényt a token ellenőrzéséhez
 async function verifyToken(token) {
     try {
         const response = await fetch('/api/user/get', {
@@ -157,7 +193,6 @@ async function verifyToken(token) {
     }
 }
 
-// Módosítsd a getAuthToken() függvényt
 async function getValidAuthToken() {
     console.log('=== ÉRVÉNYES TOKEN KERESÉS ===');
     
@@ -210,7 +245,6 @@ async function getValidAuthToken() {
     return null;
 }
 
-// Frissítsd a getAuthToken() függvényt, hogy aszinkron legyen
 async function getAuthToken() {
     return await getValidAuthToken();
 }
@@ -242,7 +276,7 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Navigation functionality
+// Navigation functionality (EZ MÉG RÁÉR)
 document.querySelectorAll(".navList").forEach(function(element) {
     element.addEventListener('click', function() {
         // Close sidebar on mobile after selection
@@ -254,18 +288,14 @@ document.querySelectorAll(".navList").forEach(function(element) {
             e.classList.remove('active');
         });
 
-        // Add active class to the clicked navList element
         this.classList.add('active');
 
-        // Get the index of the clicked navList element
         var index = Array.from(this.parentNode.children).indexOf(this);
 
-        // Hide all data-table elements
         document.querySelectorAll(".data-table").forEach(function(table) {
             table.style.display = 'none';
         });
 
-        // Show the corresponding table based on the clicked index
         var tables = document.querySelectorAll(".data-table");
         if (tables.length > index) {
             tables[index].style.display = 'block';
@@ -327,7 +357,7 @@ function checkUrlForToken() {
     const urlToken = urlParams.get('token');
     
     if (urlToken) {
-        console.log('Token található URL-ben, mentés localStorage-ba');
+        console.log('Tokent megtaláltam, mentem localStorage-ba');
         localStorage.setItem('secret', urlToken);
         
         // Távolítsuk el az URL-ből
@@ -426,7 +456,7 @@ function hideReviewsMenuItem() {
         navPlaceholder.innerHTML = '';
     }
     
-    // Elrejtjük a lektorálás oldalt is
+    // Elrejtjük a lektorálás oldalt is!!! (többiek is teszteljekS!!)
     const reviewsSection = document.getElementById('reviews');
     if (reviewsSection) {
         reviewsSection.style.display = 'none';
@@ -444,7 +474,7 @@ function setupNavigation() {
             });
             this.classList.add('active');
             
-            // Oldalsáv bezárása mobilon
+            // Oldalsáv bezárása mobilon (ez fail a css miatt)
             if (window.innerWidth <= 768) {
                 const sidebar = document.getElementById('sidebar');
                 if (sidebar) {
@@ -506,14 +536,13 @@ function setupEventListeners() {
         }
     });
   document.querySelector('[data-target="articles"]')?.addEventListener('click', function() {
-        // Késleltetés a DOM frissülés miatt
         setTimeout(() => {
             loadUserArticles();
         }, 300);
     });
 
      document.querySelector('[data-target="reviews"]')?.addEventListener('click', function() {
-        // Késleltetés a DOM frissülés miatt
+        
     setTimeout(() => {
         setupNavigation();
     }, 500);
@@ -583,7 +612,7 @@ function setupEventListeners() {
         });
     });
 
-    // Új cikk gomb
+    // New Article gomb (EZT MÉG ÁTGONDOLOM)
     document.getElementById('new-article-btn')?.addEventListener('click', function() {
         document.querySelectorAll(".navList").forEach(function(e) {
             e.classList.remove('active');
@@ -597,14 +626,11 @@ function setupEventListeners() {
         updatePageDescription('create-post');
     });
 
-// Cseréld le a fenti kódot erre:
 document.getElementById('post-form')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     e.stopPropagation();
     
     console.log('===== FORM SUBMIT MEGHÍVVA =====');
-    
-    // Blokk szerkesztőből generáljuk a HTML-t
     await prepareBlockPostData();
     
     // Poszt létrehozás indítása
@@ -617,7 +643,7 @@ document.getElementById('post-form')?.addEventListener('submit', async function(
             document.getElementById('post-content').focus();
             
             if (command === 'createLink') {
-                const url = prompt('Adja meg a URL-t:');
+                const url = prompt('Add meg a URL-t:');
                 if (url) {
                     document.execCommand(command, false, url);
                 }
@@ -629,27 +655,34 @@ document.getElementById('post-form')?.addEventListener('submit', async function(
 }
 
 /**
- * Poszt létrehozása - BLOKKOS VERZIÓ
+ * PosztCreation - BLOKKOS (nem tudom h most mi a baja)
  */
 async function createPost() {
     console.log('=== POSZT LÉTREHOZÁS ELINDUL ===');
     
-    // 1. Cím validálása
+    // ========== DEBUGoláshoz... ==========
+    console.log('1. Validálás kezdete...');
     const validation = validateFirstBlock();
+    console.log('Validálás eredménye:', validation);
+    
     if (!validation.isValid) {
-        alert(`Nem lehet elküldeni: ${validation.message}\n\nKérlek, először adj hozzá egy címsor blokkot!`);
+//        alert(`Nem lehet elküldeni: ${validation.message}\n\nKérlek, először adj hozzá egy címsor blokkot!`);
         return;
     }
     
-    // 2. Jogosultság ellenőrzése
+    console.log('2. Jogosultságod ellenőrzése...');
     const hasPermission = await checkUserPermissions();
+    console.log('Jogosultság:', hasPermission);
+    
     if (!hasPermission) {
         alert('Nincs jogosultságod posztot létrehozni!\n\nSzükséges jogosultságok: writer, director, lector');
         return;
     }
     
-    // 3. Token lekérése
+    console.log('3. Token lekérése...');
     const token = await getAuthToken();
+    console.log('Token megtalálva:', !!token);
+    
     if (!token) {
         alert('Nem vagy bejelentkezve! Kérjük, jelentkezz be a poszt létrehozásához.');
         const currentPath = encodeURIComponent(window.location.pathname);
@@ -657,50 +690,56 @@ async function createPost() {
         return;
     }
     
-    // 4. Adatok előkészítése
+    console.log('4. Blokkok feldolgozása...');
     const processedData = await prepareBlockPostData();
+    console.log('Feldolgozott adatok:', processedData);
+    
     if (!processedData || !processedData.blocks || processedData.blocks.length === 0) {
         alert('Hiba történt a blokkok feldolgozása során!');
         return;
     }
     
-    // 5. Következő lapszám lekérése
-    console.log('Következő lapszám lekérése...');
+    console.log('5. Következő lapszám lekérése...');
     const nextNumber = await getNextPostNumber();
+    console.log('Következő szám:', nextNumber);
     
     if (!nextNumber || nextNumber < 1) {
         alert('Hiba történt a következő szám meghatározása során!');
         return;
     }
     
-    console.log('Következő szám:', nextNumber);
+    console.log('6. Kategória ellenőrzése (tökmindegy h kategória vagy rovat...)...');
+    const categoriesInput = document.getElementById('post-categories');
+    console.log('Kategória input elem:', categoriesInput);
+    console.log('Kategória input értéke:', categoriesInput?.value);
     
-    // 6. Kategória validálása
-    const category = document.getElementById('post-categories')?.value;
-    if (!category || category.trim() === '') {
-        alert('Kérjük, válassz kategóriát!');
+    const category = categoriesInput ? categoriesInput.value.trim() : '';
+    console.log('Kategória érték:', category);
+    
+    if (!category) {
+        
         document.getElementById('select-category-btn')?.click();
         return;
     }
     
-    // 7. API adatok összeállítása
+    
+    // 7.
     const postData = {
         title: processedData.title,
         category: category,
         number: nextNumber,
         minimal_desc: processedData.excerpt,
         desc: processedData.html,
-        image: '/default-post-image.png', // Alapértelmezett kép
+        image: '/default-post-image.png',
         authors: processedData.authors || '',
         blocks_json: JSON.stringify(processedData.blocks),
         content_type: 'blocks'
     };
     
-    console.log('API küldendő adatok:', postData);
+    console.log('8. API küldendő adatok:', postData);
     
-    // 8. API hívás
     try {
-        console.log('API hívás indítása /api/post/create...');
+        console.log('9. API hívás indítása /api/post/create...');
         const response = await fetch('/api/post/create', {
             method: 'POST',
             headers: {
@@ -710,30 +749,107 @@ async function createPost() {
             body: JSON.stringify(postData)
         });
         
-        console.log('API válasz státusz:', response.status);
+        console.log('10. API válasz státusz:', response.status);
+        console.log('API válasz headers:', Object.fromEntries(response.headers.entries()));
         
         if (!response.ok) {
-            let errorMessage = 'Ismeretlen hiba';
+    const errorText = await response.text();
+    console.error('API hiba részletei:', errorText);
+    
+    let errorTitle = 'Hiba történt';
+    let errorMessage = 'Ismeretlen hiba';
+    let errorDetails = [];
+    let errorIcon = 'alert-circle-outline';
+    
+    if (response.status === 401) {
+        errorTitle = 'Bejelentkezési hiba';
+        errorMessage = 'Nem vagy bejelentkezve, vagy lejárt a munkamenet!';
+        errorIcon = 'log-out-outline';
+        errorDetails = [
+            { label: 'Státusz kód', value: '401 - Unauthorized' },
+            { label: 'Ajánlás', value: 'Jelentkezz be újra' }
+        ];
+    } else if (response.status === 403) {
+        errorTitle = 'Jogosultsági hiba';
+        errorMessage = 'Nincs jogosultságod posztot létrehozni!';
+        errorIcon = 'lock-closed-outline';
+        errorDetails = [
+            { label: 'Státusz kód', value: '403 - Forbidden' },
+            { label: 'Szükséges jogosultságok', value: 'writer, director, lector' }
+        ];
+    } else if (response.status === 400) {
+        errorTitle = 'Hiányzó adatok';
+        errorMessage = 'Hiányoznak vagy hibásak a megadott adatok!';
+        errorIcon = 'document-text-outline';
+        
+        try {
+            const errorJson = JSON.parse(errorText);
+            console.error('400 hiba részletei:', errorJson);
             
-            if (response.status === 401) {
-                errorMessage = 'Nem vagy bejelentkezve, vagy lejárt a munkamenet!';
-            } else if (response.status === 403) {
-                errorMessage = 'Nincs jogosultságod posztot létrehozni!';
-            } else if (response.status === 400) {
-                errorMessage = 'Hiányzó kötelező mezők!';
-            } else {
-                const errorText = await response.text();
-                errorMessage = `Hiba: ${response.statusText}`;
-                console.error('Hiba részletei:', errorText);
+            // Feldolgozzuk a hibaüzeneteket
+            if (errorJson.errors) {
+                Object.entries(errorJson.errors).forEach(([field, message]) => {
+                    errorDetails.push({ label: field, value: message });
+                });
+            } else if (errorJson.message) {
+                errorDetails.push({ label: 'Hibaüzenet', value: errorJson.message });
             }
-            
-            alert(`Hiba történt: ${errorMessage}`);
-            return;
+        } catch (e) {
+            console.error('Nem sikerült parse-olni a hibaüzenetet:', e);
+            errorDetails.push({ label: 'Hibaüzenet', value: errorText.substring(0, 100) + (errorText.length > 100 ? '...' : '') });
         }
         
-        // 9. Sikeres válasz feldolgozása
+        if (errorDetails.length === 0) {
+            errorDetails.push({ label: 'Hiba', value: 'Hiányzó vagy érvénytelen mezők' });
+        }
+    } else if (response.status === 404) {
+        errorTitle = 'Nem található';
+        errorMessage = 'A kért erőforrás nem található!';
+        errorIcon = 'search-outline';
+        errorDetails = [
+            { label: 'Státusz kód', value: '404 - Not Found' },
+            { label: 'Végpont', value: response.url.split('/').pop() || 'Ismeretlen' }
+        ];
+    } else if (response.status >= 500) {
+        errorTitle = 'Szerverhiba';
+        errorMessage = 'Hiba történt a szerver oldalon!';
+        errorIcon = 'server-outline';
+        errorDetails = [
+            { label: 'Státusz kód', value: `${response.status} - Server Error` },
+            { label: 'Kérjük', value: 'Próbáld újra később' }
+        ];
+    } else {
+        errorMessage = `${response.status} - ${response.statusText || 'Ismeretlen hiba'}`;
+    }
+    
+    // Hibakezelő modal megjelenítése
+    await showConfirmModal({
+        title: errorTitle,
+        message: errorMessage,
+        subMessage: response.status === 401 ? 'Kattints a gombra az újra bejelentkezéshez.' : '',
+        icon: errorIcon,
+        confirmText: response.status === 401 ? 'Bejelentkezés' : 'Rendben',
+        cancelText: response.status !== 401 ? 'Mégse' : undefined,
+        details: errorDetails,
+        onConfirm: function() {
+            if (response.status === 401) {
+                // Bejelentkezési redirect
+                const currentPath = encodeURIComponent(window.location.pathname);
+                window.location.href = `/api/login/google?redirect=${currentPath}`;
+            }
+            // Egyéb esetekben csak bezárjuk a modalt
+        },
+        onCancel: function() {
+            // Modal bezárása (mégse gomb)
+        }
+    });
+    
+    return;
+}
+        
+        // 11. Sikeres válasz feldolgozása
         const result = await response.json();
-        console.log('Sikeres poszt létrehozás:', result);
+        console.log('12. Sikeres poszt létrehozás:', result);
         
         if (result.pid) {
             // Következő szám frissítése
@@ -755,7 +871,7 @@ async function createPost() {
         }
         
     } catch (error) {
-        console.error('Hiba a poszt létrehozása során:', error);
+        console.error('13. Hiba a poszt létrehozása során:', error);
         alert('Hálózati hiba történt! Kérjük, próbáld újra.');
     }
 }
@@ -855,7 +971,7 @@ function setupTitleBlockButton() {
     
     if (!titleBtn || !blockContainer) return;
     
-    titleBtn.addEventListener('click', function() {
+    titleBtn.addEventListener('click', async function() {
         // Ellenőrizzük, van-e már első blokk
         const existingBlocks = blockContainer.querySelectorAll('.content-block');
         
@@ -867,14 +983,26 @@ function setupTitleBlockButton() {
             const firstBlockType = firstBlock.getAttribute('data-block-type');
             
             if (firstBlockType !== 'heading') {
-                // Az első blokk nem címsor - cseréljük
-                if (confirm('Az első blokk már nem "Címsor" típusú. Lecseréljem címsorra?')) {
+                // Az első blokk nem címsor - megerősítés kérése
+                const result = await showConfirmModal({
+                    title: 'Címsor cseréje',
+                    message: 'Az első blokk már nem "Címsor" típusú.',
+                    subMessage: 'Lecseréljem címsorra?',
+                    icon: 'swap-horizontal-outline',
+                    confirmText: 'Igen, cseréld',
+                    cancelText: 'Mégse',
+                    details: [
+                        { label: 'Jelenlegi blokk', value: getBlockTypeName(firstBlockType) }
+                    ]
+                });
+                
+                if (result) {
                     firstBlock.remove();
                     addNewBlock('heading', true);
                 }
             } else {
                 // Már van címsor - új címsor a helyére?
-                alert('Már van címsor blokk az első helyen!');
+                showSuccessNotification('Már van címsor blokk az első helyen!', 'info');
             }
         }
     });
@@ -2486,7 +2614,7 @@ async function loadUserArticles() {
                 <p>${error.message}</p>
                 <button class="btn-secondary" onclick="loadUserArticles()">
                     <ion-icon name="refresh-outline"></ion-icon>
-                    Újrapróbálkozás
+                    <span style="font-family: 'Abril Fatface';">Újrapróbálkozás
                 </button>
             </div>
         `;
@@ -2496,7 +2624,7 @@ async function loadUserArticles() {
 /**
  * Megjeleníti a felhasználó cikkeit
  */
-function displayUserArticles(articlesData, container) {
+async function displayUserArticles(articlesData, container) {
     if (!articlesData || Object.keys(articlesData).length === 0) {
         container.innerHTML = `
             <div class="empty-state">
@@ -2510,7 +2638,6 @@ function displayUserArticles(articlesData, container) {
             </div>
         `;
         
-        // Eseménykezelő a gombhoz
         setTimeout(() => {
             document.getElementById('create-first-article')?.addEventListener('click', () => {
                 document.querySelector('[data-target="create-post"]').click();
@@ -2532,19 +2659,48 @@ function displayUserArticles(articlesData, container) {
             </div>
     `;
     
-    // Cikkek listázása
-    Object.entries(articlesData).forEach(([pid, article]) => {
-        const status = getArticleStatus(article);
-        const statusBadge = getStatusBadgeHTML(status);
+    // Cikkek listázása - aszinkron státusz lekérdezéssel
+    const articleEntries = Object.entries(articlesData);
+    
+    // Elsőként betöltjük a státuszokat
+    const statusMap = await getStatusesForArticles(articleEntries);
+    
+    articleEntries.forEach(([pid, article]) => {
+        const statusInfo = statusMap[pid] || { status: article.status || 'draft', hidden: false };
+        const status = statusInfo.status;
         const createdDate = formatDate(article.created || new Date().toISOString());
+        
+        // Státusz badge generálása
+        let statusBadgeHTML = '';
+        if (status) {
+            const statusConfig = {
+                'published': { text: 'Publikálva', class: 'published' },
+                'pending': { text: 'Ellenőrzés alatt', class: 'pending' },
+                'draft': { text: 'Vázlat', class: 'draft' },
+                'approved': { text: 'Elfogadva', class: 'published' },
+                'rejected': { text: 'Elutasítva', class: 'rejected' }
+            };
+            
+            const config = statusConfig[status] || { text: 'Ismeretlen', class: 'draft' };
+            
+            // Hidden státusz kezelése
+            let statusText = config.text;
+            let statusClass = config.class;
+            if (statusInfo.hidden) {
+                statusText += ' (Rejtett)';
+                statusClass = 'draft';
+            }
+            
+            statusBadgeHTML = `<span class="status-badge ${statusClass}">${statusText}</span>`;
+        }
         
         html += `
             <div class="table-row" data-pid="${pid}" data-status="${status}">
                 <div class="table-col">
-                    <div class="article-title">${article.title || 'Cím nélkül'}</div>
+                    <div class="article-title" style="font-family: 'Abril Fatface'">${article.title || 'Cím nélkül'}</div>
                 </div>
-                <div class="table-col">
-                    ${statusBadge}
+                <div class="table-col" id="status-col-${pid}">
+                    ${statusBadgeHTML}
                 </div>
                 <div class="table-col">${createdDate}</div>
                 <div class="table-col">${article.number || '-'}</div>
@@ -2572,32 +2728,166 @@ function displayUserArticles(articlesData, container) {
     setupArticleFilters();
 }
 
+async function getStatusesForArticles(articleList) {
+    const token = await getAuthToken();
+    if (!token) return {};
+    
+    const statusPromises = articleList.map(async ([pid, article]) => {
+        try {
+            const response = await fetch(`/api/post/get/status?post=${pid}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                return { pid, status: data.status, hidden: data.hidden };
+            }
+        } catch (error) {
+            console.error(`Hiba státusz lekérésnél PID ${pid}:`, error);
+        }
+        return { pid, status: null, hidden: false };
+    });
+    
+    const results = await Promise.all(statusPromises);
+    const statusMap = {};
+    
+    results.forEach(result => {
+        statusMap[result.pid] = {
+            status: result.status,
+            hidden: result.hidden
+        };
+    });
+    
+    return statusMap;
+}
+
 /**
  * Megállapítja a cikk státuszát
  */
-function getArticleStatus(article) {
-    // Itt a szerverről jövő adatok alapján kell meghatározni
-    // Jelenleg alapértelmezetten "draft"-ot adunk vissza
-    // A jövőben ezt a szerver API-ból kell lekérni
+async function getArticleStatus(article, pid) {
+    if (!pid) {
+        return article.status || 'draft';
+    }
+    
+    try {
+        const token = await getAuthToken();
+        if (!token) {
+            return article.status || 'draft';
+        }
+        
+        const response = await fetch(`/api/post/get/status?post=${pid}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const statusData = await response.json();
+            return statusData.status || 'draft';
+        }
+    } catch (error) {
+        console.error(`Hiba a státusz lekérése során PID ${pid}:`, error);
+    }
+    
     return article.status || 'draft';
 }
+
 
 /**
  * Státusz badge HTML generálása
  */
-function getStatusBadgeHTML(status) {
-    const statusConfig = {
-        'published': { text: 'Publikálva', class: 'published' },
-        'pending': { text: 'Ellenőrzés alatt', class: 'pending' },
-        'draft': { text: 'Vázlat', class: 'draft' },
-        'approved': { text: 'Elfogadva', class: 'published' },
-        'rejected': { text: 'Elutasítva', class: 'rejected' }
-    };
+async function getStatusBadgeHTML(status, pid) {
+    // Ha már van status, használjuk azt (kompatibilitás)
+    if (status) {
+        const statusConfig = {
+            'published': { text: 'Publikálva', class: 'published' },
+            'pending': { text: 'Ellenőrzés alatt', class: 'pending' },
+            'draft': { text: 'Vázlat', class: 'draft' },
+            'approved': { text: 'Elfogadva', class: 'published' },
+            'rejected': { text: 'Elutasítva', class: 'rejected' }
+        };
+        
+        const config = statusConfig[status] || { text: 'Ismeretlen', class: 'draft' };
+        return `<span class="status-badge ${config.class}">${config.text}</span>`;
+    }
     
-    const config = statusConfig[status] || { text: 'Ismeretlen', class: 'draft' };
+    // Ha nincs status, de van PID, lekérjük a szerverről
+    if (!pid) {
+        return `<span class="status-badge draft">Betöltés...</span>`;
+    }
     
-    return `<span class="status-badge ${config.class}">${config.text}</span>`;
+    try {
+        const token = await getAuthToken();
+        if (!token) {
+            return `<span class="status-badge draft" style="font-family: 'Abril Fatface';">Nincs bejelentkezve</span>`;
+        }
+        
+        // API hívás: /api/post/get/status?post={pid}
+        const response = await fetch(`/api/post/get/status?post=${pid}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        console.log(`Státusz lekérés PID: ${pid}, státusz: ${response.status}`);
+        
+        if (response.ok) {
+            const statusData = await response.json();
+            console.log(`Státusz adatok PID ${pid}:`, statusData);
+            
+            // Átalakítás magyarra
+            let statusText = 'Ismeretlen';
+            let statusClass = 'draft';
+            
+            switch(statusData.status) {
+                case 'pending':
+                    statusText = 'Ellenőrzés alatt';
+                    statusClass = 'pending';
+                    break;
+                case 'approved':
+                    statusText = 'Elfogadva';
+                    statusClass = 'published';
+                    break;
+                case 'published':
+                    statusText = 'Publikálva';
+                    statusClass = 'published';
+                    break;
+                case 'rejected':
+                    statusText = 'Elutasítva';
+                    statusClass = 'rejected';
+                    break;
+                case 'draft':
+                    statusText = 'Vázlat';
+                    statusClass = 'draft';
+                    break;
+                default:
+                    statusText = statusData.status || 'Ismeretlen';
+                    statusClass = 'draft';
+            }
+            
+            // Hidden státusz kezelése
+            if (statusData.hidden) {
+                statusText += ' (Rejtett)';
+                statusClass = 'draft';
+            }
+            
+            return `<span class="status-badge ${statusClass}">${statusText}</span>`;
+        } else {
+            console.warn(`Hiba státusz lekérésnél PID ${pid}:`, response.status);
+            return `<span class="status-badge draft">Hiba</span>`;
+        }
+        
+    } catch (error) {
+        console.error(`Hiba a státusz lekérése során PID ${pid}:`, error);
+        return `<span class="status-badge draft">Hiba</span>`;
+    }
 }
+
 
 /**
  * Dátum formázása
@@ -2911,20 +3201,20 @@ async function openAuthorsModal() {
                 <div class="authors-modal-search">
                     <div class="search-input-wrapper">
                         <ion-icon name="search-outline"></ion-icon>
-                        <input type="text" id="search-authors-input" placeholder="Keresés szerzők között...">
+                        <input type="text" style="font-family: 'Abril Fatface';" id="search-authors-input" placeholder="Keresés szerzők között...">
                     </div>
                 </div>
                 
                 <div class="authors-modal-list" id="authors-modal-list">
                     <div class="authors-loading">
                         <ion-icon name="sync-outline" class="loading-icon"></ion-icon>
-                        <p>Szerzők betöltése...</p>
+                        <p style="font-family: 'Abril Fatface';">Szerzők betöltése...</p>
                     </div>
                 </div>
                 
                 <div class="authors-modal-footer">
-                    <button type="button" class="btn-secondary" id="cancel-authors-modal">Mégse</button>
-                    <button type="button" class="btn-primary" id="save-authors-modal">Kiválasztás</button>
+                    <button type="button" class="btn-secondary" id="cancel-authors-modal" style="font-family: 'Abril Fatface'; font-size: 16px">Mégse</button>
+                    <button type="button" class="btn-primary" id="save-authors-modal" style="font-family: 'Abril Fatface'; font-size: 16px">Kiválasztás</button>
                 </div>
             </div>
         </div>
@@ -3067,7 +3357,7 @@ async function openAuthorsModal() {
                 <ion-icon name="alert-circle-outline"></ion-icon>
                 <p>${message}</p>
                 <button type="button" class="btn-secondary" onclick="location.reload()" 
-                        style="margin-top: 16px;">
+                        style="margin-top: 20px; font-family: 'Abril Fatface'; background-color: green">
                     Újrapróbálkozás
                 </button>
             </div>
@@ -3702,13 +3992,13 @@ async function displayReviews(pendingData, editedData, container) {
                         <button class="btn-action review-view" onclick="viewReviewPost(${pid})">
                             <ion-icon name="eye-outline"></ion-icon>
                         </button>
-                        <button class="btn-success review-approve" onclick="approveReviewPost(${pid})">
+                        <button class="btn-success review-approve" onclick="approveReviewPost2(${pid})">
                             <ion-icon name="checkmark-outline"></ion-icon>
-                            Elfogadás
+                            <span style="font-family: 'Abril Fatface'">Elfogadás</span>
                         </button>
                         <button class="btn-danger review-delete" onclick="deleteReviewPost(${pid})">
                             <ion-icon name="trash-outline"></ion-icon>
-                            Törlés
+                            <span style="font-family: 'Abril Fatface'">Törlés</span>
                         </button>
                     </div>
                 </div>
@@ -4032,11 +4322,19 @@ async function approveReviewPost(pid) {
  * Poszt törlése
  */
 async function deleteReviewPost(pid) {
-    if (!confirm('Biztosan törölni szeretnéd ezt a posztot? Ez a művelet VÉGLEGES és nem visszavonható!')) {
-        return;
-    }
+
+    
     
     try {
+
+        const result = await showConfirmModal({
+            title: 'Poszt törlése',
+            message: 'Biztosan törölni szeretnéd engedni ezt a posztot?',
+            subMessage: 'Törölve lesz az adatbázosból véglegesen.',
+            icon: 'trash-outline',
+            confirmText: 'Igen, törlöm',
+            cancelText: 'Mégse'
+        });
         const token = await getAuthToken();
         
         const response = await fetch('/api/post/delete', {
@@ -4590,11 +4888,11 @@ async function showConfirmModal(options = {}) {
                     <div class="confirm-modal-footer">
                         <button type="button" class="btn-secondary" id="${modalId}-cancel">
                             <ion-icon name="close-outline"></ion-icon>
-                            ${config.cancelText}
+                             <span style="font-family: 'Abril Fatface'; font-size: 16px">${config.cancelText}</span>
                         </button>
                         <button type="button" class="btn-danger" id="${modalId}-confirm">
                             <ion-icon name="checkmark-outline"></ion-icon>
-                            ${config.confirmText}
+                            <span style="font-family: 'Abril Fatface'; font-size: 16px">${config.confirmText}
                         </button>
                     </div>
                 </div>
@@ -4700,40 +4998,43 @@ async function deleteArticle(pid) {
 }
 
 
-async function deleteReviewPost(pid) {
+async function approveReviewPost2(pid) {
     try {
         const result = await showConfirmModal({
-            title: 'Poszt törlése',
-            message: 'Biztosan törölni szeretnéd ezt a posztot?',
-            subMessage: 'Ez a művelet véglegesen törli a posztot az adatbázisból!',
-            icon: 'warning-outline',
-            confirmText: 'Igen, véglegesen törlöm',
+            title: 'Poszt elfogadása',
+            message: 'Biztosan ki szeretnéd engedni ezt a posztot?',
+            subMessage: 'A poszt meg fog jelenni a címlapon és nyilvános lesz.',
+            icon: 'checkmark-outline',
+            confirmText: 'Igen, elfogadom',
             cancelText: 'Mégse'
         });
         
         if (result) {
             const token = await getAuthToken();
             
-            const response = await fetch('/api/post/delete', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ post: parseInt(pid) })
-            });
+            const response = await fetch('/api/post/approve', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ post: parseInt(pid) })
+        });
             
             if (response.ok) {
-                showSuccessNotification('Poszt sikeresen törölve!', 'success');
-                loadPendingReviews();
-            } else {
-                const error = await response.text();
-                showSuccessNotification(`Hiba: ${error}`, 'error');
-            }
+            const result = await response.json();
+            alert('Poszt sikeresen elfogadva!');
+            
+            // Lista frissítése
+            loadPendingReviews();
+        } else {
+            const error = await response.text();
+            alert(`Hiba: ${error}`);
+        }
         }
     } catch (error) {
-        console.error('Hiba a poszt törlése során:', error);
-        showSuccessNotification('Hiba történt a poszt törlése során!', 'error');
+        console.error('Hiba a poszt elfogadása során:', error);
+        alert('Hiba történt a poszt elfogadása során!');
     }
 }
 
@@ -5024,14 +5325,70 @@ function addNewBlock(blockType) {
  */
 function setupBlockEventListeners(block) {
     // Törlés gomb
-    const deleteBtn = block.querySelector('[data-action="delete"]');
-    if (deleteBtn) {
-        deleteBtn.addEventListener('click', function() {
-            if (confirm('Biztosan törölni szeretnéd ezt a blokkot?')) {
-                block.remove();
-            }
+// Törlés gomb
+// Törlés gomb
+const deleteBtn = block.querySelector('[data-action="delete"]');
+if (deleteBtn) {
+    deleteBtn.addEventListener('click', async function() {
+        // Blokk típus lekérése
+        const blockType = block.getAttribute('data-block-type');
+        const blockTypeName = getBlockTypeName(blockType);
+        
+        // Ellenőrizzük, hogy ez az első blokk-e
+        const isFirst = isFirstBlock(block);
+        
+        // Megerősítés modallal
+        const result = await showConfirmModal({
+            title: 'Blokk törlése',
+            message: `Biztosan törölni szeretnéd ezt a blokkot?`,
+            subMessage: isFirst && blockType === 'heading' ? 
+                'Figyelem: Ez a címsor blokk, a cím el fog veszni!' : 
+                'A művelet nem visszavonható.',
+            icon: 'trash-outline',
+            confirmText: 'Igen, törlöm',
+            cancelText: 'Mégse',
+            details: [
+                { label: 'Blokk típus', value: blockTypeName },
+                { label: 'Pozíció', value: isFirst ? 'Első hely' : `#${Array.from(block.parentNode.children).indexOf(block) + 1}` }
+            ]
         });
-    }
+        
+        if (result) {
+            // Törlés előtt mentjük az állapotot
+            const wasFirstHeading = isFirst && blockType === 'heading';
+            
+            // Töröljük a blokkot
+            block.remove();
+            
+            // Utánkövetés: ellenőrizzük az állapotot
+            const remainingBlocks = document.querySelectorAll('.content-block');
+            
+            if (remainingBlocks.length === 0) {
+                // Nincs több blokk - üres tartalom
+                updateTitlePreview(null, 'Nincs tartalom');
+            } else if (wasFirstHeading) {
+                // Első címsor törölve - frissítjük a címet
+                const newFirstBlock = remainingBlocks[0];
+                const newBlockType = newFirstBlock.getAttribute('data-block-type');
+                
+                if (newBlockType === 'heading') {
+                    // Az új első blokk is címsor
+                    const headingInput = newFirstBlock.querySelector('.block-heading-input');
+                    const newTitle = headingInput ? headingInput.value.trim() : '';
+                    updateTitlePreview(newTitle, 'Új címsor');
+                } else {
+                    // Az új első blokk nem címsor
+                    updateTitlePreview('', 'Hiányzó cím');
+                }
+            }
+            
+            // Frissítjük a blokk pozíciókat és előnézetet
+            setTimeout(async () => {
+                await prepareBlockPostData();
+            }, 100);
+        }
+    });
+}
     
     // Duplikálás gomb
     const duplicateBtn = block.querySelector('[data-action="duplicate"]');
@@ -5440,11 +5797,36 @@ function setupPreviewButton() {
         console.log('Cikk előnézete külön oldalon...');
         
         // 1. Blokkok validálása
-        const validation = validateFirstBlock();
-        if (!validation.isValid) {
-            alert(`Nem lehet megtekinteni: ${validation.message}\n\nKérlek, először adj hozzá egy címsor blokkot!`);
-            return;
+       const validation = validateFirstBlock();
+if (!validation.isValid) {
+    await showConfirmModal({
+        title: 'Előnézet nem elérhető',
+        message: validation.message,
+        subMessage: 'Kérlek, először adj hozzá egy címsor blokkot!',
+        icon: 'eye-off-outline',
+        confirmText: 'Címsor hozzáadása',
+        cancelText: 'Mégse',
+        details: [
+            { label: 'Hiba típusa', value: validation.isValid ? 'Érvényes' : 'Érvénytelen' },
+            { label: 'Blokkok száma', value: document.querySelectorAll('.content-block').length || 0 }
+        ],
+        onConfirm: function() {
+            // Címsor blokk hozzáadása gomb aktiválása
+            const titleBtn = document.getElementById('add-title-block-btn');
+            if (titleBtn) {
+                titleBtn.click();
+            } else {
+                // Ha nincs gomb, manuálisan adjunk hozzá címsort
+                addNewBlock('heading', true);
+            }
+        },
+        onCancel: function() {
+            // Vissza a szerkesztéshez
+            console.log('Előnézet megjelenítése megszakítva');
         }
+    });
+    return;
+}
         
         // 2. Adatok előkészítése
         const postData = await prepareBlockPostData();
@@ -5497,6 +5879,9 @@ async function getAuthorsDisplayData() {
     const authorsInput = document.getElementById('post-authors');
     let authorIds = [];
     
+    console.log('Szerzők adatainak lekérése...');
+    console.log('Authors input value:', authorsInput ? authorsInput.value : 'N/A');
+    
     // 1. JELENLEGI FELHASZNÁLÓ HOZZÁADÁSA
     try {
         const token = await getAuthToken();
@@ -5512,11 +5897,15 @@ async function getAuthorsDisplayData() {
             
             if (userResponse.ok) {
                 const currentUser = await userResponse.json();
+                console.log('Jelenlegi felhasználó:', currentUser);
+                
                 if (currentUser && currentUser.uid) {
                     // Jelenlegi felhasználó hozzáadása (ha még nincs benne)
                     authorIds.push(currentUser.uid.toString());
                     console.log('Jelenlegi felhasználó hozzáadva:', currentUser.uid);
                 }
+            } else {
+                console.error('Nem sikerült lekérni a jelenlegi felhasználót');
             }
         }
     } catch (error) {
@@ -5529,21 +5918,32 @@ async function getAuthorsDisplayData() {
             .map(id => id.trim())
             .filter(id => id !== '');
         
+        console.log('Kiválasztott szerző ID-k:', selectedIds);
+        
+        // Csak az érvényes, számként értelmezhető ID-kat vegyük fel
+        const validIds = selectedIds.filter(id => {
+            const num = parseInt(id);
+            return !isNaN(num) && num > 0;
+        });
+        
         // Duplikációk elkerülése
-        selectedIds.forEach(id => {
+        validIds.forEach(id => {
             if (!authorIds.includes(id)) {
                 authorIds.push(id);
             }
         });
-        console.log('Kiválasztott szerzők hozzáadva:', selectedIds);
+        console.log('Érvényes szerzők hozzáadva:', validIds);
     }
     
-    // 3. SZERZŐK ADATAINAK LEKÉRÉSE
+    // 3. SZERZŐK ADATAINAK LEKÉRÉSE ÉS ÉRVÉNYESÍTÉSE
     const authors = [];
     
     if (authorIds.length === 0) {
-        return authors; // Üres tömb, ha nincsenek szerzők
+        console.log('Nincsenek szerzők hozzáadva');
+        return authors;
     }
+    
+    console.log('Összes author ID ellenőrzésre:', authorIds);
     
     try {
         const token = await getAuthToken();
@@ -5558,11 +5958,15 @@ async function getAuthorsDisplayData() {
             
             if (response.ok) {
                 const allUsers = await response.json();
+                console.log('Összes felhasználó:', Object.keys(allUsers));
                 
                 // Minden authorId-hez megkeressük a nevet
                 for (const id of authorIds) {
                     const uid = parseInt(id);
+                    console.log(`Ellenőrzöm a felhasználót ID: ${uid} (${id})`);
+                    
                     if (allUsers[uid]) {
+                        console.log(`Felhasználó ${uid} található:`, allUsers[uid]);
                         const authorName = allUsers[uid].alias || 
                                          allUsers[uid].full_name || 
                                          allUsers[uid].first_name || 
@@ -5571,24 +5975,22 @@ async function getAuthorsDisplayData() {
                             id: uid,
                             name: authorName,
                             email: allUsers[uid].email || '',
-                            isCurrentUser: await isCurrentUser(uid) // Ellenőrizzük, hogy ez-e a jelenlegi felhasználó
-                        });
-                    } else {
-                        // Ha nincs adat, csak az ID-t mentjük
-                        authors.push({
-                            id: uid,
-                            name: `Felhasználó ${uid}`,
-                            email: '',
                             isCurrentUser: await isCurrentUser(uid)
                         });
+                    } else {
+                        console.warn(`Figyelmeztetés: A(z) ${uid} ID-val rendelkező felhasználó nem található!`);
+                        // Nem adjuk hozzá, ha nem létezik
                     }
                 }
+            } else {
+                console.error('Nem sikerült lekérni az összes felhasználót');
             }
         }
     } catch (error) {
         console.error('Hiba a szerzők betöltése során:', error);
     }
     
+    console.log('Végleges szerzők listája:', authors);
     return authors;
 }
 
