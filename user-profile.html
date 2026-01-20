@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
 
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -303,6 +304,7 @@
         }
         
         .contact-label {
+            font-family: 'Abril Fatface';
             font-size: 12px;
             color: var(--profile-text-light);
             margin-bottom: 2px;
@@ -353,6 +355,20 @@
             font-weight: 600;
             margin-bottom: 10px;
         }
+
+        .category-icon {
+    width: auto;
+    height: 30px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+.post-category-with-icon {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
         
         .post-title {
             font-size: 18px;
@@ -374,7 +390,8 @@
             align-items: center;
             font-size: 14px;
             color: var(--profile-text-light);
-            padding-top: 15px;
+            padding-top: 10px;
+            padding-bottom: -20px;
             border-top: 1px solid var(--profile-border);
         }
         
@@ -567,6 +584,224 @@
                 gap: 15px;
             }
         }
+
+        .image-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+   .image-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+}
+
+.image-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.image-modal-content {
+    position: relative;
+    width: auto;
+    height: auto;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-modal-content img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10001;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+.image-caption {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    opacity: 0.9;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 12px 20px;
+    border-radius: 8px;
+    max-width: 80%;
+    margin: 0 auto;
+    backdrop-filter: blur(10px);
+}
+
+.modal-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10001;
+    opacity: 0.7;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-nav:hover {
+    background: rgba(255, 255, 255, 0.25);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.modal-prev {
+    left: 30px;
+}
+
+.modal-next {
+    right: 30px;
+}
+
+/* Tablet és mobil eszközök */
+@media (max-width: 768px) {
+    .modal-close-btn {
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+    }
+    
+    .modal-nav {
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+    }
+    
+    .modal-prev {
+        left: 15px;
+    }
+    
+    .modal-next {
+        right: 15px;
+    }
+    
+    .image-caption {
+        bottom: 20px;
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .modal-prev {
+        left: 10px;
+    }
+    
+    .modal-next {
+        right: 10px;
+    }
+}
+
+/* Kattintható képek animáció */
+.profile-avatar-container {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.profile-avatar-container:hover {
+    transform: scale(1.05);
+}
+
+.profile-avatar-container:hover .profile-avatar {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.profile-avatar {
+    transition: all 0.3s ease;
+}
+
+.cover-photo-container {
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.cover-photo-container:hover .cover-photo {
+    transform: scale(1.02);
+}
+
+.cover-photo {
+    transition: transform 0.5s ease;
+}
+
+
     </style>
 </head>
 
@@ -593,7 +828,25 @@
 
 <body>
 
-    
+<div class="image-modal-overlay" id="image-modal">
+    <div class="image-modal-content">
+        <button class="modal-close-btn" id="modal-close-btn">
+            <ion-icon name="close-outline"></ion-icon>
+        </button>
+        
+        <button class="modal-nav modal-prev" id="modal-prev-btn">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+        </button>
+        
+        <img id="modal-image" src="" alt="Nagyított kép">
+        
+        <button class="modal-nav modal-next" id="modal-next-btn">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+        
+        <div class="image-caption" id="modal-caption"></div>
+    </div>
+</div>
     
     <div class="profile-container">
 
@@ -610,29 +863,29 @@
         <!-- Profil fejléc -->
         <div class="profile-header">
             <div class="cover-photo-container">
-                <img id="profile-cover" class="cover-photo" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&auto=format&fit=crop" alt="Profil háttér">
+                <img id="profile-cover" class="cover-photo" src="https://www.google.com/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fstock.adobe.com%2Fsearch%3Fk%3Dgeneric%2Bperson%2Bicon&ved=0CBYQjRxqFwoTCIDbwbGi_5EDFQAAAAAdAAAAABAI&opi=89978449" alt="Profil háttér">
                 <div class="cover-overlay"></div>
             </div>
             
             <div class="profile-info-section">
                 <div class="profile-avatar-container">
-                    <img id="profile-avatar" class="profile-avatar" src="https://ui-avatars.com/api/?name=Guest&background=1891d1&color=fff" alt="Profilkép">
+                    <img id="profile-avatar" class="profile-avatar" src="/Irok/Profilkep/profil1.svg" alt="Profilkép">
 
                 </div>
                 
                 <div class="profile-name-section">
-                    <h1 id="profile-name" class="profile-name">Felhasználó neve</h1>
-                    <div id="profile-username" class="profile-username">@felhasznalonev</div>
+                    <h1 id="profile-name" class="profile-name" style="font-family: 'Abril Fatface';">Betöltés...</h1>
+           <!--          <div id="profile-username" class="profile-username">@felhasznalonev</div>  -->
                     
-                    <div id="profile-roles" class="profile-roles">
+                    <div id="profile-roles" class="profile-roles" style="font-family: 'Oswald';">
                         <!-- Rangok ide töltődnek -->
                     </div>
                 </div>
                 
                 <div class="profile-stats">
                     <div class="stat-item">
-                        <span id="articles-count" class="stat-number">0</span>
-                        <span class="stat-label">Cikkek</span>
+                        <span id="articles-count" class="stat-number" style="font-family: 'Abril Fatface">0</span>
+                        <span class="stat-label" style="font-family: 'Oswald">Cikkek</span>
                     </div>
 
                      <!-- 
@@ -658,7 +911,7 @@
         <div class="current-issue-banner" id="current-issue-banner">
             <div class="issue-info">
                 
-                <p class="issue-number" id="current-issue-number"  style="font-family: 'Abril Fatface';">-</p>
+                <p class="issue-number" id="current-issue-number"  style="font-family: 'Abril Fatface'">-</p>
                 <p class="issue-motto" id="current-issue-motto"  style="font-family: 'Abril Fatface';">-</p>
             </div>
             <div class="issue-actions">
@@ -670,7 +923,7 @@
             <!-- Bal oldal - Posztok -->
             <div class="profile-posts-section">
                 <div class="info-card">
-                    <h3 style="font-family: 'Abril Fatface';">Legújabb cikkek</h3>
+                    <h3 style="font-family: 'Abril Fatface'; font-size: 20px;">Legújabb cikkek</h3>
                     
                     <div id="posts-container" class="posts-grid">
                         <div class="empty-state">
@@ -684,8 +937,8 @@
                 <div id="load-more-posts" style="text-align: center; margin-top: 20px; display: none;">
                     <button class="btn-message" onclick="loadMorePosts()">
                         <ion-icon name="chevron-down-outline"></ion-icon>
-                        További cikkek betöltése
-                    </button>
+                        <span style="font-family: 'Abril Fatface'; font-weight: 100; font-size: 18px;">További cikkek betöltése</span>        
+                                </button>
                 </div>
             </div>
             
@@ -703,14 +956,14 @@
                 
                 <!-- Kapcsolat információk -->
                 <div class="info-card">
-                    <h3 style= "font-family: 'Abril Fatface'">Kapcsolat</h3>
+                    <h3 style="font-family: 'Abril Fatface'">Kapcsolat</h3>
                     <div id="contact-list" class="contact-list">
                         <div class="contact-item">
                             <div class="contact-icon">
                                 <ion-icon name="mail-outline"></ion-icon>
                             </div>
                             <div class="contact-details">
-                                <div class="contact-label" style="font-family: 'Abril Fatface'">Email</div>
+                                <div class="contact-label">Email</div>
                                 <div id="contact-email" class="contact-value"  style="font-family: 'Oswald">-</div>
                             </div>
                         </div>
@@ -720,8 +973,8 @@
                                 <ion-icon name="logo-discord"></ion-icon>
                             </div>
                             <div class="contact-details">
-                                <div class="contact-label" style="font-family: 'Abril Fatface'">Discord</div>
-                                <div id="contact-discord" class="contact-value"  style="font-family: 'Oswald">-</div>
+                                <div class="contact-label">Discord</div>
+                                <div id="contact-discord" class="contact-value">-</div>
                             </div>
                         </div>
                         
@@ -730,7 +983,7 @@
                                 <ion-icon name="logo-youtube"></ion-icon>
                             </div>
                             <div class="contact-details">
-                                <div class="contact-label" style="font-family: 'Abril Fatface';">YouTube</div>
+                                <div class="contact-label">YouTube</div>
                                 <div id="contact-youtube" class="contact-value"  style="font-family: 'Oswald">-</div>
                             </div>
                         </div>
@@ -740,7 +993,7 @@
                                 <ion-icon name="logo-instagram"></ion-icon>
                             </div>
                             <div class="contact-details">
-                                <div class="contact-label" style="font-family: 'Abril Fatface';">Instagram</div>
+                                <div class="contact-label">Instagram</div>
                                 <div id="contact-instagram" class="contact-value"  style="font-family: 'Oswald">-</div>
                             </div>
                         </div>
@@ -750,7 +1003,7 @@
                                 <ion-icon name="book-outline"></ion-icon>
                             </div>
                             <div class="contact-details">
-                                <div class="contact-label" style="font-family: 'Abril Fatface';">Wattpad</div>
+                                <div class="contact-label">Wattpad</div>
                                 <div id="contact-wattpad" class="contact-value"  style="font-family: 'Oswald">-</div>
                             </div>
                         </div>
@@ -759,7 +1012,7 @@
                 
                 <!-- Legnépszerűbb cikk -->
                 <div class="info-card">
-                    <h3 style="font-family: 'Abril Fatface';">Legnépszerűbb cikk</h3>
+                    <h3 style="font-family: 'Abril Fatface'">Legnépszerűbb cikk</h3>
                     <div id="popular-post" class="empty-state"  style="font-family: 'Oswald">
                         <ion-icon name="trending-up-outline"></ion-icon>
                         <p>Még nincs elérhető adat</p>
@@ -768,52 +1021,167 @@
             </div>
         </div>
     </div>
-    
+    <script type="module" src="user-profile.js"></script>
     <script>
-    // Felhasználói profil oldal JavaScript
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Felhasználói profil oldal betöltve');
-        
-        // URL paraméterek ellenőrzése (uid)
+
+        initImageModal();
+
         const urlParams = new URLSearchParams(window.location.search);
         const uid = urlParams.get('uid');
         
         if (uid) {
-            // Ha van UID paraméter, betöltjük a felhasználó adatait
             loadUserProfile(uid);
         } else {
-            // Ha nincs UID, megpróbáljuk a jelenlegi felhasználót betölteni
             loadCurrentUserProfile();
         }
         
-        // Lapszám betöltése
         loadCurrentIssue();
-        
-        // Alap eseménykezelők
         setupEventListeners();
     });
     
-    function setupEventListeners() {
-        // Vissza gomb
-        document.querySelector('.btn-back').addEventListener('click', function(e) {
+function setupEventListeners() {
+    const backBtn = document.querySelector('.btn-back');
+    if (backBtn) {
+        backBtn.addEventListener('click', function(e) {
             e.preventDefault();
             window.history.back();
         });
     }
+}
     
+    function initImageModal() {
+    const modal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const modalCaption = document.getElementById('modal-caption');
+    const closeBtn = document.getElementById('modal-close-btn');
+    const prevBtn = document.getElementById('modal-prev-btn');
+    const nextBtn = document.getElementById('modal-next-btn');
+    
+    // Bezárás
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Esc billentyű
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+    
+function showBigImage(src, alt = 'Nagyított kép') {
+    const modalImage = document.getElementById('modal-image');
+    const modalCaption = document.getElementById('modal-caption');
+    const modal = document.getElementById('image-modal');
+    
+    // Várj egy kicsit, hogy biztosan betöltődjön a kép
+    modalImage.onload = function() {
+        modalImage.style.display = 'block';
+        modalCaption.textContent = alt;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+    
+    modalImage.onerror = function() {
+        console.error('Nem sikerült betölteni a képet:', src);
+        modalImage.style.display = 'none';
+        modalCaption.textContent = 'Nem sikerült betölteni a képet';
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+    
+    modalImage.style.display = 'none'; // Elrejtjük amíg betölt
+    modalImage.src = src;
+    
+    // Backup timeout, ha nem hívódna meg az onload
+    setTimeout(() => {
+        if (!modal.classList.contains('active')) {
+            modalImage.style.display = 'block';
+            modalCaption.textContent = alt;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }, 500);
+}
+    
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Kis késleltetés, hogy a CSS animáció lejátszódjon
+        setTimeout(() => {
+            modalImage.src = '';
+            modalCaption.textContent = '';
+        }, 300);
+    }
+
+        function setupImageNavigation(currentSrc) {
+        // Itt implementálhatod a képváltási logikát
+        // Például: profil kép és háttér kép között váltás
+        const images = [
+            { src: document.getElementById('profile-avatar')?.src, alt: 'Profilkép' },
+            { src: document.getElementById('profile-cover')?.src, alt: 'Profil háttér' }
+        ].filter(img => img.src);
+        
+        if (images.length > 1) {
+            let currentIndex = images.findIndex(img => img.src === currentSrc);
+            
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            
+            prevBtn.onclick = function() {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showBigImage(images[currentIndex].src, images[currentIndex].alt);
+            };
+            
+            nextBtn.onclick = function() {
+                currentIndex = (currentIndex + 1) % images.length;
+                showBigImage(images[currentIndex].src, images[currentIndex].alt);
+            };
+        } else {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
+    }
+    
+    // Globális hozzáférés a showBigImage függvényhez
+    window.showBigImage = showBigImage;
+    
+    // Profil és háttérkép kattintás események
+    setTimeout(() => {
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profileCover = document.getElementById('profile-cover');
+        
+        if (profileAvatar) {
+            profileAvatar.addEventListener('click', function() {
+                showBigImage(this.src, 'Profilkép');
+            });
+        }
+        
+        if (profileCover) {
+            profileCover.addEventListener('click', function() {
+                showBigImage(this.src, 'Profil háttér');
+            });
+        }
+    }, 500);
+}
+
     async function loadCurrentUserProfile() {
         console.log('Jelenlegi felhasználó profiljának betöltése...');
         
         const token = await getAuthToken();
         if (!token) {
             console.log('Nincs token - publikus profil betöltése');
-            // Publikus felhasználó betöltése (pl. alapértelmezett vagy népszerű)
             loadPublicProfile();
             return;
         }
         
         try {
-            // Lekérjük a jelenlegi felhasználó UID-ját
             const userResponse = await fetch('/api/user/get', {
                 method: 'POST',
                 headers: {
@@ -821,7 +1189,7 @@
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    get: 'uid, email, first_name, full_name, alias, roles, pfp, description, face, dc, yt, insta, wattpad, created_at'
+                    get: 'uid, email, first_name, full_name, alias, roles, pfp, description, face, dc, yt, insta, wattpad, created_at, background'
                 })
             });
             
@@ -829,13 +1197,8 @@
                 const userData = await userResponse.json();
                 console.log('Felhasználói adatok:', userData);
                 
-                // Profil megjelenítése
                 displayUserProfile(userData);
-                
-                // Felhasználó cikkeinek betöltése
                 loadUserPosts(userData.uid);
-                
-                // Művelet gombok beállítása (saját profil esetén)
                 setupOwnProfileActions();
             } else {
                 console.error('Hiba a felhasználói adatok lekérése során');
@@ -851,7 +1214,6 @@
         console.log(`Felhasználói profil betöltése UID alapján: ${uid}`);
         
         try {
-            // GET /api/user/getone?uid=XXX
             const response = await fetch(`/api/user/getone?uid=${uid}`, {
                 method: 'GET'
             });
@@ -859,18 +1221,11 @@
             if (response.ok) {
                 const userData = await response.json();
                 console.log('Felhasználói adatok:', userData);
-                
-                // Profil megjelenítése
                 displayUserProfile(userData);
-                
-                // Felhasználó cikkeinek betöltése
                 loadUserPosts(uid);
-                
-                // Művelet gombok beállítása (másik felhasználó esetén)
                 setupOtherProfileActions(uid);
                 
             } else if (response.status === 404) {
-                // Felhasználó nem található
                 showUserNotFound();
             } else {
                 console.error('Hiba a felhasználói adatok lekérése során:', response.status);
@@ -882,16 +1237,13 @@
         }
     }
     
-    function displayUserProfile(userData) {
+ function displayUserProfile(userData) {
         console.log('Profil megjelenítése:', userData);
-        
-        // Alapadatok
         const profileName = document.getElementById('profile-name');
         const profileUsername = document.getElementById('profile-username');
         const profileAvatar = document.getElementById('profile-avatar');
+        const profileCover = document.getElementById('profile-cover');
         const profileEmail = document.getElementById('contact-email');
-        
-        // Név megjelenítése
         let displayName = 'Felhasználó';
         let username = '';
         
@@ -908,45 +1260,50 @@
         
         if (profileName) profileName.textContent = displayName;
         if (profileUsername) profileUsername.textContent = username;
-        
-        // Email (csak saját profil esetén vagy ha nyilvános)
         if (profileEmail) {
             profileEmail.textContent = userData.email || '-';
         }
-        
 if (userData.pfp && userData.pfp.trim() !== '' && 
-        userData.pfp !== 'null' && userData.pfp !== 'undefined') {
-        
-        // Ellenőrizzük, hogy Base64-e vagy URL-e
-        if (userData.pfp.startsWith('data:image/')) {
-            // Base64 kép - közvetlenül használható
-            profileAvatar.src = userData.pfp;
-        } else if (userData.pfp.startsWith('http://') || userData.pfp.startsWith('https://')) {
-            // Külső URL
-            profileAvatar.src = userData.pfp;
-        } else if (userData.pfp.startsWith('/')) {
-            // Relatív útvonal (szerveren lévő kép)
-            profileAvatar.src = userData.pfp;
-        } else {
-            // Valószínűleg csak egy fájlnév vagy elérési út
-            profileAvatar.src = '/uploads/profiles/' + userData.pfp;
-        }
+    userData.pfp !== 'null' && userData.pfp !== 'undefined') {
+    
+    if (userData.pfp.startsWith('data:image/')) {
+        profileAvatar.src = userData.pfp;
+    } else if (userData.pfp.startsWith('http://') || userData.pfp.startsWith('https://')) {
+        profileAvatar.src = userData.pfp;
+    } else if (userData.pfp.startsWith('/')) {
+        profileAvatar.src = userData.pfp;
     } else {
-        // Generált avatar ha nincs profilkép
-        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=1891d1&color=fff&size=168`;
-        profileAvatar.src = avatarUrl;
+        profileAvatar.src = '/uploads/profiles/' + userData.pfp;
     }
+} else {
+    // Inkább használj egy normális URL-t az avatar generáláshoz
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=1891d1&color=fff&size=168&format=png`;
+    profileAvatar.src = avatarUrl;
+}
+
+
+        if (profileCover && userData.background && userData.background.trim() !== '' && 
+            userData.background !== 'null' && userData.background !== 'undefined') {
+            
+            console.log('Háttérkép betöltése:', userData.background);
+            
+            if (userData.background.startsWith('data:image/')) {
+                profileCover.src = userData.background;
+            } else if (userData.background.startsWith('http://') || userData.background.startsWith('https://')) {
+                profileCover.src = userData.background;
+            } else if (userData.background.startsWith('/')) {
+                profileCover.src = userData.background;
+            } else {
+                profileCover.src = '/uploads/backgrounds/' + userData.background;
+            }
+        } else if (profileCover) {
+            profileCover.src = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&auto=format&fit=crop';
+        }
         
-        // Rangok megjelenítése
         displayProfileRoles(userData.roles);
-        
-        // Bemutatkozás
         displayAboutSection(userData.description);
-        
-        // Kapcsolati információk
         displayContactInfo(userData);
-        
-        // Dátum formázása
+    
         if (userData.created_at) {
             const joinedDate = new Date(userData.created_at);
             const formattedDate = joinedDate.toLocaleDateString('hu-HU', {
@@ -956,7 +1313,6 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
             document.getElementById('joined-date').textContent = formattedDate;
         }
     }
-    
     function displayProfileRoles(rolesString) {
         const container = document.getElementById('profile-roles');
         if (!container) return;
@@ -971,10 +1327,11 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
                     rolesArray = rolesString;
                 }
             } catch (e) {
-                console.error('Hiba a rangok parse-olása során:', e);
+                console.error('Hiba a rangok betöltése során:', e);
                 rolesArray = rolesString.split(',').map(r => r.trim());
             }
         }
+            rolesArray = rolesArray.filter(role => role !== '*');
         
         if (rolesArray.length === 0) {
             container.innerHTML = '<span class="role-badge" style="background: #6b7280;">Felhasználó</span>';
@@ -984,7 +1341,7 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
         let html = '';
         rolesArray.forEach(role => {
             const roleLower = role.toLowerCase();
-            let roleColor = '#1891d1'; // Alap szín
+            let roleColor = '#1891d1';
             
             if (roleLower.includes('writer')) roleColor = '#1e40af';
             else if (roleLower.includes('lector')) roleColor = '#92400e';
@@ -1015,7 +1372,6 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
     }
     
     function displayContactInfo(userData) {
-        // Discord
         const discord = document.getElementById('contact-discord');
         if (discord && userData.dc) {
             discord.textContent = userData.dc;
@@ -1023,7 +1379,6 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
             discord.textContent = '-';
         }
         
-        // YouTube
         const youtube = document.getElementById('contact-youtube');
         if (youtube && userData.yt) {
             youtube.textContent = userData.yt;
@@ -1032,7 +1387,6 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
             youtube.textContent = '-';
         }
         
-        // Instagram
         const instagram = document.getElementById('contact-instagram');
         if (instagram && userData.insta) {
             instagram.textContent = userData.insta;
@@ -1041,7 +1395,6 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
             instagram.textContent = '-';
         }
         
-        // Wattpad
         const wattpad = document.getElementById('contact-wattpad');
         if (wattpad && userData.wattpad) {
             wattpad.textContent = userData.wattpad;
@@ -1051,120 +1404,61 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
         }
     }
     
-    async function loadUserPosts(uid) {
-        console.log(`Felhasználó cikkeinek betöltése: ${uid}`);
+async function loadUserPosts(uid) {
+    console.log(`Felhasználó cikkeinek betöltése: ${uid}`);
+    
+    const container = document.getElementById('posts-container');
+    if (!container) return;
+    
+    try {
+        // Új API végpont használata
+        const response = await fetch(`/api/post/get/fromauthor?author=${uid}`, {
+            method: 'GET'
+        });
         
-        const container = document.getElementById('posts-container');
-        if (!container) return;
-        
-        try {
-            // Publikus cikkek lekérése a felhasználótól
-            const response = await fetch(`/api/post/get/user?uid=${uid}&published=true`, {
-                method: 'GET'
-            });
+        if (response.ok) {
+            const posts = await response.json();
+            console.log('Felhasználó cikkei:', posts);
             
-            if (response.ok) {
-                const posts = await response.json();
-                console.log('Felhasználó cikkei:', posts);
+            // Ellenőrizzük, hogy van-e adat
+            if (posts && Object.keys(posts).length > 0) {
+                displayUserPosts(posts);
                 
-                if (posts && Object.keys(posts).length > 0) {
-                    displayUserPosts(posts);
-                    
-                    // Statisztika frissítése
-                    document.getElementById('articles-count').textContent = Object.keys(posts).length;
-                    
-                    // Legnépszerűbb cikk
-                    findPopularPost(posts);
-                    
-                } else {
-                    showNoPosts();
-                }
+                // Cikkek számának frissítése
+                document.getElementById('articles-count').textContent = Object.keys(posts).length;
+                
+                // Legnépszerűbb cikk keresése
+                findPopularPost(posts);
+                
             } else {
                 showNoPosts();
             }
-        } catch (error) {
-            console.error('Hiba a cikkek betöltése során:', error);
+        } else {
             showNoPosts();
-        }
-    }
-    
-    function displayUserPosts(posts) {
-        const container = document.getElementById('posts-container');
-        if (!container) return;
-        
-        let html = '';
-        Object.entries(posts).forEach(([pid, post]) => {
-            const postDate = new Date(post.created || new Date());
-            const formattedDate = postDate.toLocaleDateString('hu-HU', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
             
-            const excerpt = post.minimal_desc || 
-                           (post.desc ? post.desc.substring(0, 150) + '...' : 'Nincs leírás...');
-            
-            // Kép URL vagy alapértelmezett
-            const imageUrl = post.image && post.image.trim() !== '' ? 
-                           post.image : 'https://images.unsplash.com/photo-1581276879432-15e50529f34b?w=800&auto=format&fit=crop';
-            
-            html += `
-                <div class="post-card">
-                    <img src="${imageUrl}" alt="${post.title}" class="post-image">
-                    <div class="post-content">
-                        <span class="post-category">${post.category || 'Általános'}</span>
-                        <h4 class="post-title">${post.title || 'Cím nélkül'}</h4>
-                        <p class="post-excerpt">${excerpt}</p>
-                        <div class="post-meta">
-                            <div class="post-date">
-                                <ion-icon name="calendar-outline"></ion-icon>
-                                <span>${formattedDate}</span>
-                            </div>
-                            <div class="post-stats">
-                                <div class="stat">
-                                    <ion-icon name="eye-outline"></ion-icon>
-                                    <span>${post.views || 0}</span>
-                                </div>
-                                <div class="stat">
-                                    <ion-icon name="heart-outline"></ion-icon>
-                                    <span>${post.likes || 0}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-        
-        container.innerHTML = html;
-        
-        // Több cikk betöltése gomb
-        if (Object.keys(posts).length >= 5) {
-            document.getElementById('load-more-posts').style.display = 'block';
-        }
-    }
-    
-    function findPopularPost(posts) {
-        let popularPost = null;
-        let maxViews = 0;
-        
-        Object.entries(posts).forEach(([pid, post]) => {
-            const views = post.views || 0;
-            if (views > maxViews) {
-                maxViews = views;
-                popularPost = post;
+            // Hibakezelés
+            if (response.status === 500) {
+                console.error('500 Internal Server Error - kapcsolódj a backendessel');
             }
-        });
-        
-        if (popularPost) {
-            displayPopularPost(popularPost);
         }
+    } catch (error) {
+        console.error('Hiba a cikkek betöltése során:', error);
+        showNoPosts();
     }
+}
     
-    function displayPopularPost(post) {
-        const container = document.getElementById('popular-post');
-        if (!container) return;
-        
+function displayUserPosts(posts) {
+    const container = document.getElementById('posts-container');
+    if (!container) return;
+    
+    let html = '';
+    let postCount = 0;
+    
+    Object.entries(posts).forEach(([pid, post]) => {
+        postCount++;
+        const category = post.category || 'Általános';
+        const iconUrl = getCategoryIcon(category);
+        const categoryColor = getCategoryColor(category); // Új sor - szín lekérdezése
         const postDate = new Date(post.created || new Date());
         const formattedDate = postDate.toLocaleDateString('hu-HU', {
             year: 'numeric',
@@ -1173,28 +1467,129 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
         });
         
         const excerpt = post.minimal_desc || 
-                       (post.desc ? post.desc.substring(0, 100) + '...' : '');
+                       (post.desc ? post.desc.substring(0, 300) + '...' : 'Nincs leírás...');
         
-        container.innerHTML = `
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 15px;">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <div style="font-size: 24px; color: #ef4444;">🔥</div>
-                    <div>
-                        <div style="font-weight: 600; color: #2d3748;">${post.title || 'Cím nélkül'}</div>
-                        <div style="font-size: 12px; color: #6b7280;">${formattedDate}</div>
+        const postTitle = post.title || 'Cím nélkül';
+        const authors = post.authors || [];
+        
+        html += `
+    <div class="post-card" data-pid="${pid}">
+        <div class="post-content">
+            <h4 class="post-title" style="font-family: 'Abril Fatface'; font-weight:100; font-size: 18px;color: ${categoryColor}">
+                ${postTitle}
+            </h4>
+            <p class="post-excerpt" style="font-family:'Oswald">${excerpt}</p>
+            
+            <div class="post-meta">
+                <div class="stat">
+                    <div class="post-category-with-icon">
+                        <img src="${iconUrl}" alt="${category}" class="category-icon" 
+                             style="width: auto; height: 30px; margin-right: 8px; vertical-align: middle;">
+                    </div>
+                    <div class="post-category" style="color: white; background-color: ${categoryColor}">
+                        <ion-icon name="people-outline"></ion-icon>
+                        <span style="font-family: 'Oswald'; font-size: 16px">${authors.length}</span>
+                    </div>
+                </div>    
+                <div class="post-category" style="color: white; background-color: ${categoryColor}">
+                    <div class="post-date">
+                        <ion-icon name="calendar-outline"></ion-icon>
+                        <span style="font-family: 'Oswald'; font-size: 16px">${formattedDate}</span>
                     </div>
                 </div>
-                <p style="font-size: 14px; color: #4b5563; margin-bottom: 10px;">${excerpt}</p>
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6b7280;">
-                    <span><ion-icon name="eye-outline"></ion-icon> ${post.views || 0} megtekintés</span>
-                    <span><ion-icon name="heart-outline"></ion-icon> ${post.likes || 0} like</span>
-                </div>
-                <a href="/post/${Object.keys(post)[0]}" style="display: inline-block; margin-top: 10px; padding: 6px 12px; background: #1891d1; color: white; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: 600;">
-                    Olvasom
-                </a>
             </div>
-        `;
+        </div>
+    </div>
+`;
+    });
+    
+    container.innerHTML = html;
+    if (postCount >= 5) {
+        document.getElementById('load-more-posts').style.display = 'block';
     }
+    
+    
+setTimeout(() => {
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const pid = this.getAttribute('data-pid');
+            if (pid) {
+                window.location.href = `/post2.html?pid=${pid}`;
+            }
+        });
+        
+        card.style.cursor = 'pointer';
+        card.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
+        
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+        });
+    });
+}, 100);
+}
+function findPopularPost(posts) {
+    let popularPid = null;
+    let popularPost = null;
+    let maxViews = 0;
+    
+    Object.entries(posts).forEach(([pid, post]) => {
+        const views = post.views || 0;
+        if (views > maxViews) {
+            maxViews = views;
+            popularPid = pid;
+            popularPost = post;
+        }
+    });
+    
+    if (popularPost && popularPid) {
+        displayPopularPost(popularPid, popularPost);
+    }
+}
+
+    
+function displayPopularPost(pid, post) {
+    const container = document.getElementById('popular-post');
+    if (!container) return;
+    
+    const postDate = new Date(post.created || new Date());
+    const formattedDate = postDate.toLocaleDateString('hu-HU', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+    
+    const excerpt = post.minimal_desc || 
+                   (post.desc ? post.desc.substring(0, 300) + '...' : '');
+    
+    container.innerHTML = `
+        <div style="background: #f8f9fa; border-radius: 8px; padding: 15px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <div style="font-size: 24px; color: #ef4444;">🔥</div>
+                <div>
+                    <div style="font-weight: 600; color: #2d3748;"; font-size: 18px>${post.title || 'Cím nélkül'}</div>
+                    <div style="font-size: 12px; color: #6b7280;">${formattedDate}</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; color: #4b5563; margin-bottom: 10px;">${excerpt}</p>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6b7280;">
+                <span><ion-icon name="eye-outline"></ion-icon> ${post.views || 0} megtekintés</span>
+                <span><ion-icon name="heart-outline"></ion-icon> ${post.likes || 0} like</span>
+            </div>
+            <a href="/post/${pid}" style="display: inline-block; margin-top: 10px; padding: 6px 12px; background: #1891d1; color: white; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: 600;">
+                Olvasom
+            </a>
+        </div>
+    `;
+}
     
     function showNoPosts() {
         const container = document.getElementById('posts-container');
@@ -1213,11 +1608,11 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
         if (!container) return;
         
         container.innerHTML = `
-<a href="profile.html" class="btn-follow" style="font-family: 'Abril Fatface'; text-decoration: none;">
+<a href="dashboard/settings.html" class="btn-follow" style="font-family: 'Abril Fatface'; text-decoration: none;">
     <ion-icon name="create-outline"></ion-icon>
     Profil szerkesztése
 </a>
-<a href="dashboard.html" class="btn-message" style="font-family: 'Abril Fatface'; text-decoration: none;">
+<a href="dashboard/dashboard.html" class="btn-message" style="font-family: 'Abril Fatface'; text-decoration: none;">
     <ion-icon name="grid-outline"></ion-icon>
     Dashboard
 </a>
@@ -1225,8 +1620,6 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
     <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
 </button>
         `;
-        
-        // Dropdown menü a "több" gombhoz
         const moreBtn = container.querySelector('.btn-more');
         moreBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1244,11 +1637,7 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
                 <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
             </button>
         `;
-        
-        // Követés állapot ellenőrzése
         checkFollowStatus(uid);
-        
-        // Dropdown menü
         const moreBtn = container.querySelector('.btn-more');
         moreBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -1287,7 +1676,6 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
     }
     
     function toggleFollow(uid) {
-        // TODO: Követés API implementáció
         console.log(`Követés váltás: ${uid}`);
         
         const followBtn = document.getElementById('follow-btn');
@@ -1305,13 +1693,11 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
     }
     
     function sendMessage(uid) {
-        // TODO: Üzenetküldés implementáció
         console.log(`Üzenet küldés: ${uid}`);
         showNotification('Üzenet funkció hamarosan elérhető!', 'info');
     }
     
     function showProfileDropdown(button, uid = null) {
-        // Dropdown létrehozása
         const dropdown = document.createElement('div');
         dropdown.className = 'profile-dropdown-menu';
         dropdown.style.cssText = `
@@ -1336,7 +1722,6 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
         `;
         
         if (uid) {
-            // Másik felhasználó
             dropdownHTML = `
 <div class="dropdown-item" onclick="shareProfile(${uid})" style="font-family: 'Abril Fatface';">
     <ion-icon name="share-outline" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;"></ion-icon>
@@ -1350,14 +1735,13 @@ if (userData.pfp && userData.pfp.trim() !== '' &&
 ${dropdownHTML}
             `;
         } else {
-            // Saját profil
             dropdownHTML = 
             
             
             `
 
            
-                <div class="dropdown-item" onclick="window.location.href='settings.html'" style="font-family: 'Abril Fatface';>
+                <div class="dropdown-item" onclick="window.location.href='dashboard/settings.html'" style="font-family: 'Abril Fatface';>
                     <ion-icon name="settings-outline"></ion-icon>
                     Beállítások
                 </div>
@@ -1376,8 +1760,6 @@ ${dropdownHTML}
         }
         
         dropdown.innerHTML = dropdownHTML;
-        
-        // Stílus a dropdown elemekhez
         const style = document.createElement('style');
         style.textContent = `
             .dropdown-item {
@@ -1444,13 +1826,11 @@ ${dropdownHTML}
     }
     
     function reportUser(uid) {
-        // TODO: Jelentés implementáció
         console.log(`Felhasználó jelentése: ${uid}`);
         showNotification('Jelentés elküldve', 'info');
     }
     
     function blockUser(uid) {
-        // TODO: Letiltás implementáció
         console.log(`Felhasználó letiltása: ${uid}`);
         showNotification('Felhasználó letiltva', 'success');
     }
@@ -1475,13 +1855,8 @@ ${dropdownHTML}
     }
     
     function loadPublicProfile() {
-        // Alapértelmezett publikus profil betöltése
-        console.log('Publikus profil betöltése');
+        console.log('Nyilvános profil betöltése');
         
-        // Lehetőségek:
-        // 1. Legnépszerűbb felhasználó
-        // 2. Alapértelmezett demo profil
-        // 3. Hibaüzenet
         
         showProfileError();
     }
@@ -1537,13 +1912,13 @@ ${dropdownHTML}
     }
     
     function showNotification(message, type = 'info') {
-        // Egyszerű értesítés
         const notification = document.createElement('div');
         notification.style.cssText = `
             position: fixed;
             bottom: 20px;
             right: 20px;
             background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            font-family: 'Abril Fatface';
             color: white;
             padding: 12px 20px;
             border-radius: 8px;
@@ -1561,8 +1936,6 @@ ${dropdownHTML}
                 notification.remove();
             }, 300);
         }, 3000);
-        
-        // Animáció CSS
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideIn {
@@ -1609,15 +1982,257 @@ ${dropdownHTML}
         window.location.href = '/logout.php';
     }
     
-    // Publikus API endpoint-ok mockolása (jelenleg nem létező végpontok)
-    // Ezeket később a backend implementálja
     function mockAPIs() {
-        // Ez a rész csak fejlesztéshez, később törölhető
         console.log('Mock API endpoint-ok inicializálva');
     }
-    
-    // Oldal betöltésekor mock API-k inicializálása
     mockAPIs();
+
+
+
+
+
+    
+    </script>
+
+    <script>
+
+function getCategoryIcon(categoryName) {
+    const iconMap = {
+        // Pontos egyezések
+        'hitelet': '/Rovatok/Rovatok-ikon/hitelet.svg',
+        'onallo': '/Rovatok/Rovatok-ikon/onallo.svg',
+        'deutschblick': '/Rovatok/Rovatok-ikon/deutschblick.svg',
+        'rangers': '/Rovatok/Rovatok-ikon/rangers.svg',
+        'iskolank elete': '/Rovatok/Rovatok-ikon/iskolankelete.svg',
+        'Iskolánk élete': '/Rovatok/Rovatok-ikon/iskolankelete.svg',
+        'divatrovat': '/Rovatok/Rovatok-ikon/divat.svg',
+        'divat': '/Rovatok/Rovatok-ikon/divatrovat.svg',
+        'ajánlóink': '/Rovatok/Rovatok-ikon/ajanloink.svg',
+        'líc-tech': '/Rovatok/Rovatok-ikon/lictech.svg',
+        'lic-tech': '/Rovatok/Rovatok-ikon/lictech.svg',
+        'lictech': '/Rovatok/Rovatok-ikon/lictech.svg',
+        'tech': '/Rovatok/Rovatok-ikon/lictech.svg',
+        'irodalom': '/Rovatok/Rovatok-ikon/irodalom.svg',
+        'művészet': '/Rovatok/Rovatok-ikon/muveszet.svg',
+        'muveszet': '/Rovatok/Rovatok-ikon/muveszet.svg',
+        'érdekességek a világból': '/Rovatok/Rovatok-ikon/erdekessegek.svg',
+        'erdekessegek': '/Rovatok/Rovatok-ikon/erdekessegek.svg',
+        'érdekességek': '/Rovatok/Rovatok-ikon/erdekessegek.svg',
+        'világ': '/Rovatok/Rovatok-ikon/erdekessegek.svg',
+        'horgászrovat': '/Rovatok/Rovatok-ikon/horgaszrovat.svg',
+        'horgász': '/Rovatok/Rovatok-ikon/horgaszrovat.svg',
+        'receptrovat': '/Rovatok/Rovatok-ikon/receptrovat.svg',
+        'recept': '/Rovatok/Rovatok-ikon/receptrovat.svg',
+        
+        // Általános kategóriák (biztonsági háló)
+        'általános': '/Rovatok/Rovatok-ikon/altalanos.svg',
+        'altalanos': '/Rovatok/Rovatok-ikon/altalanos.svg',
+        'egyéb': '/Rovatok/Rovatok-ikon/altalanos.svg',
+        'más': '/Rovatok/Rovatok-ikon/altalanos.svg'
+    };
+    
+    // Kisbetűsítés, ékezetek eltávolítása és normalizálás
+    const normalizedCategory = categoryName
+        .toLowerCase()
+        .trim()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Ékezetek eltávolítása
+    
+    // 1. Pontos egyezés
+    if (iconMap[normalizedCategory]) {
+        return iconMap[normalizedCategory];
+    }
+    
+    // 2. Részleges egyezés keresése
+    for (const [key, value] of Object.entries(iconMap)) {
+        if (normalizedCategory.includes(key) && 
+            key !== 'általános' && 
+            key !== 'altalanos' && 
+            key !== 'egyéb' && 
+            key !== 'más') {
+            return value;
+        }
+    }
+    
+    
+    // 4. Alapértelmezett visszatérés
+    return iconMap['altalanos'] || '/Rovatok/Rovatok-ikon/altalanos.svg';
+}
+
+
+function getCategoryColor(categoryName) {
+    const colorMap = {
+        // Pontos egyezések
+        'hitelet': '#424485', // lila
+        'onallo': '#9BC2D3', // zöld
+        'deutschblick': '#F59E0B',
+        'rangers': '#C50225', 
+        'iskolank elete': '#006188',
+        'divatrovat': '#006188', 
+        'divat': '#006188', 
+        'ajanloink': '#5D729C', 
+        'lic-tech': '#00563F', // világoskék/türkiz
+        'lic-tech': '#00563F',
+        'lictech': '#00563F',
+        'tech': '#00563F',
+        'irodalom': '#8B5CF6', // lila
+        'művészet': '#F59E0B', // sárga/narancs
+        'muveszet': '#F59E0B',
+        'érdekességek a világból': '#10B981', // zöld
+        'erdekessegek': '#10B981',
+        'érdekességek': '#10B981',
+        'világ': '#10B981',
+        'horgászrovat': '#3B82F6', // kék
+        'horgász': '#3B82F6',
+        'receptrovat': '#F59E0B', // sárga/narancs
+        'recept': '#F59E0B',
+        
+        // Általános kategóriák
+        'általános': '#6B7280', // szürke
+        'altalanos': '#6B7280',
+        'egyéb': '#6B7280',
+        'más': '#6B7280'
+    };
+    
+    // Kisbetűsítés, ékezetek eltávolítása és normalizálás
+    const normalizedCategory = categoryName
+        .toLowerCase()
+        .trim()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    // 1. Pontos egyezés
+    if (colorMap[normalizedCategory]) {
+        return colorMap[normalizedCategory];
+    }
+    
+    // 2. Részleges egyezés keresése
+    for (const [key, value] of Object.entries(colorMap)) {
+        if (normalizedCategory.includes(key) && 
+            key !== 'általános' && 
+            key !== 'altalanos' && 
+            key !== 'egyéb' && 
+            key !== 'más') {
+            return value;
+        }
+    }
+    
+    // 3. Alapértelmezett visszatérés
+    return colorMap['altalanos'] || '#6B7280';
+}
+
+async function loadMorePosts() {
+    console.log('További cikkek betöltése...');
+    
+    // Gomb letiltása és szöveg megváltoztatása
+    const loadMoreBtn = document.querySelector('#load-more-posts button');
+    if (loadMoreBtn) {
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.innerHTML = `
+            <ion-icon name="checkmark-outline"></ion-icon>
+            <span style="font-family: 'Abril Fatface'; font-weight: 100; font-size: 18px;">
+                Egyelőre ennyi
+            </span>
+        `;
+        
+        // Stílus módosítása, hogy jelezzük, inaktív
+        loadMoreBtn.style.opacity = '0.7';
+        loadMoreBtn.style.cursor = 'not-allowed';
+        loadMoreBtn.style.backgroundColor = '#f0f0f0';
+        loadMoreBtn.style.color = '#888';
+        loadMoreBtn.style.borderColor = '#ddd';
+    }
+    
+    // Üzenet megjelenítése
+    showNotification('Egyelőre ennyi cikk érhető el.', 'info');
+}
+// Segédfüggvény további posztok megjelenítéséhez
+function displayAdditionalPosts(posts) {
+    const container = document.getElementById('posts-container');
+    if (!container) return;
+    
+    let html = '';
+    
+    Object.entries(posts).forEach(([pid, post]) => {
+        const category = post.category || 'Általános';
+        const iconUrl = getCategoryIcon(category);
+        const categoryColor = getCategoryColor(category);
+        const postDate = new Date(post.created || new Date());
+        const formattedDate = postDate.toLocaleDateString('hu-HU', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+        
+        const excerpt = post.minimal_desc || 
+                       (post.desc ? post.desc.substring(0, 300) + '...' : 'Nincs leírás...');
+        
+        const postTitle = post.title || 'Cím nélkül';
+        const authors = post.authors || [];
+        
+        html += `
+            <div class="post-card" data-pid="${pid}">
+                <div class="post-content">
+                    <h4 class="post-title" style="font-family: 'Abril Fatface'; font-weight:100; font-size: 18px;color: ${categoryColor}">
+                        ${postTitle}
+                    </h4>
+                    <p class="post-excerpt" style="font-family:'Oswald">${excerpt}</p>
+                    
+                    <div class="post-meta">
+                        <div class="stat">
+                            <div class="post-category-with-icon">
+                                <img src="${iconUrl}" alt="${category}" class="category-icon" 
+                                     style="width: auto; height: 30px; margin-right: 8px; vertical-align: middle;">
+                            </div>
+                            <div class="post-category" style="color: white; background-color: ${categoryColor}">
+                                <ion-icon name="people-outline"></ion-icon>
+                                <span style="font-family: 'Oswald'; font-size: 16px">${authors.length}</span>
+                            </div>
+                        </div>    
+                        <div class="post-category" style="color: white; background-color: ${categoryColor}">
+                            <div class="post-date">
+                                <ion-icon name="calendar-outline"></ion-icon>
+                                <span style="font-family: 'Oswald'; font-size: 16px">${formattedDate}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    // Új posztok hozzáadása a meglévőkhöz
+    container.insertAdjacentHTML('beforeend', html);
+    
+    // Eseménykezelők beállítása az új posztokhoz
+    setTimeout(() => {
+        const newCards = container.querySelectorAll('.post-card:not([data-initialized])');
+        newCards.forEach(card => {
+            card.setAttribute('data-initialized', 'true');
+            
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const pid = this.getAttribute('data-pid');
+                if (pid) {
+                    window.location.href = `/post2.html?pid=${pid}`;
+                }
+            });
+            
+            card.style.cursor = 'pointer';
+            card.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
+            
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+                this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+            });
+        });
+    }, 100);
+}
     </script>
 </body>
 </html>

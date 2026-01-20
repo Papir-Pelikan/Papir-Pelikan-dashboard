@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lektorálás - Poszt szerkesztése</title>
     <link rel="stylesheet" href="dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <style>
@@ -425,7 +426,400 @@
                 font-size: 24px;
             }
         }
+
+        /* Hozzáadás a létező stílusokhoz */
+.review-block:hover {
+    border-color: #1891d1;
+    box-shadow: 0 2px 8px rgba(24, 145, 209, 0.1);
+}
+
+#block-editor-container {
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 300px;
+}
+
+.block-type-badge {
+    background: #4a6cf7;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+
+/* Drag & Drop stílusok */
+.draggable-block.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+}
+
+.draggable-block.drag-over {
+    box-shadow: 0 0 0 2px #1891d1;
+    background: #f0f9ff;
+}
+
+.drag-handle:hover {
+    background: #e2e8f0;
+    cursor: grab;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Edit modal stílusok */
+.edit-block-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.edit-block-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.edit-block-modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(-20px);
+    transition: transform 0.3s;
+}
+
+.edit-block-modal.active .edit-block-modal-content {
+    transform: translateY(0);
+}
+
+.edit-block-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 4px solid #1891d1;
+}
+
+.edit-block-modal-header ion-icon {
+    font-size: 24px;
+    color: #1891d1;
+}
+
+.edit-block-modal-header h3 {
+    margin: 0;
+    flex: 1;
+    color: #2d3748;
+}
+
+.edit-block-modal-header .close-edit-modal {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #718096;
+    line-height: 1;
+}
+
+.edit-block-form {
+    padding: 20px;
+}
+
+.edit-block-modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+/* Animációk */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.review-block {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Gomb hover efektek */
+.block-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.save-blocks-btn:hover {
+    box-shadow: 0 4px 8px rgba(32, 201, 151, 0.3);
+}
+/* A meglévő stílusokhoz hozzáadva */
+
+/* Confirm modal stílusok */
+.confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.confirm-modal.active {
+    opacity: 1;
+}
+
+.confirm-modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(-20px);
+    transition: transform 0.3s;
+}
+
+.confirm-modal.active .confirm-modal-content {
+    transform: translateY(0);
+}
+
+.confirm-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.confirm-modal-header ion-icon {
+    font-size: 24px;
+    color: #1891d1;
+}
+
+.confirm-modal-header h3 {
+    margin: 0;
+    flex: 1;
+    color: #2d3748;
+}
+
+.confirm-modal-header .close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #718096;
+    line-height: 1;
+}
+
+.confirm-modal-body {
+    padding: 20px;
+}
+
+.confirm-modal-body p {
+    margin: 0 0 15px 0;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.confirm-modal-body .sub-message {
+    color: #718096;
+    font-size: 14px;
+}
+
+.details-list {
+    margin-top: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item .label {
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.detail-item .value {
+    color: #2d3748;
+    max-width: 60%;
+    text-align: right;
+    word-break: break-word;
+}
+
+.confirm-modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+/* Blokk nézet stílusok */
+.review-block:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+#block-editor-container {
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 300px;
+    margin-bottom: 20px;
+}
     </style>
+
+    <style>
+    /* Gyors javítás a hibás SVG kérések elkerülésére */
+    ion-icon {
+        --ionicon-stroke-width: 32px;
+    }
+    
+    /* Lokális fallback ikonok */
+    .ionicon-fallback {
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+        color: #666;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        margin-right: 8px;
+    }
+    
+    /* Blokk típus ikonok fallback-el */
+    .block-icon-fallback {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        background: #4a6cf7;
+        color: white;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+    
+    .block-icon-fallback.paragraph::before { content: "¶"; }
+    .block-icon-fallback.heading::before { content: "H"; }
+    .block-icon-fallback.image::before { content: "🖼"; }
+    .block-icon-fallback.quote::before { content: "❝"; }
+    .block-icon-fallback.list::before { content: "•"; }
+    .block-icon-fallback.code::before { content: "</>"; }
+    .block-icon-fallback.divider::before { content: "—"; }
+    .block-icon-fallback.embed::before { content: "🔗"; }
+
+
+
+    .image-preview-container {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.image-preview-container:hover {
+    border-color: #1891d1;
+    box-shadow: 0 4px 8px rgba(24, 145, 209, 0.1);
+    transform: translateY(-2px);
+}
+
+.image-preview-container:hover img {
+    opacity: 0.9;
+}
+
+.image-loading {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.6; }
+}
+
+/* 8. Kép előnézet az érintő eszközökön */
+@media (hover: hover) {
+    .image-preview-container:hover {
+        box-shadow: 0 6px 12px rgba(24, 145, 209, 0.15);
+    }
+}
+
+/* 9. Gomb stílusok a lightbox-hoz */
+.lightbox-actions button,
+.lightbox-actions a {
+    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.lightbox-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.lightbox-actions .btn-secondary:hover {
+    background: #5a6268;
+}
+
+.lightbox-actions .btn-primary {
+    background: #1891d1;
+    color: white;
+}
+
+.lightbox-actions .btn-primary:hover {
+    background: #1477ad;
+}
+</style>
 </head>
 <body>
     <div class="review-editor-container">
@@ -494,21 +888,30 @@
                     <div class="form-group">
                         <label for="edit-content">Tartalom</label>
                         <div class="editor-toolbar">
-                            <button type="button" class="toolbar-btn" onclick="formatText('bold')">
-                                <strong>B</strong> Félkövér
-                            </button>
-                            <button type="button" class="toolbar-btn" onclick="formatText('italic')">
-                                <em>I</em> Dőlt
-                            </button>
-                            <button type="button" class="toolbar-btn" onclick="insertList()">
-                                <ion-icon name="list-outline"></ion-icon> Lista
-                            </button>
-                            <button type="button" class="toolbar-btn" onclick="insertLink()">
-                                <ion-icon name="link-outline"></ion-icon> Link
-                            </button>
+                            
+
+                            <button type="button" class="toolbar-btn" onclick="toggleBlockView()" id="block-view-toggle">
+        <ion-icon name="grid-outline"></ion-icon>
+        <span style="font-family: 'Abril Fatface'; font-size: 14px">Blokkos nézet</span>
+    </button>
                         </div>
-                        <textarea id="edit-content" class="form-control" rows="15" 
-                                  placeholder="Írd ide a poszt tartalmát..."></textarea>
+                        <div id="block-editor-container" style="display: none; margin-top: 20px;">
+    <div id="no-blocks-message" style="
+        text-align: center;
+        padding: 40px 20px;
+        color: #718096;
+        border: 2px dashed #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    ">
+        <ion-icon name="cube-outline" style="font-size: 48px; margin-bottom: 16px;"></ion-icon>
+        <h3 style="margin: 0 0 10px 0; color: #4a5568;">Blokkos szerkesztő</h3>
+        <p>Itt jelennek majd meg a poszt blokkjai.</p>
+    </div>
+</div>
+
+<textarea id="edit-content" class="form-control" rows="15" 
+          placeholder="Írd ide a poszt tartalmát..."></textarea>
                     </div>
                     
                     <!-- Változtatások -->
@@ -611,7 +1014,480 @@
             </div>
         </div>
     </div>
+    <!-- Képfeltöltő Modal -->
+<div id="image-upload-modal" class="image-upload-modal" style="display: none;">
+    <div class="image-upload-modal-content">
+        <div class="image-upload-modal-header">
+            <h3>
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                Kép feltöltése
+            </h3>
+            <button class="close-image-upload-modal">×</button>
+        </div>
+        
+        <div class="image-upload-modal-body">
+            <!-- URL beillesztés -->
+            <div class="form-group">
+                <label>Kép URL beillesztése</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="url" id="image-url-input" class="form-control" 
+                           placeholder="https://example.com/image.jpg">
+                    <button type="button" class="toolbar-btn" onclick="useImageFromUrl()">
+                        <ion-icon name="link-outline"></ion-icon>
+                        Használ
+                    </button>
+                </div>
+                <small style="color: #6c757d; display: block; margin-top: 5px;">
+                    Egyszerűen másold be a kép URL-jét (pl. helyi fájl, külső forrás)
+                </small>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <div style="font-weight: 500; color: #495057; margin-bottom: 10px;">VAGY</div>
+            </div>
+            
+            <!-- Fájlfeltöltés -->
+            <div class="form-group">
+                <label>Kép feltöltése számítógépről</label>
+                <div id="image-drop-zone" style="
+                    border: 2px dashed #1891d1;
+                    border-radius: 8px;
+                    padding: 40px 20px;
+                    text-align: center;
+                    background: #f8fafc;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                ">
+                    <ion-icon name="images-outline" style="
+                        font-size: 48px;
+                        color: #1891d1;
+                        margin-bottom: 15px;
+                        display: block;
+                    "></ion-icon>
+                    <h4 style="margin: 0 0 10px 0; color: #2d3748;">
+                        Húzd ide a képet, vagy kattints a tallózáshoz
+                    </h4>
+                    <p style="color: #718096; margin: 0 0 20px 0;">
+                        Támogatott formátumok: JPG, PNG, GIF, WebP
+                    </p>
+                    <button type="button" class="toolbar-btn" onclick="document.getElementById('image-file-input').click()">
+                        <ion-icon name="folder-open-outline"></ion-icon>
+                        Kép kiválasztása
+                    </button>
+                </div>
+                <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+            </div>
+            
+            <!-- Előnézet -->
+            <div id="upload-preview-container" style="
+                margin-top: 20px;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                border: 1px solid #e2e8f0;
+                display: none;
+            ">
+                <h4 style="margin-top: 0; margin-bottom: 10px; color: #495057;">Előnézet</h4>
+                <div id="upload-preview" style="
+                    max-width: 100%;
+                    max-height: 200px;
+                    overflow: hidden;
+                    text-align: center;
+                    margin-bottom: 15px;
+                ">
+                    <!-- Itt jelenik meg az előnézet -->
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+                    <span id="upload-file-name" style="
+                        font-size: 12px;
+                        color: #6c757d;
+                        word-break: break-all;
+                        flex: 1;
+                    "></span>
+                    <button type="button" class="toolbar-btn" onclick="uploadSelectedImage()" 
+                            style="background: #20c997; color: white; border-color: #20c997;">
+                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                        Feltöltés
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Feltöltési állapot -->
+            <div id="upload-progress" style="display: none;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <ion-icon name="sync-outline" style="
+                        font-size: 20px;
+                        color: #1891d1;
+                        animation: spin 1s linear infinite;
+                    "></ion-icon>
+                    <span style="color: #495057;">Feltöltés folyamatban...</span>
+                </div>
+                <div style="
+                    height: 6px;
+                    background: #e2e8f0;
+                    border-radius: 3px;
+                    overflow: hidden;
+                ">
+                    <div id="upload-progress-bar" style="
+                        height: 100%;
+                        background: #1891d1;
+                        width: 0%;
+                        transition: width 0.3s;
+                    "></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="image-upload-modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeImageUploader()">
+                <ion-icon name="close-outline"></ion-icon>
+                Mégse
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Képfeltöltő modal megnyitása
+function openImageUploader() {
+    const modal = document.getElementById('image-upload-modal');
+    modal.style.display = 'block';
     
+    // Reset állapot
+    resetImageUploader();
+    
+    // Eseménykezelők
+    setupImageUploadEvents();
+    
+    // ESC bezárás
+    document.addEventListener('keydown', function onEsc(e) {
+        if (e.key === 'Escape') closeImageUploader();
+    });
+}
+
+// Képfeltöltő bezárása
+function closeImageUploader() {
+    const modal = document.getElementById('image-upload-modal');
+    modal.style.display = 'none';
+    resetImageUploader();
+}
+
+// Képfeltöltő reset
+function resetImageUploader() {
+    document.getElementById('image-url-input').value = '';
+    document.getElementById('image-file-input').value = '';
+    document.getElementById('upload-preview-container').style.display = 'none';
+    document.getElementById('upload-progress').style.display = 'none';
+    document.getElementById('upload-progress-bar').style.width = '0%';
+    document.getElementById('upload-preview').innerHTML = '';
+    document.getElementById('upload-file-name').textContent = '';
+}
+
+// Kép használata URL-ből
+function useImageFromUrl() {
+    const urlInput = document.getElementById('image-url-input');
+    const imageUrl = urlInput.value.trim();
+    
+    if (!imageUrl) {
+        alert('Kérlek adj meg egy érvényes URL-t!');
+        return;
+    }
+    
+    // Ellenőrizzük, hogy kép URL-e
+    if (!isValidImageUrl(imageUrl)) {
+        alert('Az URL nem egy érvényes képfájlra mutat!');
+        return;
+    }
+    
+    // Teszteljük a képet
+    testImageUrl(imageUrl).then(isValid => {
+        if (isValid) {
+            // Kép használata a szerkesztőben
+            useImageInEditor(imageUrl);
+            closeImageUploader();
+        } else {
+            alert('Nem lehet betölteni a képet ebből az URL-ből!');
+        }
+    }).catch(() => {
+        alert('Hiba történt a kép ellenőrzése során!');
+    });
+}
+
+// Kép URL validálása
+function isValidImageUrl(url) {
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+    const lowerUrl = url.toLowerCase();
+    return imageExtensions.some(ext => lowerUrl.includes(ext)) || 
+           lowerUrl.includes('data:image/') ||
+           lowerUrl.includes('blob:');
+}
+
+// Kép URL tesztelése
+function testImageUrl(url) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+        
+        // Timeout
+        setTimeout(() => resolve(false), 5000);
+    });
+}
+
+// Kép használata a szerkesztőben
+function useImageInEditor(imageUrl) {
+    // Megkeressük a kép URL mezőt a szerkesztőben
+    const editModal = document.querySelector('.edit-block-modal.active');
+    if (!editModal) return;
+    
+    const urlInput = editModal.querySelector('[name="image-url"]');
+    if (urlInput) {
+        urlInput.value = imageUrl;
+        
+        // Előnézet frissítése
+        updateImagePreview(urlInput);
+        
+        // Sikeres üzenet
+        showSuccessNotification('Kép URL beillesztve!', 'success');
+    }
+}
+
+// Képfeltöltés eseménykezelők
+function setupImageUploadEvents() {
+    const dropZone = document.getElementById('image-drop-zone');
+    const fileInput = document.getElementById('image-file-input');
+    
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.background = '#e8f4fd';
+        dropZone.style.borderColor = '#1891d1';
+    });
+    
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.background = '#f8fafc';
+        dropZone.style.borderColor = '#1891d1';
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.background = '#f8fafc';
+        dropZone.style.borderColor = '#1891d1';
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleImageFile(files[0]);
+        }
+    });
+    
+    // Fájl kiválasztás
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleImageFile(e.target.files[0]);
+        }
+    });
+}
+
+// Képfájl kezelése
+function handleImageFile(file) {
+    // Ellenőrzés
+    if (!file.type.startsWith('image/')) {
+        alert('Kérlek képfájlt válassz!');
+        return;
+    }
+    
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        alert('A kép túl nagy! Maximum 10MB lehet.');
+        return;
+    }
+    
+    // Előnézet
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const previewContainer = document.getElementById('upload-preview-container');
+        const preview = document.getElementById('upload-preview');
+        const fileName = document.getElementById('upload-file-name');
+        
+        preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 180px; border-radius: 4px;" alt="Előnézet">`;
+        fileName.textContent = file.name;
+        previewContainer.style.display = 'block';
+        
+        // Automatikus görgetés az előnézethez
+        previewContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    reader.readAsDataURL(file);
+}
+
+// Kép feltöltése a szerverre
+async function uploadSelectedImage() {
+    const fileInput = document.getElementById('image-file-input');
+    if (!fileInput.files.length) {
+        alert('Nincs kép kiválasztva!');
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('post_id', postId);
+    
+    // Feltöltési állapot megjelenítése
+    document.getElementById('upload-progress').style.display = 'block';
+    document.getElementById('upload-progress-bar').style.width = '30%';
+    
+    try {
+        const token = getAuthToken();
+        const response = await fetch('/api/upload/image', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+                // 'Content-Type' nem kell, FormData automatikusan beállítja
+            },
+            body: formData
+        });
+        
+        document.getElementById('upload-progress-bar').style.width = '70%';
+        
+        if (response.ok) {
+            const result = await response.json();
+            document.getElementById('upload-progress-bar').style.width = '100%';
+            
+            if (result.url) {
+                // Sikeres feltöltés - kép használata a szerkesztőben
+                setTimeout(() => {
+                    useImageInEditor(result.url);
+                    closeImageUploader();
+                    showSuccessNotification('Kép sikeresen feltöltve!', 'success');
+                }, 500);
+            } else {
+                throw new Error('Nem érkezett URL a szerverről');
+            }
+        } else {
+            throw new Error(`Feltöltési hiba: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Hiba a kép feltöltése során:', error);
+        document.getElementById('upload-progress-bar').style.background = '#e74c3c';
+        showSuccessNotification('Hiba történt a feltöltés során!', 'error');
+        
+        // Visszaállítás 3 másodperc múlva
+        setTimeout(() => {
+            document.getElementById('upload-progress').style.display = 'none';
+            document.getElementById('upload-progress-bar').style.width = '0%';
+            document.getElementById('upload-progress-bar').style.background = '#1891d1';
+        }, 3000);
+    }
+}
+
+// Kép előnézet frissítése
+function updateImagePreview(urlInput) {
+    const imageUrl = urlInput.value.trim();
+    const previewContainer = document.getElementById('image-preview-container');
+    const preview = document.getElementById('image-preview');
+    const urlDisplay = document.getElementById('image-url-display');
+    
+    if (imageUrl && isValidImageUrl(imageUrl)) {
+        preview.innerHTML = `<img src="${imageUrl}" style="max-width: 100%; max-height: 180px; border-radius: 4px;" alt="Előnézet">`;
+        urlDisplay.textContent = imageUrl;
+        previewContainer.style.display = 'block';
+    } else {
+        previewContainer.style.display = 'none';
+    }
+}
+
+// Kép URL input eseménykezelő hozzáadása (a modal létrehozásakor)
+function setupImageUrlInputListener() {
+    const editModal = document.querySelector('.edit-block-modal.active');
+    if (!editModal) return;
+    
+    const urlInput = editModal.querySelector('[name="image-url"]');
+    if (urlInput) {
+        urlInput.addEventListener('input', function() {
+            updateImagePreview(this);
+        });
+    }
+}
+
+// Stílusok hozzáadása
+const uploaderStyle = document.createElement('style');
+uploaderStyle.textContent = `
+    .image-upload-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10001;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    .image-upload-modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease-out;
+    }
+    
+    .image-upload-modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .image-upload-modal-header h3 {
+        margin: 0;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .image-upload-modal-header .close-image-upload-modal {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #718096;
+        line-height: 1;
+    }
+    
+    .image-upload-modal-body {
+        padding: 20px;
+    }
+    
+    .image-upload-modal-footer {
+        padding: 20px;
+        border-top: 1px solid #e2e8f0;
+        text-align: right;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(uploaderStyle);
+</script>
     <script>
         // URL paraméterek
         const urlParams = new URLSearchParams(window.location.search);
@@ -742,16 +1618,45 @@
         }
         
         // Poszt adatok betöltése
-        async function loadPostData() {
+      // Poszt adatok betöltése - FRISSÍTVE
+// Poszt adatok betöltése - MÓDOSÍTVE
+async function loadPostData() {
+    try {
+        const token = getAuthToken();
+        if (!token) {
+            throw new Error('Nincs bejelentkezve');
+        }
+        
+        const edited = reviewType === 'edited';
+        
+        // 1. PRÓBÁLJUK MEG ELŐSZÖR A NORMÁL VÉGPONTOT
+        console.log('1. Próbálom lekérni a posztot a /api/post/get/contents endpointon...');
+        const response = await fetch('/api/post/get/contents', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                post: parseInt(postId),
+                edited: edited,
+                include_blocks: true // Kérjük a blokkokat
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Hiba a poszt betöltése során: ${response.status}`);
+        }
+        
+        const postData = await response.json();
+        console.log('1. Poszt adatok a /api/post/get/contents endpointról:', postData);
+        
+        // 2. HA NINCS BLOCKS_JSON, PRÓBÁLJUK MÁSIK VÉGPONTOT
+        if (!postData.blocks_json) {
+            console.log('2. Nincs blocks_json, próbálom a /api/post/get endpointot...');
+            
             try {
-                const token = getAuthToken();
-                if (!token) {
-                    throw new Error('Nincs bejelentkezve');
-                }
-                
-                // Lekérjük a poszt tartalmát (szerkesztett verziót ha kell)
-                const edited = reviewType === 'edited';
-                const response = await fetch('/api/post/get/contents', {
+                const getResponse = await fetch('/api/post/get', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -759,48 +1664,221 @@
                     },
                     body: JSON.stringify({
                         post: parseInt(postId),
-                        edited: edited
+                        get: 'blocks_json'
                     })
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`Hiba a poszt betöltése során: ${response.status}`);
+                if (getResponse.ok) {
+                    const getData = await getResponse.json();
+                    console.log('2. Poszt adatok a /api/post/get endpointról:', getData);
+                    
+                    // Egyesítsük az adatokat
+                    if (getData.blocks_json) {
+                        postData.blocks_json = getData.blocks_json;
+                    }
                 }
-                
-                const postData = await response.json();
-                console.log('Poszt adatok:', postData);
-                
-                // Elmentjük az eredeti adatokat
-                originalPost = { ...postData };
-                
-                // Kitöltjük az űrlapot
-                populateForm(postData);
-                
-                // Kitöltjük az információkat
-                await populateInfo(postData);
-                
-                // Diff betöltése (ha van)
-                if (edited) {
-                    await loadDiff();
-                }
-                
-            } catch (error) {
-                console.error('Hiba a poszt betöltése során:', error);
-                throw error;
+            } catch (getError) {
+                console.warn('Nem sikerült lekérni a blokkokat:', getError);
             }
         }
         
-        // Űrlap kitöltése
-        function populateForm(postData) {
-            document.getElementById('edit-title').value = postData.title || '';
-            document.getElementById('edit-excerpt').value = postData.minimal_desc || '';
-            document.getElementById('edit-content').value = postData.desc || '';
-            
-            // Kategória megjelenítése
-            displayCategory(postData.category);
+        // 3. HA MÉG MINDIG NINCS BLOCKS_JSON, DE VAN DESC, PRÓBÁLJUK VISSZAALAKÍTANI
+        if (!postData.blocks_json && postData.desc) {
+            console.log('3. Még mindig nincs blocks_json, próbálom visszaalakítani a DESC-ből...');
+            try {
+                const parsedBlocks = attemptParseBlocksFromDesc(postData.desc);
+                if (parsedBlocks) {
+                    postData.blocks_json = JSON.stringify(parsedBlocks);
+                    console.log('3. Blokkok visszaalakítva a DESC-ből:', parsedBlocks);
+                }
+            } catch (parseError) {
+                console.warn('Nem sikerült visszaalakítani a blokkokat:', parseError);
+            }
         }
         
-        // Kategória megjelenítése chip-ként
+        // 4. VÉGÜL HA SEMMI SEM MŰKÖDIK, KÉRDEZZÜK MEG A SZERVERRŐL KÜLÖN
+        if (!postData.blocks_json) {
+            console.log('4. Próbálom a /api/post/get/blocks endpointot...');
+            try {
+                const blocksResponse = await fetch('/api/post/get/blocks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        post: parseInt(postId)
+                    })
+                });
+                
+                if (blocksResponse.ok) {
+                    const blocksData = await blocksResponse.json();
+                    console.log('4. Blokk adatok:', blocksData);
+                    
+                    if (blocksData.blocks) {
+                        postData.blocks_json = JSON.stringify(blocksData.blocks);
+                    }
+                }
+            } catch (blocksError) {
+                console.warn('Nem sikerült lekérni a blokkokat külön:', blocksError);
+            }
+        }
+        
+        // Elmentjük az eredeti adatokat
+        originalPost = { ...postData };
+        console.log('Végső poszt adatok:', postData);
+        
+        // Kitöltjük az űrlapot
+        populateForm(postData);
+        
+        // Kitöltjük az információkat
+        await populateInfo(postData);
+        
+        // Diff betöltése (ha van)
+        if (edited) {
+            await loadDiff();
+        }
+        
+    } catch (error) {
+        console.error('Hiba a poszt betöltése során:', error);
+        throw error;
+    }
+}
+
+/**
+ * Próbálja visszaalakítani a blokkokat a DESC HTML-ből
+ */
+function attemptParseBlocksFromDesc(html) {
+    if (!html) return null;
+    
+    try {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        
+        const blocks = [];
+        let blockIndex = 0;
+        
+        // Végigjárjuk a gyermek elemeket
+        Array.from(tempDiv.children).forEach(element => {
+            const block = createBlockFromElement(element, blockIndex);
+            if (block) {
+                blocks.push(block);
+                blockIndex++;
+            }
+        });
+        
+        return blocks.length > 0 ? blocks : null;
+        
+    } catch (error) {
+        console.error('Hiba a HTML parse során:', error);
+        return null;
+    }
+}
+
+/**
+ * Elemből blokk létrehozása
+ */
+function createBlockFromElement(element, index) {
+    const tagName = element.tagName.toLowerCase();
+    const className = element.className || '';
+    
+    let block = {
+        id: `block_${Date.now()}_${index}`,
+        type: '',
+        content: '',
+        attributes: {},
+        styles: {},
+        position: index
+    };
+    
+    // Döntsük el a blokk típusát
+    if (tagName === 'h1' || tagName === 'h2' || tagName === 'h3' || 
+        tagName === 'h4' || tagName === 'h5' || tagName === 'h6') {
+        block.type = 'heading';
+        block.content = element.textContent || '';
+        block.attributes.level = tagName;
+        
+    } else if (tagName === 'p' || className.includes('paragraph')) {
+        block.type = 'paragraph';
+        block.content = element.innerHTML || '';
+        
+    } else if (tagName === 'figure' || className.includes('image')) {
+        block.type = 'image';
+        const img = element.querySelector('img');
+        if (img) {
+            block.content = img.src || '';
+            block.attributes.alt = img.alt || '';
+        }
+        const figcaption = element.querySelector('figcaption');
+        if (figcaption) {
+            block.attributes.caption = figcaption.textContent || '';
+        }
+        
+    } else if (tagName === 'blockquote') {
+        block.type = 'quote';
+        block.content = element.querySelector('p')?.innerHTML || element.innerHTML || '';
+        const cite = element.querySelector('cite');
+        if (cite) {
+            block.attributes.author = cite.textContent.replace('—', '').trim();
+        }
+        
+    } else if (tagName === 'ul' || tagName === 'ol') {
+        block.type = 'list';
+        const items = Array.from(element.querySelectorAll('li')).map(li => li.textContent || '');
+        block.content = items;
+        block.attributes.type = tagName;
+        
+    } else if (tagName === 'pre') {
+        block.type = 'code';
+        const code = element.querySelector('code');
+        block.content = code ? code.textContent : element.textContent || '';
+        if (code && code.className) {
+            const langMatch = code.className.match(/language-(\w+)/);
+            if (langMatch) {
+                block.attributes.language = langMatch[1];
+            }
+        }
+        
+    } else if (tagName === 'hr') {
+        block.type = 'divider';
+        block.content = 'divider';
+        
+    } else {
+        // Ha nem ismert típus, akkor paragraph-ként kezeljük
+        block.type = 'paragraph';
+        block.content = element.outerHTML || '';
+    }
+    
+    return block.type ? block : null;
+}
+        // Űrlap kitöltése
+        // Űrlap kitöltése
+// Űrlap kitöltése
+// Űrlap kitöltése - FRISSÍTVE
+function populateForm(postData) {
+    document.getElementById('edit-title').value = postData.title || '';
+    document.getElementById('edit-excerpt').value = postData.minimal_desc || '';
+    
+    console.log('PopulateForm - poszt adatok:', {
+        hasBlocksJson: !!postData.blocks_json,
+        blocksJson: postData.blocks_json,
+        desc: postData.desc ? postData.desc.substring(0, 100) + '...' : null
+    });
+    
+    // Blokk nézet gomb megjelenítése mindig, ha van blocks_json
+    const blockToggle = document.getElementById('block-view-toggle');
+    if (blockToggle && postData.blocks_json) {
+        blockToggle.style.display = 'flex';
+        
+        // Betöltjük a blokkokat előre
+        displayBlocksFromPost(postData.blocks_json);
+    }
+    
+    // Kategória megjelenítése
+    displayCategory(postData.category);
+} 
+
+// Kategória megjelenítése chip-ként
         function displayCategory(categoryName) {
             const container = document.getElementById('category-display');
             const hiddenInput = document.getElementById('edit-category');
@@ -973,111 +2051,125 @@
         }
         
         // Mentés és elfogadás
-        async function saveAndApprove() {
-            if (!confirm('Biztosan szeretnéd menteni és elfogadni a szerkesztéseket?')) {
-                return;
-            }
-            
-            try {
-                showLoading(true);
-                
-                const token = getAuthToken();
-                if (!token) {
-                    throw new Error('Nincs bejelentkezve');
-                }
-                
-                // Összeállítjuk a frissítendő adatokat
-                const updateData = {
-                    post: parseInt(postId)
-                };
-                
-                // Csak azokat a mezőket adjuk hozzá, amik változtak
-                const title = document.getElementById('edit-title').value;
-                const category = document.getElementById('edit-category').value;
-                const excerpt = document.getElementById('edit-excerpt').value;
-                const content = document.getElementById('edit-content').value;
-                const notes = document.getElementById('edit-notes').value;
-                
-                if (title !== originalPost.title) updateData.title = title;
-                if (category !== originalPost.category) updateData.category = category;
-                if (excerpt !== originalPost.minimal_desc) updateData.minimal_desc = excerpt;
-                if (content !== originalPost.desc) updateData.desc = content;
-                
-                if (Object.keys(updateData).length <= 1) {
-                    alert('Nincs változás a szerkesztésben!');
-                    showLoading(false);
-                    return;
-                }
-                
-                // Ha vannak megjegyzések, hozzáadjuk
-                if (notes.trim() !== '') {
-                    updateData.notes = notes;
-                }
-                
-                console.log('Frissítési adatok:', updateData);
-                
-                // Küldjük a szerkesztési kérelmet
-                const editResponse = await fetch('/api/post/edit', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(updateData)
-                });
-                
-                if (!editResponse.ok) {
-                    const errorText = await editResponse.text();
-                    throw new Error(`Szerkesztési hiba: ${errorText}`);
-                }
-                
-                // Ha lektor vagy direktor vagyunk, azonnal elfogadjuk
-                const roles = currentUser?.roles || [];
-                let isEditor = false;
-                
-                if (typeof roles === 'string') {
-                    try {
-                        const parsedRoles = JSON.parse(roles);
-                        isEditor = Array.isArray(parsedRoles) && 
-                            (parsedRoles.includes('lector') || parsedRoles.includes('director') || parsedRoles.includes('*'));
-                    } catch (e) {
-                        // Ha nem JSON, akkor sima stringként kezeljük
-                        isEditor = roles.includes('lector') || roles.includes('director') || roles.includes('*');
-                    }
-                } else if (Array.isArray(roles)) {
-                    isEditor = roles.includes('lector') || roles.includes('director') || roles.includes('*');
-                }
-                
-                if (isEditor) {
-                    const approveResponse = await fetch('/api/post/approve', {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ post: parseInt(postId) })
-                    });
-                    
-                    if (approveResponse.ok) {
-                        alert('Szerkesztés sikeresen mentve és a poszt elfogadva!');
-                        window.location.href = 'dashboard.html#reviews';
-                    } else {
-                        const errorText = await approveResponse.text();
-                        throw new Error(`Elfogadási hiba: ${errorText}`);
-                    }
-                } else {
-                    alert('Szerkesztés sikeresen mentve, elfogadásra vár!');
-                    window.location.href = 'dashboard.html#reviews';
-                }
-                
-            } catch (error) {
-                console.error('Hiba a mentés során:', error);
-                alert(`Hiba történt: ${error.message}`);
-            } finally {
-                showLoading(false);
-            }
+async function saveAndApprove() {
+    if (!confirm('Biztosan szeretnéd menteni és elfogadni a szerkesztéseket?')) {
+        return;
+    }
+
+    try {
+        showLoading(true);
+        
+        const token = getAuthToken();
+        if (!token) {
+            throw new Error('Nincs bejelentkezve');
         }
         
+        // Összeállítjuk a frissítendő adatokat
+        const updateData = {
+            post: parseInt(postId)
+        };
+        
+        // Csak azokat a mezőket adjuk hozzá, amik változtak
+        const title = document.getElementById('edit-title').value;
+        const category = document.getElementById('edit-category').value;
+        const excerpt = document.getElementById('edit-excerpt').value;
+        const notes = document.getElementById('edit-notes').value;
+        
+        // Tartalom lekérése - blokk nézet alapján
+        let content = '';
+        const isBlockView = document.getElementById('block-editor-container').style.display !== 'none';
+        
+        if (isBlockView && window.editorBlocks) {
+            // Ha blokk nézetben vagyunk, HTML generálása a blokkokból
+            content = generateHTMLFromBlocks();
+            // Blokkok JSON is mentése
+            updateData.blocks_json = JSON.stringify(window.editorBlocks);
+            updateData.content_type = 'blocks';
+        } else {
+            // Ha szöveges nézetben vagyunk
+            content = document.getElementById('edit-content').value;
+        }
+        
+        if (title !== originalPost.title) updateData.title = title;
+        if (category !== originalPost.category) updateData.category = category;
+        if (excerpt !== originalPost.minimal_desc) updateData.minimal_desc = excerpt;
+        if (content !== originalPost.desc) updateData.desc = content;
+        
+        if (Object.keys(updateData).length <= 1) {
+            alert('Nincs változás a szerkesztésben!');
+            showLoading(false);
+            return;
+        }
+        
+        // Ha vannak megjegyzések, hozzáadjuk
+        if (notes.trim() !== '') {
+            updateData.notes = notes;
+        }
+        
+        console.log('Frissítési adatok:', updateData);
+        
+        // Küldjük a szerkesztési kérelmet
+        const editResponse = await fetch('/api/post/edit', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updateData)
+        });
+        
+        if (!editResponse.ok) {
+            const errorText = await editResponse.text();
+            throw new Error(`Szerkesztési hiba: ${errorText}`);
+        }
+        
+        // Ha lektor vagy direktor vagyunk, azonnal elfogadjuk
+        const roles = currentUser?.roles || [];
+        let isEditor = false;
+        
+        if (typeof roles === 'string') {
+            try {
+                const parsedRoles = JSON.parse(roles);
+                isEditor = Array.isArray(parsedRoles) && 
+                    (parsedRoles.includes('lector') || parsedRoles.includes('director') || parsedRoles.includes('*'));
+            } catch (e) {
+                // Ha nem JSON, akkor sima stringként kezeljük
+                isEditor = roles.includes('lector') || roles.includes('director') || roles.includes('*');
+            }
+        } else if (Array.isArray(roles)) {
+            isEditor = roles.includes('lector') || roles.includes('director') || roles.includes('*');
+        }
+        
+        if (isEditor) {
+            const approveResponse = await fetch('/api/post/approve', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ post: parseInt(postId) })
+            });
+            
+            if (approveResponse.ok) {
+                alert('Szerkesztés sikeresen mentve és a poszt elfogadva!');
+                window.location.href = 'dashboard.html#reviews';
+            } else {
+                const errorText = await approveResponse.text();
+                throw new Error(`Elfogadási hiba: ${errorText}`);
+            }
+        } else {
+            alert('Szerkesztés sikeresen mentve, elfogadásra vár!');
+            window.location.href = 'dashboard.html#reviews';
+        }
+        
+    } catch (error) {
+        console.error('Hiba a mentés során:', error);
+        alert(`Hiba történt: ${error.message}`);
+    } finally {
+        showLoading(false);
+    }
+}
+
         // Vázlat mentése
         async function saveDraft() {
             try {
@@ -1307,6 +2399,3404 @@
             textarea.focus();
             textarea.setSelectionRange(start + linkText.length, start + linkText.length);
         }
+
+        function generateHTMLFromBlocks() {
+    if (!window.editorBlocks || !Array.isArray(window.editorBlocks)) {
+        return '';
+    }
+    
+    let html = '';
+    
+    window.editorBlocks.forEach((block, index) => {
+        const blockHtml = generateHTMLFromBlock(block);
+        if (blockHtml) {
+            html += blockHtml + '\n\n';
+        }
+    });
+    
+    return html.trim();
+}
+
     </script>
+
+
+// 2. Képfeltöltő modal és függvények - JAVÍTOTT VERZIÓ
+
+<script>
+// Globális változó az aktuális blokk indexhez
+let currentImageBlockIndex = null;
+
+// Képfeltöltő modal megnyitása
+function openImageUploader() {
+    // Megkeressük az aktuális modal-t
+    const editModal = document.querySelector('.edit-block-modal.active');
+    if (editModal) {
+        // Kiolvassuk a blokk indexét a modal ID-ből
+        const modalId = editModal.id;
+        const match = modalId.match(/edit-block-modal-(\d+)/);
+        if (match) {
+            currentImageBlockIndex = parseInt(match[1]);
+        }
+    }
+    
+    const modal = document.getElementById('image-upload-modal');
+    modal.style.display = 'flex';
+    
+    // Reset állapot
+    resetImageUploader();
+    
+    // Eseménykezelők
+    setupImageUploadEvents();
+    
+    // ESC bezárás
+    const handleEsc = (e) => {
+        if (e.key === 'Escape') closeImageUploader();
+    };
+    document.addEventListener('keydown', handleEsc);
+    
+    // Modal bezárása kattintásra
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeImageUploader();
+        }
+    });
+}
+
+// Képfeltöltő bezárása
+function closeImageUploader() {
+    const modal = document.getElementById('image-upload-modal');
+    modal.style.display = 'none';
+    resetImageUploader();
+    currentImageBlockIndex = null;
+}
+
+// Képfeltöltő reset
+function resetImageUploader() {
+    document.getElementById('image-url-input').value = '';
+    document.getElementById('image-file-input').value = '';
+    document.getElementById('upload-preview-container').style.display = 'none';
+    document.getElementById('upload-progress').style.display = 'none';
+    document.getElementById('upload-progress-bar').style.width = '0%';
+    document.getElementById('upload-preview').innerHTML = '';
+    document.getElementById('upload-file-name').textContent = '';
+}
+
+// Kép használata URL-ből - JAVÍTVA
+function useImageFromUrl() {
+    const urlInput = document.getElementById('image-url-input');
+    const imageUrl = urlInput.value.trim();
+    
+    if (!imageUrl) {
+        showSuccessNotification('Kérlek adj meg egy érvényes URL-t!', 'error');
+        return;
+    }
+    
+    // Ellenőrizzük, hogy kép URL-e (lazább ellenőrzés)
+    if (!imageUrl.match(/\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i) && 
+        !imageUrl.startsWith('data:image/') &&
+        !imageUrl.startsWith('blob:')) {
+        showSuccessNotification('Az URL nem látszik képfájlnak!', 'warning');
+    }
+    
+    // Kép használata a szerkesztőben
+    useImageInEditor(imageUrl);
+    
+    // Sikeres üzenet
+    showSuccessNotification('Kép URL beillesztve!', 'success');
+    
+    // Modal bezárása
+    setTimeout(() => {
+        closeImageUploader();
+    }, 500);
+}
+
+// Kép használata a szerkesztőben - JAVÍTVA
+function useImageInEditor(imageUrl) {
+    const editModal = document.querySelector('.edit-block-modal.active');
+    if (!editModal) return;
+    
+    const urlInput = editModal.querySelector('[name="image-url"]');
+    if (urlInput) {
+        urlInput.value = imageUrl;
+        
+        // Előnézet frissítése
+        updateImagePreview();
+        
+        showSuccessNotification('Kép URL beillesztve!', 'success');
+    }
+}
+
+// Képfeltöltés eseménykezelők
+function setupImageUploadEvents() {
+    const dropZone = document.getElementById('image-drop-zone');
+    const fileInput = document.getElementById('image-file-input');
+    
+    // Drag and drop
+    ['dragover', 'dragenter'].forEach(event => {
+        dropZone.addEventListener(event, (e) => {
+            e.preventDefault();
+            dropZone.style.background = '#e8f4fd';
+            dropZone.style.borderColor = '#1891d1';
+        });
+    });
+    
+    ['dragleave', 'dragend'].forEach(event => {
+        dropZone.addEventListener(event, () => {
+            dropZone.style.background = '#f8fafc';
+            dropZone.style.borderColor = '#1891d1';
+        });
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.background = '#f8fafc';
+        dropZone.style.borderColor = '#1891d1';
+        
+        if (e.dataTransfer.files.length > 0) {
+            handleImageFile(e.dataTransfer.files[0]);
+        }
+    });
+    
+    // Fájl kiválasztás
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleImageFile(e.target.files[0]);
+        }
+    });
+}
+
+// Képfájl kezelése - JAVÍTVA
+function handleImageFile(file) {
+    // Ellenőrzés
+    if (!file.type.startsWith('image/')) {
+        showSuccessNotification('Kérlek képfájlt válassz!', 'error');
+        return;
+    }
+    
+    if (file.size > 10 * 1024 * 1024) {
+        showSuccessNotification('A kép túl nagy! Maximum 10MB lehet.', 'error');
+        return;
+    }
+    
+    // Előnézet
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const previewContainer = document.getElementById('upload-preview-container');
+        const preview = document.getElementById('upload-preview');
+        const fileName = document.getElementById('upload-file-name');
+        
+        preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 180px; border-radius: 4px; object-fit: contain;" alt="Előnézet">`;
+        fileName.textContent = `${file.name} (${formatFileSize(file.size)})`;
+        previewContainer.style.display = 'block';
+        
+        previewContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    reader.readAsDataURL(file);
+}
+
+// Kép feltöltése a szerverre - TELJESEN ÁTÍRVA (mivel nincs /api/upload/image endpoint)
+async function uploadSelectedImage() {
+    const fileInput = document.getElementById('image-file-input');
+    if (!fileInput.files.length) {
+        showSuccessNotification('Nincs kép kiválasztva!', 'error');
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    
+    // Feltöltési állapot megjelenítése
+    const progressDiv = document.getElementById('upload-progress');
+    const progressBar = document.getElementById('upload-progress-bar');
+    progressDiv.style.display = 'block';
+    progressBar.style.width = '30%';
+    
+    try {
+        // Mivel nincs /api/upload/image endpoint, használjuk a local storage-t vagy data URL-t
+        showSuccessNotification('Nincs feltöltési endpoint. A kép csak ideiglenesen kerül mentésre.', 'warning');
+        
+        // Várunk egy kicsit a progress effect miatt
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        progressBar.style.width = '70%';
+        
+        // A fájlt data URL-ként tároljuk (ideiglenes megoldás)
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            progressBar.style.width = '100%';
+            
+            // Data URL használata
+            const dataUrl = e.target.result;
+            
+            setTimeout(() => {
+                useImageInEditor(dataUrl);
+                closeImageUploader();
+                showSuccessNotification('Kép betöltve (ideiglenes)!', 'success');
+            }, 500);
+        };
+        reader.readAsDataURL(file);
+        
+    } catch (error) {
+        console.error('Hiba a kép feltöltése során:', error);
+        progressBar.style.background = '#e74c3c';
+        showSuccessNotification('Hiba történt! ' + error.message, 'error');
+        
+        setTimeout(() => {
+            progressDiv.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressBar.style.background = '#1891d1';
+        }, 3000);
+    }
+}
+
+// Kép előnézet frissítése - JAVÍTVA
+function updateImagePreview() {
+    const urlInput = document.querySelector('.edit-block-modal.active [name="image-url"]');
+    if (!urlInput) return;
+    
+    const imageUrl = urlInput.value.trim();
+    const previewContainer = document.getElementById('image-preview-container');
+    const preview = document.getElementById('image-preview');
+    const urlDisplay = document.getElementById('image-url-display');
+    const errorDiv = document.getElementById('image-error');
+    
+    if (errorDiv) errorDiv.style.display = 'none';
+    
+    if (imageUrl) {
+        // Mindig mutassuk a konténert, ha van URL
+        previewContainer.style.display = 'block';
+        urlDisplay.textContent = imageUrl;
+        
+        // Töltsük be a képet
+        const img = new Image();
+        img.onload = function() {
+            preview.innerHTML = `<img src="${imageUrl}" style="max-width: 100%; max-height: 180px; border-radius: 4px; object-fit: contain;" alt="Előnézet">`;
+        };
+        img.onerror = function() {
+            preview.innerHTML = `
+                <div style="padding: 20px; color: #718096; text-align: center;">
+                    <ion-icon name="image-outline" style="font-size: 48px; margin-bottom: 10px;"></ion-icon>
+                    <p>Kép betöltése sikertelen</p>
+                    <small>URL: ${imageUrl.substring(0, 50)}${imageUrl.length > 50 ? '...' : ''}</small>
+                </div>
+            `;
+        };
+        
+        // Cross-origin képek kezelése
+        img.crossOrigin = "anonymous";
+        img.src = imageUrl;
+        
+        // Timeout, ha túl lassú a betöltés
+        setTimeout(() => {
+            if (!img.complete) {
+                preview.innerHTML = `
+                    <div style="padding: 20px; color: #f39c12; text-align: center;">
+                        <ion-icon name="time-outline" style="font-size: 48px; margin-bottom: 10px;"></ion-icon>
+                        <p>Kép betöltése folyamatban...</p>
+                    </div>
+                `;
+            }
+        }, 1000);
+        
+    } else {
+        previewContainer.style.display = 'none';
+    }
+}
+
+// Segédfüggvények
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Az oldal betöltésekor inicializáljuk az előnézetet
+document.addEventListener('DOMContentLoaded', function() {
+    // Hozzáadjuk az input eseményt a kép URL mezőhöz
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.name === 'image-url') {
+            setTimeout(updateImagePreview, 100);
+        }
+    });
+});
+</script>
+
+<!-- Képfeltöltő Modal HTML -->
+<div id="image-upload-modal" class="image-upload-modal" style="display: none;">
+    <div class="image-upload-modal-content">
+        <div class="image-upload-modal-header">
+            <h3>
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                Kép feltöltése / URL beillesztés
+            </h3>
+            <button class="close-image-upload-modal" onclick="closeImageUploader()">×</button>
+        </div>
+        
+        <div class="image-upload-modal-body">
+            <!-- URL beillesztés -->
+            <div class="form-group">
+                <label>Kép URL beillesztése</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="url" id="image-url-input" class="form-control" 
+                           placeholder="https://example.com/image.jpg"
+                           style="flex: 1;">
+                    <button type="button" class="toolbar-btn" onclick="useImageFromUrl()" 
+                            style="white-space: nowrap;">
+                        <ion-icon name="link-outline"></ion-icon>
+                        Használ
+                    </button>
+                </div>
+                <small style="color: #6c757d; display: block; margin-top: 5px;">
+                    Bármilyen kép URL-t beilleszthetsz (jpg, png, gif, webp, stb.)
+                </small>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0; position: relative;">
+                <hr style="border: none; border-top: 1px solid #e2e8f0;">
+                <div style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    padding: 0 15px;
+                    color: #718096;
+                    font-weight: 500;
+                ">VAGY</div>
+            </div>
+            
+            <!-- Fájlfeltöltés (csak demo, mivel nincs endpoint) -->
+            <div class="form-group">
+                <label>Kép feltöltése számítógépről (demo)</label>
+                <div id="image-drop-zone" style="
+                    border: 2px dashed #1891d1;
+                    border-radius: 8px;
+                    padding: 40px 20px;
+                    text-align: center;
+                    background: #f8fafc;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                ">
+                    <ion-icon name="images-outline" style="
+                        font-size: 48px;
+                        color: #1891d1;
+                        margin-bottom: 15px;
+                        display: block;
+                    "></ion-icon>
+                    <h4 style="margin: 0 0 10px 0; color: #2d3748;">
+                        Húzd ide a képet, vagy kattints a tallózáshoz
+                    </h4>
+                    <p style="color: #718096; margin: 0 0 20px 0;">
+                        Támogatott formátumok: JPG, PNG, GIF, WebP (max 10MB)
+                    </p>
+                    <button type="button" class="toolbar-btn" onclick="document.getElementById('image-file-input').click()">
+                        <ion-icon name="folder-open-outline"></ion-icon>
+                        Kép kiválasztása
+                    </button>
+                </div>
+                <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+                <small style="color: #f39c12; display: block; margin-top: 5px;">
+                    ⚠️ A feltöltés jelenleg csak demó módban működik
+                </small>
+            </div>
+            
+            <!-- Előnézet -->
+            <div id="upload-preview-container" style="
+                margin-top: 20px;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                border: 1px solid #e2e8f0;
+                display: none;
+            ">
+                <h4 style="margin-top: 0; margin-bottom: 10px; color: #495057;">Kiválasztott kép</h4>
+                <div id="upload-preview" style="
+                    max-width: 100%;
+                    max-height: 200px;
+                    overflow: hidden;
+                    text-align: center;
+                    margin-bottom: 15px;
+                ">
+                    <!-- Itt jelenik meg az előnézet -->
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+                    <span id="upload-file-name" style="
+                        font-size: 12px;
+                        color: #6c757d;
+                        word-break: break-all;
+                        flex: 1;
+                    "></span>
+                    <button type="button" class="toolbar-btn" onclick="uploadSelectedImage()" 
+                            style="background: #20c997; color: white; border-color: #20c997;">
+                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                        Betöltés (demo)
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Feltöltési állapot -->
+            <div id="upload-progress" style="display: none;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <ion-icon name="sync-outline" style="
+                        font-size: 20px;
+                        color: #1891d1;
+                        animation: spin 1s linear infinite;
+                    "></ion-icon>
+                    <span style="color: #495057;">Feltöltés folyamatban...</span>
+                </div>
+                <div style="
+                    height: 6px;
+                    background: #e2e8f0;
+                    border-radius: 3px;
+                    overflow: hidden;
+                ">
+                    <div id="upload-progress-bar" style="
+                        height: 100%;
+                        background: #1891d1;
+                        width: 0%;
+                        transition: width 0.3s;
+                    "></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="image-upload-modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeImageUploader()">
+                <ion-icon name="close-outline"></ion-icon>
+                Bezárás
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .image-upload-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10001;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    .image-upload-modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease-out;
+    }
+    
+    .image-upload-modal-header {
+        padding: 20px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .image-upload-modal-header h3 {
+        margin: 0;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .image-upload-modal-header .close-image-upload-modal {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #718096;
+        line-height: 1;
+    }
+    
+    .image-upload-modal-body {
+        padding: 20px;
+    }
+    
+    .image-upload-modal-footer {
+        padding: 20px;
+        border-top: 1px solid #e2e8f0;
+        text-align: right;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Toolbar gomb stílus */
+    .toolbar-btn {
+        padding: 8px 14px !important;
+        background: white !important;
+        border: 1px solid #dee2e6 !important;
+        border-radius: 6px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        font-size: 14px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        font-family: 'Poppins', sans-serif !important;
+    }
+    
+    .toolbar-btn:hover {
+        background: #1891d1 !important;
+        color: white !important;
+        border-color: #1891d1 !important;
+    }
+</style>
+
+
+    <script>
+
+        /**
+ * Blokkok megjelenítése a szerkesztőben
+ */
+/**
+ * Blokkok megjelenítése a szerkesztőben - JAVÍTVATOTT
+ */
+/**
+ * Blokkok megjelenítése a szerkesztőben - KIJAVÍTVA
+ */
+async function displayBlocksFromPost(blocksJson) {
+    try {
+        console.log('DisplayBlocksFromPost hívva:', typeof blocksJson);
+        
+        const container = document.getElementById('edit-content');
+        const blockEditor = document.getElementById('block-editor-container');
+        
+        if (!container || !blockEditor) {
+            console.error('HIBA: Nincs container vagy blockEditor');
+            return;
+        }
+        
+        // Ha a blokkok JSON stringként érkeznek
+        let blocks = blocksJson;
+        if (typeof blocksJson === 'string') {
+            console.log('Blocks JSON stringként érkezett, parse-olom...');
+            try {
+                blocks = JSON.parse(blocksJson);
+                console.log('Blokkok parse-olva:', blocks);
+            } catch (e) {
+                console.error('Hiba a blokkok parse-olása során:', e);
+                // Próbáljuk meg újra egy másik módszerrel
+                try {
+                    blocks = JSON.parse(blocksJson.replace(/\\/g, ''));
+                } catch (e2) {
+                    console.error('Második parse hiba:', e2);
+                    return;
+                }
+            }
+        }
+        
+        if (!Array.isArray(blocks)) {
+            console.error('HIBA: A blocks nem tömb:', blocks);
+            return;
+        }
+        
+        console.log(`${blocks.length} blokk betöltve`);
+        
+        // 1. HTML generálása blokkokból a textarea-hoz
+        let htmlContent = '';
+        blocks.forEach((block, index) => {
+            const blockHtml = generateHTMLFromBlock(block);
+            if (blockHtml) {
+                htmlContent += blockHtml + '\n\n';
+                console.log(`Blokk ${index} HTML:`, blockHtml.substring(0, 100) + '...');
+            }
+        });
+        
+        // Beállítjuk a tartalmat
+        container.value = htmlContent.trim();
+        console.log('Textarea tartalom beállítva, hossz:', container.value.length);
+        
+        // 2. Blokk szerkesztő konténer feltöltése
+        loadBlocksForEditing(blocks);
+        
+    } catch (error) {
+        console.error('Hiba a blokkok megjelenítése során:', error);
+        console.error('Stack trace:', error.stack);
+    }
+}
+/**
+ * HTML generálása egyetlen blokkból
+ */
+/**
+ * HTML generálása egyetlen blokkból - KIJAVÍTVA
+ */
+function generateHTMLFromBlock(block) {
+    if (!block || !block.type) {
+        console.warn('HIBA: Érvénytelen blokk:', block);
+        return '';
+    }
+    
+    console.log(`Generating HTML for block type: ${block.type}`, block);
+    
+    let html = '';
+    
+    try {
+        switch(block.type) {
+            case 'paragraph':
+                html = `<p class="block-paragraph">${escapeHtml(block.content || '')}</p>`;
+                break;
+                
+            case 'heading':
+                const level = block.attributes?.level || 'h2';
+                html = `<${level} class="block-heading">${escapeHtml(block.content || '')}</${level}>`;
+                break;
+                
+            case 'image':
+                const alt = block.attributes?.alt || '';
+                const caption = block.attributes?.caption || '';
+                html = `<figure class="block-image">`;
+                html += `<img src="${escapeHtml(block.content || '')}" alt="${escapeHtml(alt)}">`;
+                if (caption) {
+                    html += `<figcaption>${escapeHtml(caption)}</figcaption>`;
+                }
+                html += `</figure>`;
+                break;
+                
+            case 'quote':
+                const author = block.attributes?.author ? 
+                    `<cite>— ${escapeHtml(block.attributes.author)}</cite>` : '';
+                html = `<blockquote class="block-quote">`;
+                html += `<p>${escapeHtml(block.content || '').replace(/\n/g, '<br>')}</p>`;
+                html += author;
+                html += `</blockquote>`;
+                break;
+                
+            case 'list':
+                const listType = block.attributes?.type || 'ul';
+                html = `<${listType} class="block-list">\n`;
+                const items = Array.isArray(block.content) ? block.content : [block.content];
+                items.forEach(item => {
+                    if (item && item.trim() !== '') {
+                        html += `  <li>${escapeHtml(item)}</li>\n`;
+                    }
+                });
+                html += `</${listType}>`;
+                break;
+                
+            case 'code':
+                const language = block.attributes?.language ? 
+                    ` class="language-${escapeHtml(block.attributes.language)}"` : '';
+                html = `<pre class="block-code"><code${language}>${escapeHtml(block.content || '')}</code></pre>`;
+                break;
+                
+            case 'divider':
+                html = `<hr class="block-divider">`;
+                break;
+                
+            case 'embed':
+                html = `<div class="block-embed" data-url="${escapeHtml(block.content || '')}">
+                    [Beágyazott tartalom: ${escapeHtml(block.content || '')}]
+                </div>`;
+                break;
+                
+            default:
+                console.warn(`Ismeretlen blokk típus: ${block.type}`);
+                html = `<div class="block-${block.type}">${escapeHtml(block.content || '')}</div>`;
+        }
+        
+        console.log(`Generated HTML for ${block.type}:`, html.substring(0, 100) + (html.length > 100 ? '...' : ''));
+        
+    } catch (error) {
+        console.error('Hiba a HTML generálása során:', error);
+        html = `<p>Hiba a blokk generálása során: ${escapeHtml(error.message)}</p>`;
+    }
+    
+    return html;
+}
+/**
+ * HTML escape függvény
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Blokk nézet váltása
+ */
+/**
+ * Blokk nézet váltása - FRISSÍTVE
+ */
+function toggleBlockView() {
+    const blockEditor = document.getElementById('block-editor-container');
+    const textEditor = document.getElementById('edit-content');
+    const toggleBtn = document.getElementById('block-view-toggle');
+    
+    if (blockEditor.style.display === 'none') {
+        // Blokk nézetre váltás
+        blockEditor.style.display = 'block';
+        textEditor.style.display = 'none';
+        toggleBtn.innerHTML = '<ion-icon name="document-text-outline"></ion-icon> Szöveges nézet';
+        
+        // Blokkok betöltése, ha még nem történt meg
+        if (!window.editorBlocks && originalPost && originalPost.blocks_json) {
+            try {
+                const blocks = JSON.parse(originalPost.blocks_json);
+                loadBlocksForEditing(blocks);
+            } catch (error) {
+                console.error('Hiba a blokkok betöltése során:', error);
+            }
+        }
+    } else {
+        // Szöveges nézetre váltás
+        blockEditor.style.display = 'none';
+        textEditor.style.display = 'block';
+        toggleBtn.innerHTML = '<ion-icon name="grid-outline"></ion-icon> Blokkos nézet';
+    }
+}
+
+/**
+ * Blokkok betöltése szerkesztéshez
+ */
+/**
+ * Blokkok betöltése szerkesztéshez - JAVÍTVATOTT
+ */
+async function loadBlocksForEditing(blocks) {
+    const container = document.getElementById('block-editor-container');
+    const noBlocksMsg = document.getElementById('no-blocks-message');
+    
+    if (!blocks || !Array.isArray(blocks) || blocks.length === 0) {
+        if (noBlocksMsg) noBlocksMsg.style.display = 'block';
+        return;
+    }
+    
+    if (noBlocksMsg) noBlocksMsg.style.display = 'none';
+    
+    // Elmentjük a blokkokat globális változóba
+    window.editorBlocks = [...blocks];
+    console.log('Editor blocks inicializálva:', window.editorBlocks.length, 'blokk');
+    
+    // Töltsük be az összes felhasználót a szerzők megjelenítéséhez
+    await loadAllUsers();
+    
+    container.innerHTML = '';
+    
+    // Blokk típusokhoz tartozó ikonok
+    const blockIcons = {
+        'paragraph': 'document-text-outline',
+        'heading': 'text-outline',
+        'image': 'image-outline',
+        'quote': 'quote-outline',
+        'list': 'list-outline',
+        'code': 'code-slash-outline',
+        'divider': 'remove-outline',
+        'embed': 'link-outline'
+    };
+    
+    // Színek blokk típusonként
+    const blockColors = {
+        'heading': '#1891d1',
+        'paragraph': '#4a6cf7',
+        'image': '#20c997',
+        'quote': '#6f42c1',
+        'list': '#fd7e14',
+        'code': '#343a40',
+        'divider': '#6c757d',
+        'embed': '#17a2b8'
+    };
+    
+    // Minden blokk megjelenítése
+    blocks.forEach((block, index) => {
+        const blockDiv = document.createElement('div');
+        blockDiv.className = 'review-block draggable-block'; // Hozzáadtam: draggable-block
+        blockDiv.draggable = true;
+        blockDiv.dataset.blockIndex = index;
+        blockDiv.dataset.blockType = block.type;
+        blockDiv.style.cssText = `
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 2px solid ${blockColors[block.type] || '#e2e8f0'};
+            border-radius: 8px;
+            background: white;
+            position: relative;
+            transition: all 0.3s ease;
+        `;
+        
+        // Blokk fejléc
+        const headerDiv = document.createElement('div');
+        headerDiv.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f1f1;
+        `;
+        
+        // Bal oldal: blokk típus és pozíció
+        const leftInfo = document.createElement('div');
+        leftInfo.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        `;
+        
+        // Pozíció badge
+        const posBadge = document.createElement('div');
+        posBadge.style.cssText = `
+            background: #6c757d;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        `;
+        posBadge.textContent = `#${index + 1}`;
+        
+        // Típus badge
+        const typeBadge = document.createElement('div');
+        typeBadge.style.cssText = `
+            background: ${blockColors[block.type] || '#4a6cf7'};
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        `;
+        typeBadge.innerHTML = `
+            <ion-icon name="${blockIcons[block.type] || 'cube-outline'}" style="font-size: 14px;"></ion-icon>
+            ${getBlockTypeName(block.type)}
+        `;
+        
+        // Jobb oldal: műveletek
+        const rightActions = document.createElement('div');
+        rightActions.style.cssText = `
+            display: flex;
+            gap: 5px;
+        `;
+        
+        // Művelet gombok
+        const actionButtons = [
+            { icon: 'create-outline', title: 'Szerkesztés', action: 'edit' },
+            { icon: 'copy-outline', title: 'Duplikálás', action: 'duplicate' },
+            { icon: 'trash-outline', title: 'Törlés', action: 'delete', color: '#e74c3c' }
+        ];
+        
+        actionButtons.forEach(btn => {
+            const btnEl = document.createElement('button');
+            btnEl.type = 'button';
+            btnEl.title = btn.title;
+            btnEl.style.cssText = `
+                background: ${btn.color || '#f8f9fa'};
+                border: 1px solid #dee2e6;
+                border-radius: 6px;
+                padding: 6px 10px;
+                cursor: pointer;
+                color: ${btn.color ? 'white' : '#495057'};
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 12px;
+                transition: all 0.2s;
+            `;
+            btnEl.innerHTML = `<ion-icon name="${btn.icon}" style="font-size: 14px;"></ion-icon>`;
+            
+            btnEl.onmouseenter = () => {
+                btnEl.style.background = btn.color || '#e9ecef';
+            };
+            btnEl.onmouseleave = () => {
+                btnEl.style.background = btn.color || '#f8f9fa';
+            };
+            
+            btnEl.onclick = () => handleBlockAction(btn.action, index, block);
+            rightActions.appendChild(btnEl);
+        });
+        
+        leftInfo.appendChild(posBadge);
+        leftInfo.appendChild(typeBadge);
+        headerDiv.appendChild(leftInfo);
+        headerDiv.appendChild(rightActions);
+        
+        // Blokk tartalom
+        const contentDiv = document.createElement('div');
+        contentDiv.style.cssText = `
+            margin-top: 10px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 50px;
+            border-left: 3px solid ${blockColors[block.type] || '#4a6cf7'};
+        `;
+        
+        let contentText = '';
+        
+        switch(block.type) {
+            case 'heading':
+                const level = block.attributes?.level || 'h2';
+                contentText = `📝 ${level.toUpperCase()}: ${block.content || ''}`;
+                break;
+                
+            case 'paragraph':
+                contentText = `📄 ${block.content || ''}`;
+                break;
+                
+            case 'image':
+                contentText = `🖼️ Kép: ${block.content || ''}\n`;
+                if (block.attributes?.alt) {
+                    contentText += `Alt: ${block.attributes.alt}\n`;
+                }
+                if (block.attributes?.caption) {
+                    contentText += `Aláírás: ${block.attributes.caption}`;
+                }
+                break;
+                
+            case 'quote':
+                contentText = `💬 Idézet: ${block.content || ''}\n`;
+                if (block.attributes?.author) {
+                    contentText += `— ${block.attributes.author}`;
+                }
+                break;
+                
+            case 'list':
+                contentText = `📋 Lista (${block.attributes?.type || 'ul'}):\n`;
+                const items = Array.isArray(block.content) ? block.content : [block.content];
+                items.forEach((item, i) => {
+                    contentText += `  ${i + 1}. ${item || ''}\n`;
+                });
+                break;
+                
+            case 'code':
+                const lang = block.attributes?.language || 'nincs megadva';
+                contentText = `💻 Kód (${lang}):\n${block.content || ''}`;
+                break;
+                
+            case 'divider':
+                contentText = `➖ Elválasztó sor`;
+                break;
+                
+            case 'embed':
+                contentText = `🔗 Beágyazás: ${block.content || ''}`;
+                if (block.attributes?.type) {
+                    contentText += `\nTípus: ${block.attributes.type}`;
+                }
+                break;
+                
+            default:
+                contentText = `❓ Ismeretlen blokk: ${JSON.stringify(block, null, 2)}`;
+        }
+        
+        contentDiv.textContent = contentText;
+        
+        // Attribútumok megjelenítése (ha vannak)
+        if (block.attributes && Object.keys(block.attributes).length > 0) {
+            const attrsDiv = document.createElement('div');
+            attrsDiv.style.cssText = `
+                margin-top: 10px;
+                padding: 8px;
+                background: #e8f4fd;
+                border-radius: 4px;
+                font-size: 12px;
+                color: #1891d1;
+            `;
+            
+            let attrsText = '⚙️ Attribútumok: ';
+            Object.entries(block.attributes).forEach(([key, value]) => {
+                if (value && value !== '') {
+                    attrsText += `${key}: ${value}; `;
+                }
+            });
+            
+            attrsDiv.textContent = attrsText.trim();
+            contentDiv.appendChild(attrsDiv);
+        }
+        
+        // Stílusok megjelenítése (ha vannak)
+        if (block.styles && Object.keys(block.styles).length > 0) {
+            const stylesDiv = document.createElement('div');
+            stylesDiv.style.cssText = `
+                margin-top: 10px;
+                padding: 8px;
+                background: #f8f9fa;
+                border-radius: 4px;
+                font-size: 11px;
+                color: #6c757d;
+                font-family: 'Courier New', monospace;
+            `;
+            
+            let stylesText = '🎨 Stílusok:\n';
+            Object.entries(block.styles).forEach(([key, value]) => {
+                if (value && value !== '') {
+                    stylesText += `  ${key}: ${value}\n`;
+                }
+            });
+            
+            stylesDiv.textContent = stylesText.trim();
+            contentDiv.appendChild(stylesDiv);
+        }
+        
+        blockDiv.appendChild(headerDiv);
+        blockDiv.appendChild(contentDiv);
+        container.appendChild(blockDiv);
+    });
+
+        setupDragAndDrop();
+//        addSaveBlocksButton();
+    
+    console.log(`${blocks.length} blokk betöltve a szerkesztőbe`);
+}
+
+
+/**
+ * Blokkok mentése textarea-ba
+ */
+function saveBlocksToTextarea() {
+    // Jelenleg csak visszaállítjuk az eredeti tartalmat
+    const textarea = document.getElementById('edit-content');
+    // Ha módosítottuk a blokkokat, itt kellene összegyűjteni
+}
+
+/**
+ * Blokk típusnév lekérdezése
+ */
+function getBlockTypeName(type) {
+    const names = {
+        'paragraph': 'Bekezdés',
+        'heading': 'Címsor',
+        'image': 'Kép',
+        'quote': 'Idézet',
+        'list': 'Lista',
+        'code': 'Kód',
+        'divider': 'Elválasztó',
+        'embed': 'Beágyazás'
+    };
+    
+    return names[type] || 'Ismeretlen';
+}
+
+
+/**
+ * Drag & Drop beállítása
+ */
+/**
+ * Drag & Drop beállítása - JAVÍTVATOTT
+ */
+function setupDragAndDrop() {
+    const container = document.getElementById('block-editor-container');
+    if (!container) {
+        console.error('Drag & drop konténer nem található');
+        return;
+    }
+    
+    let draggedBlock = null;
+    let draggedIndex = null;
+    
+    // Drag start
+    container.addEventListener('dragstart', (e) => {
+        const block = e.target.closest('.draggable-block');
+        if (block) {
+            draggedBlock = block;
+            draggedIndex = parseInt(block.dataset.blockIndex);
+            
+            block.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', draggedIndex);
+            
+            console.log(`Drag start: block ${draggedIndex}`);
+        }
+    });
+    
+    // Drag over
+    container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        const blocks = Array.from(container.querySelectorAll('.draggable-block:not(.dragging)'));
+        const afterElement = getDragAfterElement(container, e.clientY);
+        
+        if (afterElement) {
+            afterElement.classList.add('drag-over');
+        }
+    });
+    
+    // Drag leave
+    container.addEventListener('dragleave', (e) => {
+        const block = e.target.closest('.draggable-block');
+        if (block && block !== draggedBlock) {
+            block.classList.remove('drag-over');
+        }
+    });
+    
+    // Drop
+    container.addEventListener('drop', (e) => {
+        e.preventDefault();
+        
+        const afterElement = getDragAfterElement(container, e.clientY);
+        const blocks = Array.from(container.querySelectorAll('.draggable-block'));
+        
+        // Drag-over class eltávolítása
+        blocks.forEach(block => block.classList.remove('drag-over'));
+        
+        if (draggedBlock) {
+            let insertIndex = 0;
+            
+            if (afterElement) {
+                insertIndex = parseInt(afterElement.dataset.blockIndex);
+                if (insertIndex > draggedIndex) {
+                    insertIndex--;
+                }
+                container.insertBefore(draggedBlock, afterElement);
+            } else {
+                insertIndex = blocks.length - 1;
+                container.appendChild(draggedBlock);
+            }
+            
+            // Blokk pozíció frissítése
+            draggedBlock.classList.remove('dragging');
+            
+            // Blokkok tömbjének újrarendezése
+            if (draggedIndex !== insertIndex) {
+                const movedBlock = window.editorBlocks[draggedIndex];
+                window.editorBlocks.splice(draggedIndex, 1);
+                window.editorBlocks.splice(insertIndex, 0, movedBlock);
+                
+                // Pozíciók frissítése
+                updateBlockPositions();
+                updateTextareaFromBlocks();
+                
+                console.log(`Block moved from ${draggedIndex} to ${insertIndex}`);
+                showSuccessNotification('Blokk pozíciója frissítve!');
+            }
+        }
+        
+        draggedBlock = null;
+        draggedIndex = null;
+    });
+    
+    // Drag end
+    container.addEventListener('dragend', (e) => {
+        if (draggedBlock) {
+            draggedBlock.classList.remove('dragging');
+            const blocks = container.querySelectorAll('.draggable-block');
+            blocks.forEach(block => block.classList.remove('drag-over'));
+        }
+        draggedBlock = null;
+        draggedIndex = null;
+    });
+}
+/**
+ * Blokk drag eseményeinek beállítása
+ */
+function setupBlockDragEvents(blockDiv, index) {
+    blockDiv.addEventListener('dragstart', (e) => {
+        e.stopPropagation();
+    });
+    
+    blockDiv.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+    
+    blockDiv.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        if (!blockDiv.classList.contains('dragging')) {
+            blockDiv.classList.add('drag-over');
+            blockDiv.style.boxShadow = '0 0 0 2px #1891d1';
+        }
+    });
+    
+    blockDiv.addEventListener('dragleave', (e) => {
+        if (!blockDiv.contains(e.relatedTarget)) {
+            blockDiv.classList.remove('drag-over');
+            blockDiv.style.boxShadow = '';
+        }
+    });
+    
+    blockDiv.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        blockDiv.classList.remove('drag-over');
+        blockDiv.style.boxShadow = '';
+    });
+}
+
+/**
+ * Drag után elem keresése
+ */
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.draggable-block:not(.dragging)')];
+    
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+/**
+ * Blokk pozíciók frissítése
+ */
+function updateBlockPositions() {
+    const container = document.getElementById('block-editor-container');
+    const blocks = Array.from(container.querySelectorAll('.draggable-block'));
+    
+    blocks.forEach((block, index) => {
+        const posBadge = block.querySelector('.position-badge');
+        if (posBadge) {
+            posBadge.textContent = `#${index + 1}`;
+        }
+        block.dataset.blockIndex = index;
+    });
+    
+    console.log(`Positions updated: ${blocks.length} blocks`);
+}
+
+/**
+ * Blokkok tömbjének újrarendezése
+ */
+function reorderBlocksArray() {
+    const container = document.getElementById('block-editor-container');
+    const blocks = Array.from(container.querySelectorAll('.draggable-block'));
+    
+    const newBlocks = blocks.map(block => {
+        const index = parseInt(block.dataset.blockIndex);
+        return window.editorBlocks[index];
+    });
+    
+    window.editorBlocks = newBlocks;
+    console.log('Blocks array reordered:', window.editorBlocks.length, 'blocks');
+}
+
+/**
+ * Diff nézet frissítése
+ */
+function updateDiffView() {
+    if (originalPost && originalPost.blocks_json) {
+        try {
+            const originalBlocks = JSON.parse(originalPost.blocks_json);
+            const editedContent = document.getElementById('edit-content').value;
+            
+            // Itt lehetne összehasonlítani a blokkokat
+            // Jelenleg egyszerű szöveges diff-et jelenítünk meg
+            showDiff(originalPost, {
+                title: document.getElementById('edit-title').value,
+                category: document.getElementById('edit-category').value,
+                minimal_desc: document.getElementById('edit-excerpt').value,
+                desc: editedContent
+            });
+            
+        } catch (error) {
+            console.error('Hiba a diff generálása során:', error);
+        }
+    }
+}
+
+/**
+ * Blokk műveletek kezelése
+ */
+/**
+ * Blokk műveletek kezelése
+ */
+async function handleBlockAction(action, index, block) {
+    console.log(`Block action: ${action} at index ${index}`, block);
+    
+    if (!window.editorBlocks || !window.editorBlocks[index]) {
+        console.error('Nincs editorBlocks vagy érvénytelen index');
+        return;
+    }
+    
+    switch(action) {
+        case 'edit':
+            await editBlock(index, block); // Ez most már a tényleges szerkesztőt hívja
+            break;
+        case 'duplicate':
+            await duplicateBlock(index, block);
+            break;
+        case 'delete':
+            await deleteBlock(index, block);
+            break;
+    }
+}
+
+/**
+ * Blokk duplikálása - JAVÍTVATOTT
+ */
+async function duplicateBlock(index, block) {
+    const result = await showConfirmModal({
+        title: 'Blokk duplikálása',
+        message: `Biztosan duplikálni szeretnéd ezt a blokkot?`,
+        subMessage: `A duplikált blokk az eredeti alá kerül.`,
+        icon: 'copy-outline',
+        confirmText: 'Igen, duplikálom',
+        cancelText: 'Mégse',
+        details: [
+            { label: 'Pozíció', value: index + 1 },
+            { label: 'Típus', value: getBlockTypeName(block.type) }
+        ]
+    });
+    
+    if (result) {
+        // Blokk másolata létrehozása
+        const duplicatedBlock = JSON.parse(JSON.stringify(block));
+        duplicatedBlock.id = `block_${Date.now()}_duplicate_${index}`;
+        
+        // Beszúrás az index+1 helyre
+        window.editorBlocks.splice(index + 1, 0, duplicatedBlock);
+        
+        // Frissítjük a megjelenítést
+        refreshBlockDisplay();
+        
+        showSuccessNotification('Blokk sikeresen duplikálva!');
+    }
+}
+
+
+async function editBlock(index, block) {
+    const config = getBlockConfig();
+    const modalHTML = createEditModalHTML(block, index, config);
+    
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHTML;
+    document.body.appendChild(modalContainer);
+    
+    const modal = modalContainer.querySelector('.edit-block-modal');
+    const form = modal.querySelector('.edit-block-form');
+    const saveBtn = modal.querySelector('.save-block-btn');
+    const cancelBtn = modal.querySelector('.cancel-block-btn');
+    
+    // Mezők kitöltése
+    if (form) {
+        const titleInput = form.querySelector('[name="block-title"]');
+        const contentTextarea = form.querySelector('[name="block-content"]');
+        
+        if (block.type === 'heading' && titleInput) {
+            titleInput.value = block.content || '';
+        }
+        
+        if (contentTextarea) {
+            if (block.type === 'list' && Array.isArray(block.content)) {
+                contentTextarea.value = block.content.join('\n');
+            } else {
+                contentTextarea.value = block.content || '';
+            }
+        }
+        
+        // Kép URL
+        if (block.type === 'image') {
+            const urlInput = form.querySelector('[name="image-url"]');
+            const altInput = form.querySelector('[name="image-alt"]');
+            const captionInput = form.querySelector('[name="image-caption"]');
+            
+            if (urlInput) urlInput.value = block.content || '';
+            if (altInput) altInput.value = block.attributes?.alt || '';
+            if (captionInput) captionInput.value = block.attributes?.caption || '';
+        }
+        
+        // Idézet szerző
+        if (block.type === 'quote') {
+            const authorInput = form.querySelector('[name="quote-author"]');
+            if (authorInput) authorInput.value = block.attributes?.author || '';
+        }
+        
+        // Kód nyelv
+        if (block.type === 'code') {
+            const languageInput = form.querySelector('[name="code-language"]');
+            if (languageInput) languageInput.value = block.attributes?.language || '';
+        }
+        
+        // Embed URL
+        if (block.type === 'embed') {
+            const embedUrlInput = form.querySelector('[name="embed-url"]');
+            if (embedUrlInput) embedUrlInput.value = block.content || '';
+        }
+    }
+    
+    // Mentés
+    if (saveBtn) {
+        saveBtn.addEventListener('click', async () => {
+            const updatedBlock = await getUpdatedBlockData(form, block, index);
+            if (updatedBlock) {
+                updateBlockInArray(index, updatedBlock);
+                refreshBlockDisplay();
+                modal.remove();
+                showSuccessNotification('Blokk sikeresen frissítve!');
+            }
+        });
+    }
+    
+    // Mégse
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            modal.remove();
+        });
+    }
+    
+    // ESC vagy kattintás kívülre
+    const handleEsc = (e) => {
+        if (e.key === 'Escape') modal.remove();
+    };
+    document.addEventListener('keydown', handleEsc);
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+    
+    modal.classList.add('active');
+}
+
+function updateBlockInArray(index, updatedBlock) {
+    if (window.editorBlocks && window.editorBlocks[index]) {
+        window.editorBlocks[index] = updatedBlock;
+    }
+}
+
+
+function createEditModalHTML(block, index, config) {
+    const title = getBlockTypeName(block.type);
+    const color = config.colors[block.type] || '#4a6cf7';
+    
+    let modalContent = '';
+    
+    switch(block.type) {
+        case 'heading':
+            modalContent = `
+                <div class="form-group">
+                    <label>Cím</label>
+                    <input type="text" name="block-title" class="form-control" 
+                           placeholder="Írd be a címet...">
+                </div>
+                <div class="form-group">
+                    <label>Címszint</label>
+                    <select name="heading-level" class="form-control">
+                        <option value="h1" ${block.attributes?.level === 'h1' ? 'selected' : ''}>H1 - Főcím</option>
+                        <option value="h2" ${(!block.attributes?.level || block.attributes.level === 'h2') ? 'selected' : ''}>H2 - Alcím</option>
+                        <option value="h3" ${block.attributes?.level === 'h3' ? 'selected' : ''}>H3 - Harmadik szint</option>
+                        <option value="h4" ${block.attributes?.level === 'h4' ? 'selected' : ''}>H4 - Negyedik szint</option>
+                    </select>
+                </div>
+            `;
+            break;
+            
+        case 'paragraph':
+            modalContent = `
+                <div class="form-group">
+                    <label>Szöveg</label>
+                    <textarea name="block-content" class="form-control" rows="6" 
+                              placeholder="Írd be a szöveget..."></textarea>
+                </div>
+            `;
+            break;
+            
+        // Képblokk szerkesztő része - az editBlock függvényben a 'image' case
+
+// 1. Először a KÉPBLÖKK SZERKESZTŐ rész javítása (editBlock függvényben)
+case 'image':
+    modalContent = `
+        <div class="form-group">
+            <label>Kép URL</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="url" id="edit-image-url" name="image-url" class="form-control" 
+                       placeholder="https://example.com/image.jpg"
+                       value="${block.content || ''}"
+                       oninput="updateImagePreview()">
+                <button type="button" class="toolbar-btn" onclick="openImageUploader()" 
+                        style="white-space: nowrap;">
+                    <ion-icon name="cloud-upload-outline"></ion-icon>
+                    Feltöltés
+                </button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Alternatív szöveg (alt)</label>
+            <input type="text" id="edit-image-alt" name="image-alt" class="form-control" 
+                   placeholder="A kép leírása..."
+                   value="${block.attributes?.alt || ''}">
+        </div>
+        <div class="form-group">
+            <label>Aláírás (caption)</label>
+            <input type="text" id="edit-image-caption" name="image-caption" class="form-control" 
+                   placeholder="Képaláírás..."
+                   value="${block.attributes?.caption || ''}">
+        </div>
+        
+        <!-- Kép előnézet -->
+        <div id="image-preview-container" style="
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px dashed #dee2e6;
+            ${block.content ? 'display: block;' : 'display: none;'}
+        ">
+            <h4 style="margin-top: 0; margin-bottom: 10px; color: #495057;">Kép előnézet</h4>
+            <div id="image-preview" style="
+                max-width: 100%;
+                max-height: 200px;
+                overflow: hidden;
+                text-align: center;
+            ">
+                ${block.content ? `<img src="${escapeHtml(block.content)}" style="max-width: 100%; max-height: 180px; border-radius: 4px;" alt="Előnézet" onerror="this.style.display='none'; document.getElementById('image-error').style.display='block';">` : 'Nincs kép kiválasztva'}
+                <div id="image-error" style="display: none; color: #e74c3c; padding: 10px;">
+                    <ion-icon name="warning-outline"></ion-icon>
+                    A kép nem tölthető be
+                </div>
+            </div>
+        </div>
+    `;
+    break;            
+        case 'quote':
+            modalContent = `
+                <div class="form-group">
+                    <label>Idézet szövege</label>
+                    <textarea name="block-content" class="form-control" rows="4" 
+                              placeholder="Írd be az idézetet..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Szerző</label>
+                    <input type="text" name="quote-author" class="form-control" 
+                           placeholder="A szerző neve...">
+                </div>
+            `;
+            break;
+            
+        case 'list':
+            modalContent = `
+                <div class="form-group">
+                    <label>Listaelemek (soronként egy)</label>
+                    <textarea name="block-content" class="form-control" rows="6" 
+                              placeholder="Első elem&#10;Második elem&#10;Harmadik elem"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Lista típusa</label>
+                    <select name="list-type" class="form-control">
+                        <option value="ul" ${(!block.attributes?.type || block.attributes.type === 'ul') ? 'selected' : ''}>Felsorolás (pontozott)</option>
+                        <option value="ol" ${block.attributes?.type === 'ol' ? 'selected' : ''}>Számozott</option>
+                    </select>
+                </div>
+            `;
+            break;
+            
+        case 'code':
+            modalContent = `
+                <div class="form-group">
+                    <label>Kód</label>
+                    <textarea name="block-content" class="form-control" rows="8" 
+                              placeholder="Írd be a kódot..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Programozási nyelv</label>
+                    <input type="text" name="code-language" class="form-control" 
+                           placeholder="pl.: javascript, python, php...">
+                </div>
+            `;
+            break;
+            
+        case 'embed':
+            modalContent = `
+                <div class="form-group">
+                    <label>Beágyazott tartalom URL</label>
+                    <input type="url" name="embed-url" class="form-control" 
+                           placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <div class="form-group">
+                    <label>Típus (automatikus)</label>
+                    <input type="text" class="form-control" disabled 
+                           value="${block.attributes?.type || 'Auto-detected'}">
+                </div>
+            `;
+            break;
+            
+        default:
+            modalContent = `
+                <div class="form-group">
+                    <label>Tartalom</label>
+                    <textarea name="block-content" class="form-control" rows="6" 
+                              placeholder="Írd be a tartalmat...">${JSON.stringify(block, null, 2)}</textarea>
+                </div>
+            `;
+    }
+    
+    return `
+        <div class="edit-block-modal" id="edit-block-modal-${index}">
+            <div class="edit-block-modal-content">
+                <div class="edit-block-modal-header" style="border-left-color: ${color}">
+                    <ion-icon name="${config.icons[block.type] || 'cube-outline'}"></ion-icon>
+                    <h3>${title} szerkesztése</h3>
+                    <button class="close-edit-modal">×</button>
+                </div>
+                
+                <form class="edit-block-form">
+                    ${modalContent}
+                </form>
+                
+                <div class="edit-block-modal-footer">
+                    <button type="button" class="btn-secondary cancel-block-btn">
+                        <ion-icon name="close-outline"></ion-icon>
+                        Mégse
+                    </button>
+                    <button type="button" class="btn-primary save-block-btn">
+                        <ion-icon name="save-outline"></ion-icon>
+                        Mentés
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+
+
+/**
+ * Blokk duplikálása
+ */
+async function getUpdatedBlockData(form, originalBlock, index) {
+    if (!form) return null;
+    
+    const updatedBlock = JSON.parse(JSON.stringify(originalBlock));
+    
+    switch(originalBlock.type) {
+        case 'heading':
+            const title = form.querySelector('[name="block-title"]')?.value || '';
+            const level = form.querySelector('[name="heading-level"]')?.value || 'h2';
+            updatedBlock.content = title;
+            updatedBlock.attributes.level = level;
+            break;
+            
+        case 'paragraph':
+            updatedBlock.content = form.querySelector('[name="block-content"]')?.value || '';
+            break;
+            
+        case 'image':
+            updatedBlock.content = form.querySelector('[name="image-url"]')?.value || '';
+            updatedBlock.attributes.alt = form.querySelector('[name="image-alt"]')?.value || '';
+            updatedBlock.attributes.caption = form.querySelector('[name="image-caption"]')?.value || '';
+            break;
+            
+        case 'quote':
+            updatedBlock.content = form.querySelector('[name="block-content"]')?.value || '';
+            updatedBlock.attributes.author = form.querySelector('[name="quote-author"]')?.value || '';
+            break;
+            
+        case 'list':
+            const listContent = form.querySelector('[name="block-content"]')?.value || '';
+            const listType = form.querySelector('[name="list-type"]')?.value || 'ul';
+            updatedBlock.content = listContent.split('\n').filter(item => item.trim() !== '');
+            updatedBlock.attributes.type = listType;
+            break;
+            
+        case 'code':
+            updatedBlock.content = form.querySelector('[name="block-content"]')?.value || '';
+            updatedBlock.attributes.language = form.querySelector('[name="code-language"]')?.value || '';
+            break;
+            
+        case 'embed':
+            updatedBlock.content = form.querySelector('[name="embed-url"]')?.value || '';
+            // Típus automatikus detektálása
+            updatedBlock.attributes.type = detectEmbedType(updatedBlock.content);
+            break;
+            
+        default:
+            try {
+                const newContent = form.querySelector('[name="block-content"]')?.value || '';
+                updatedBlock.content = newContent;
+            } catch (e) {
+                console.error('Hiba a blokk frissítése során:', e);
+            }
+    }
+    
+    // ID generálása, ha nincs
+    if (!updatedBlock.id) {
+        updatedBlock.id = `block_${Date.now()}_${index}`;
+    }
+    
+    return updatedBlock;
+}
+
+
+
+/**
+ * Blokk törlése
+ */
+async function moveBlockUp(index, block) {
+    if (index <= 0) {
+        showSuccessNotification('Ez a blokk már a legelső helyen van!', 'warning');
+        return;
+    }
+    
+    // Csere
+    const temp = window.editorBlocks[index];
+    window.editorBlocks[index] = window.editorBlocks[index - 1];
+    window.editorBlocks[index - 1] = temp;
+    
+    // Frissítjük a megjelenítést
+    refreshBlockDisplay();
+    
+    showSuccessNotification('Blokk feljebb mozgatva!');
+}
+
+function refreshBlockDisplay() {
+    const container = document.getElementById('block-editor-container');
+    const blocks = [...window.editorBlocks];
+    
+    console.log('Refreshing block display with', blocks.length, 'blocks');
+
+    const scrollPos = container.scrollTop;
+    container.innerHTML = '';
+    
+    const config = getBlockConfig();
+    blocks.forEach((block, index) => {
+        const blockDiv = createBlockElement(block, index, config);
+        container.appendChild(blockDiv);
+    });
+    
+    // Drag & drop újrainicializálása
+    setupDragAndDrop();
+    
+    // Textarea frissítése
+    updateTextareaFromBlocks();
+
+    container.scrollTop = scrollPos;
+    
+    // Képek preloadolása - ÚJ
+    preloadAllImages();
+    
+    console.log('Block display refreshed with', blocks.length, 'blocks');
+}
+
+function preloadAllImages() {
+    const imageBlocks = window.editorBlocks.filter(block => block.type === 'image' && block.content);
+    
+    imageBlocks.forEach((block, index) => {
+        if (block.content && (block.content.startsWith('http') || block.content.startsWith('data:'))) {
+            // Preload a háttérben
+            const img = new Image();
+            img.src = block.content;
+            img.onload = function() {
+                // Kép betöltődött, frissítsük az előnézetet
+                updateImagePreviewInBlock(index, block.content);
+            };
+        }
+    });
+}
+
+// 4. Kép előnézet frissítése blokkban - ÚJ függvény
+function updateImagePreviewInBlock(blockIndex, imageUrl) {
+    const block = document.querySelector(`.draggable-block[data-block-index="${blockIndex}"]`);
+    if (!block) return;
+    
+    const previewDiv = block.querySelector('.image-preview');
+    if (previewDiv) {
+        const img = previewDiv.querySelector('img');
+        if (img && img.src !== imageUrl) {
+            img.src = imageUrl;
+        }
+    }
+}
+
+
+function updateTextareaFromBlocks() {
+    const textarea = document.getElementById('edit-content');
+    if (!textarea || !window.editorBlocks) return;
+    
+    let htmlContent = '';
+    window.editorBlocks.forEach((block, index) => {
+        const blockHtml = generateHTMLFromBlock(block);
+        if (blockHtml) {
+            htmlContent += blockHtml + '\n\n';
+        }
+    });
+    
+    textarea.value = htmlContent.trim();
+    console.log('Textarea updated from blocks');
+}
+/**
+ * Blokk lejjebb mozgatása
+ */
+async function moveBlockDown(index, block) {
+    if (index >= window.editorBlocks.length - 1) {
+        showSuccessNotification('Ez a blokk már a legutolsó helyen van!', 'warning');
+        return;
+    }
+    
+    // Csere
+    const temp = window.editorBlocks[index];
+    window.editorBlocks[index] = window.editorBlocks[index + 1];
+    window.editorBlocks[index + 1] = temp;
+    
+    // Frissítjük a megjelenítést
+    refreshBlockDisplay();
+    
+    showSuccessNotification('Blokk lejjebb mozgatva!');
+}
+
+/**
+ * Blokk törlése
+ */
+async function deleteBlock(index, block) {
+    const result = await showConfirmModal({
+        title: 'Blokk törlése',
+        message: `Biztosan törölni szeretnéd ezt a blokkot?`,
+        subMessage: `Ez a művelet nem visszavonható!`,
+        icon: 'trash-outline',
+        confirmText: 'Igen, törlöm',
+        cancelText: 'Mégse',
+        details: [
+            { label: 'Pozíció', value: index + 1 },
+            { label: 'Típus', value: getBlockTypeName(block.type) },
+            { label: 'Tartalom', value: block.content ? block.content.substring(0, 50) + (block.content.length > 50 ? '...' : '') : 'Üres' }
+        ]
+    });
+    
+    if (result) {
+        // Blokk eltávolítása a tömbből
+        window.editorBlocks.splice(index, 1);
+        
+        // Frissítjük a megjelenítést
+        refreshBlockDisplay();
+        
+        showSuccessNotification('Blokk sikeresen törölve!');
+    }
+}
+
+
+/**
+ * Blokk elem létrehozása - ÚJ
+ */
+/**
+ * Blokk elem létrehozása - TELJESEN JAVÍTVA
+ */
+function createBlockElement(block, index, config) {
+    const blockDiv = document.createElement('div');
+    blockDiv.className = 'review-block draggable-block';
+    blockDiv.draggable = true;
+    blockDiv.dataset.blockIndex = index;
+    blockDiv.dataset.blockType = block.type;
+    
+    const blockColors = config.colors || {
+        'heading': '#1891d1',
+        'paragraph': '#4a6cf7',
+        'image': '#20c997',
+        'quote': '#6f42c1',
+        'list': '#fd7e14',
+        'code': '#343a40',
+        'divider': '#6c757d',
+        'embed': '#17a2b8'
+    };
+    
+    blockDiv.style.cssText = `
+        margin-bottom: 15px;
+        padding: 15px;
+        border: 2px solid ${blockColors[block.type] || '#e2e8f0'};
+        border-radius: 8px;
+        background: white;
+        position: relative;
+        transition: all 0.3s ease;
+        cursor: move;
+    `;
+    
+    // Fejléc
+    const headerDiv = document.createElement('div');
+    headerDiv.style.cssText = `
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f1f1f1;
+    `;
+    
+    // Bal oldal: pozíció és típus
+    const leftInfo = document.createElement('div');
+    leftInfo.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    `;
+    
+    // Pozíció badge
+    const posBadge = document.createElement('div');
+    posBadge.style.cssText = `
+        background: #6c757d;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    `;
+    posBadge.textContent = `#${index + 1}`;
+    
+    // Típus badge
+    const typeBadge = document.createElement('div');
+    typeBadge.style.cssText = `
+        background: ${blockColors[block.type] || '#4a6cf7'};
+        color: white;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+    `;
+    typeBadge.innerHTML = `
+        <ion-icon name="${config.icons[block.type] || 'cube-outline'}" style="font-size: 14px;"></ion-icon>
+        ${getBlockTypeName(block.type)}
+    `;
+    
+    // Jobb oldal: műveletek
+    const rightActions = document.createElement('div');
+    rightActions.style.cssText = `
+        display: flex;
+        gap: 5px;
+    `;
+    
+    // Művelet gombok
+    const actionButtons = [
+        { icon: 'create-outline', title: 'Szerkesztés', action: 'edit' },
+        { icon: 'copy-outline', title: 'Duplikálás', action: 'duplicate' },
+        { icon: 'trash-outline', title: 'Törlés', action: 'delete', color: '#e74c3c' }
+    ];
+    
+    actionButtons.forEach(btn => {
+        const btnEl = document.createElement('button');
+        btnEl.type = 'button';
+        btnEl.title = btn.title;
+        btnEl.style.cssText = `
+            background: ${btn.color || '#f8f9fa'};
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: ${btn.color ? 'white' : '#495057'};
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            transition: all 0.2s;
+        `;
+        btnEl.innerHTML = `<ion-icon name="${btn.icon}" style="font-size: 14px;"></ion-icon>`;
+        
+        btnEl.onmouseenter = () => {
+            btnEl.style.background = btn.color || '#e9ecef';
+        };
+        btnEl.onmouseleave = () => {
+            btnEl.style.background = btn.color || '#f8f9fa';
+        };
+        
+        btnEl.onclick = () => handleBlockAction(btn.action, index, block);
+        rightActions.appendChild(btnEl);
+    });
+    
+    leftInfo.appendChild(posBadge);
+    leftInfo.appendChild(typeBadge);
+    headerDiv.appendChild(leftInfo);
+    headerDiv.appendChild(rightActions);
+    
+    // Blokk tartalom
+    const contentDiv = document.createElement('div');
+    contentDiv.style.cssText = `
+        margin-top: 10px;
+        padding: 12px;
+        background: #f8fafc;
+        border-radius: 6px;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        min-height: 50px;
+        border-left: 3px solid ${blockColors[block.type] || '#4a6cf7'};
+    `;
+    
+    let contentText = '';
+    
+    switch(block.type) {
+        case 'heading':
+            const level = block.attributes?.level || 'h2';
+            contentText = `📝 ${level.toUpperCase()}: ${block.content || ''}`;
+            break;
+            
+        case 'paragraph':
+            contentText = `📄 ${block.content || ''}`;
+            break;
+            
+        // 1. Először módosítsuk a képblokk generálását (createBlockElement függvényben)
+// A createBlockElement függvényben a képblokk részét módosítjuk:
+case 'image':
+    // NE JELENÍTSD MEG A LINKET A TARTALOM SZÖVÉGBEN!
+    // contentText = `🖼️ Kép: ${block.content || ''}\n`; // EZT TÁVOLÍTSD EL!
+    
+    // Inkább csak a meta információkat jelenítsd meg
+    contentText = `🖼️ Kép\n`;
+    if (block.attributes?.alt) {
+        contentText += `Alt: ${block.attributes.alt}\n`;
+    }
+    if (block.attributes?.caption) {
+        contentText += `Aláírás: ${block.attributes.caption}`;
+    }
+    
+    // Kép előnézet hozzáadása - JAVÍTOTT VERZIÓ
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'image-preview-container';
+    previewContainer.style.cssText = `
+        margin-top: 10px;
+        max-width: 100%;
+        max-height: 200px;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+        min-height: 120px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    `;
+    
+    // Kép betöltési állapot
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'image-loading';
+    loadingDiv.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 12px;
+        background: rgba(255,255,255,0.9);
+        z-index: 1;
+    `;
+    loadingDiv.innerHTML = `
+        <ion-icon name="image-outline" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></ion-icon>
+        <div>Kép betöltése...</div>
+    `;
+    
+    // Kép elem - CSAK HA VAN VALÓDI KÉP
+    if (block.content && (block.content.startsWith('http') || block.content.startsWith('data:'))) {
+        const img = document.createElement('img');
+        img.className = 'image-preview';
+        img.style.cssText = `
+            width: 100%;
+            height: auto;
+            max-height: 180px;
+            object-fit: contain;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        `;
+        img.src = block.content;
+        img.alt = block.attributes?.alt || 'Kép előnézet';
+        img.title = 'Kattints a nagyításhoz';
+        
+        // Kép betöltési események
+        img.onload = function() {
+            this.style.opacity = '1';
+            loadingDiv.style.display = 'none';
+            
+            // Automatikus nagyítás, ha a kép magas
+            if (this.naturalWidth > 0) {
+                const aspectRatio = this.naturalHeight / this.naturalWidth;
+                if (aspectRatio > 1.5) {
+                    this.style.objectFit = 'cover';
+                }
+            }
+        };
+        
+        img.onerror = function() {
+            // Ha nem töltődik be a kép, mutassunk hibaüzenetet
+            loadingDiv.innerHTML = `
+                <ion-icon name="warning-outline" style="font-size: 32px; margin-bottom: 8px; color: #e74c3c;"></ion-icon>
+                <div style="color: #e74c3c;">Kép nem betölthető</div>
+                <div style="font-size: 10px; margin-top: 5px; max-width: 200px; overflow: hidden; text-overflow: ellipsis;">
+                    ${block.content.substring(0, 40)}${block.content.length > 40 ? '...' : ''}
+                </div>
+            `;
+        };
+        
+        // Kattintás esemény a kép nagyításához
+        img.onclick = function(e) {
+            e.stopPropagation();
+            showImageLightbox(block.content, block.attributes?.alt || 'Kép előnézet');
+        };
+        
+        previewContainer.appendChild(loadingDiv);
+        previewContainer.appendChild(img);
+        
+        // Konténer kattintás esemény
+        previewContainer.onclick = function(e) {
+            if (e.target === previewContainer) {
+                showImageLightbox(block.content, block.attributes?.alt || 'Kép előnézet');
+            }
+        };
+        
+        // Hover effekt
+        previewContainer.onmouseenter = function() {
+            this.style.borderColor = '#1891d1';
+            this.style.boxShadow = '0 4px 12px rgba(24, 145, 209, 0.1)';
+        };
+        
+        previewContainer.onmouseleave = function() {
+            this.style.borderColor = '#e2e8f0';
+            this.style.boxShadow = 'none';
+        };
+        
+        // Automatikus betöltés indítása
+        setTimeout(() => {
+            if (!img.complete) {
+                img.src = img.src; // Újratöltés trigger
+            }
+        }, 100);
+        
+    } else {
+        // Ha nincs kép URL, mutassunk helyettesítőt
+        previewContainer.innerHTML = `
+            <div style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 120px;
+                color: #718096;
+            ">
+                <ion-icon name="image-outline" style="font-size: 48px; margin-bottom: 10px; opacity: 0.5;"></ion-icon>
+                <div>Nincs kép hozzáadva</div>
+            </div>
+        `;
+        previewContainer.style.cursor = 'default';
+    }
+    
+    // Adjuk hozzá a tartalom div-hez
+    contentDiv.appendChild(previewContainer);
+    break;
+            
+        case 'quote':
+            contentText = `💬 Idézet: ${block.content || ''}\n`;
+            if (block.attributes?.author) {
+                contentText += `— ${block.attributes.author}`;
+            }
+            break;
+            
+        case 'list':
+            contentText = `📋 Lista (${block.attributes?.type || 'ul'}):\n`;
+            const items = Array.isArray(block.content) ? block.content : [block.content];
+            items.forEach((item, i) => {
+                contentText += `  ${i + 1}. ${item || ''}\n`;
+            });
+            break;
+            
+        case 'code':
+            const lang = block.attributes?.language || 'nincs megadva';
+            contentText = `💻 Kód (${lang}):\n${block.content || ''}`;
+            break;
+            
+        case 'divider':
+            contentText = `➖ Elválasztó sor`;
+            break;
+            
+        case 'embed':
+            contentText = `🔗 Beágyazás: ${block.content || ''}`;
+            if (block.attributes?.type) {
+                contentText += `\nTípus: ${block.attributes.type}`;
+            }
+            break;
+            
+        default:
+            contentText = `❓ Ismeretlen blokk: ${JSON.stringify(block, null, 2)}`;
+    }
+    
+    contentDiv.textContent = contentText;
+    
+    // Attribútumok megjelenítése (ha vannak)
+    if (block.attributes && Object.keys(block.attributes).length > 0) {
+        const attrsDiv = document.createElement('div');
+        attrsDiv.style.cssText = `
+            margin-top: 10px;
+            padding: 8px;
+            background: #e8f4fd;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #1891d1;
+        `;
+        
+        let attrsText = '⚙️ Attribútumok: ';
+        Object.entries(block.attributes).forEach(([key, value]) => {
+            if (value && value !== '') {
+                attrsText += `${key}: ${value}; `;
+            }
+        });
+        
+        attrsDiv.textContent = attrsText.trim();
+        contentDiv.appendChild(attrsDiv);
+    }
+    
+    blockDiv.appendChild(headerDiv);
+    blockDiv.appendChild(contentDiv);
+    
+    return blockDiv;
+}
+/**
+ * Blokk konfiguráció lekérdezése - ÚJ
+ */
+function getBlockConfig() {
+    return {
+        icons: {
+            'paragraph': 'document-text-outline',
+            'heading': 'text-outline',
+            'image': 'image-outline',
+            'quote': 'quote-outline',
+            'list': 'list-outline',
+            'code': 'code-slash-outline',
+            'divider': 'remove-outline',
+            'embed': 'link-outline'
+        },
+        colors: {
+            'heading': '#1891d1',
+            'paragraph': '#4a6cf7',
+            'image': '#20c997',
+            'quote': '#6f42c1',
+            'list': '#fd7e14',
+            'code': '#343a40',
+            'divider': '#6c757d',
+            'embed': '#17a2b8'
+        }
+    };
+}
+/**
+function addSaveBlocksButton() {
+    const container = document.getElementById('block-editor-container');
+    if (!container) return;
+    
+    // Ellenőrizzük, hogy már van-e mentés gomb
+    if (container.querySelector('.save-blocks-btn')) return;
+    
+    const saveButton = document.createElement('button');
+    saveButton.className = 'save-blocks-btn btn-success';
+    saveButton.innerHTML = `
+        <ion-icon name="save-outline"></ion-icon>
+        <span style="font-family: 'Abril Fatface'; font-size: 16px">Blokkok mentése</span>
+    `;
+    
+    saveButton.style.cssText = `
+        margin-top: 20px;
+        padding: 12px 24px;
+        background: #20c997;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        transition: all 0.3s;
+    `;
+    
+    saveButton.onmouseenter = () => {
+        saveButton.style.background = '#1aa179';
+        saveButton.style.transform = 'translateY(-2px)';
+    };
+    
+    saveButton.onmouseleave = () => {
+        saveButton.style.background = '#20c997';
+        saveButton.style.transform = 'translateY(0)';
+    };
+    
+    saveButton.onclick = async () => {
+        await saveBlocksToServer();
+    };
+    
+    container.appendChild(saveButton);
+}
+ */
+/**
+ * Blokkok mentése a szerverre
+ */
+async function saveBlocksToServer() {
+    try {
+        const token = getAuthToken();
+        if (!token) {
+            alert('Nincs bejelentkezve!');
+            return;
+        }
+        
+        if (!window.editorBlocks || window.editorBlocks.length === 0) {
+            alert('Nincsenek blokkok a mentéshez!');
+            return;
+        }
+        
+        // Blokkok validálása
+        const hasInvalidBlocks = window.editorBlocks.some(block => !block.type);
+        if (hasInvalidBlocks) {
+            alert('Hibás blokk(ok) található(k)! Kérlek ellenőrizd a blokkokat.');
+            return;
+        }
+        
+        // Megerősítés
+        const result = await showConfirmModal({
+            title: 'Blokkok mentése',
+            message: 'Biztosan menteni szeretnéd a blokk módosításokat?',
+            subMessage: 'Ez felülírja a jelenlegi blokk struktúrát.',
+            icon: 'save-outline',
+            confirmText: 'Igen, mentem',
+            cancelText: 'Mégse',
+            details: [
+                { label: 'Blokkok száma', value: window.editorBlocks.length },
+                { label: 'Módosítások', value: 'A teljes blokk struktúra frissül' }
+            ]
+        });
+        
+        if (!result) return;
+        
+        // HTML generálása blokkokból
+        let htmlContent = '';
+        window.editorBlocks.forEach((block, index) => {
+            const blockHtml = generateHTMLFromBlock(block);
+            if (blockHtml) {
+                htmlContent += blockHtml + '\n\n';
+            }
+        });
+        
+        // API hívás
+        const response = await fetch('/api/post/edit', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                post: parseInt(postId),
+                desc: htmlContent.trim(),
+                blocks_json: JSON.stringify(window.editorBlocks),
+                content_type: 'blocks'
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showSuccessNotification('Blokkok sikeresen mentve!', 'success');
+            
+            // Frissítjük az eredeti adatokat
+            if (originalPost) {
+                originalPost.desc = htmlContent.trim();
+                originalPost.blocks_json = JSON.stringify(window.editorBlocks);
+            }
+            
+            // Textarea frissítése
+            const textarea = document.getElementById('edit-content');
+            if (textarea) {
+                textarea.value = htmlContent.trim();
+            }
+            
+            console.log('Blocks saved successfully');
+            
+        } else {
+            const error = await response.text();
+            showSuccessNotification(`Hiba: ${error}`, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Hiba a blokkok mentése során:', error);
+        showSuccessNotification('Hiba történt a mentés során!', 'error');
+    }
+}
+
+/**
+ * Embed típus detektálása
+ */
+function detectEmbedType(url) {
+    if (!url) return 'unknown';
+    
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        return 'youtube';
+    } else if (url.includes('vimeo.com')) {
+        return 'vimeo';
+    } else if (url.includes('twitter.com') || url.includes('x.com')) {
+        return 'twitter';
+    } else if (url.includes('instagram.com')) {
+        return 'instagram';
+    } else if (url.includes('spotify.com')) {
+        return 'spotify';
+    } else {
+        return 'generic';
+    }
+}
+
+/**
+ * Sikeres/hiba üzenet megjelenítése
+ */
+function showSuccessNotification(message, type = 'success') {
+    // Egyszerű alert most, később lehet modal
+    if (type === 'success') {
+        alert(`✅ ${message}`);
+    } else if (type === 'warning') {
+        alert(`⚠️ ${message}`);
+    } else {
+        alert(`❌ ${message}`);
+    }
+}
+/**
+ * Megerősítő modal megjelenítése
+ */
+async function showConfirmModal(options = {}) {
+    return new Promise((resolve) => {
+        const modalId = 'confirm-modal-' + Date.now();
+        const config = {
+            title: 'Megerősítés szükséges',
+            message: 'Biztosan szeretnéd végrehajtani ezt a műveletet?',
+            subMessage: '',
+            confirmText: 'Igen',
+            cancelText: 'Mégse',
+            icon: 'alert-circle-outline',
+            ...options
+        };
+        
+        const modalHTML = `
+            <div class="confirm-modal" id="${modalId}">
+                <div class="confirm-modal-content">
+                    <div class="confirm-modal-header">
+                        <ion-icon name="${config.icon}"></ion-icon>
+                        <h3>${config.title}</h3>
+                        <button class="close-modal-btn">×</button>
+                    </div>
+                    
+                    <div class="confirm-modal-body">
+                        <p>${config.message}</p>
+                        ${config.subMessage ? `<p class="sub-message">${config.subMessage}</p>` : ''}
+                        
+                        ${config.details && config.details.length > 0 ? `
+                        <div class="details-list">
+                            ${config.details.map(item => `
+                                <div class="detail-item">
+                                    <span class="label">${item.label}:</span>
+                                    <span class="value">${item.value}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="confirm-modal-footer">
+                        <button type="button" class="btn-secondary" id="${modalId}-cancel">
+                            ${config.cancelText}
+                        </button>
+                        <button type="button" class="btn-danger" id="${modalId}-confirm">
+                            ${config.confirmText}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const modalContainer = document.createElement('div');
+        modalContainer.innerHTML = modalHTML;
+        document.body.appendChild(modalContainer);
+        
+        const modal = document.getElementById(modalId);
+        const confirmBtn = document.getElementById(`${modalId}-confirm`);
+        const cancelBtn = document.getElementById(`${modalId}-cancel`);
+        const closeBtn = modal.querySelector('.close-modal-btn');
+        
+        const handleConfirm = () => {
+            modal.remove();
+            resolve(true);
+        };
+        
+        const handleCancel = () => {
+            modal.remove();
+            resolve(false);
+        };
+        
+        confirmBtn.addEventListener('click', handleConfirm);
+        cancelBtn.addEventListener('click', handleCancel);
+        closeBtn.addEventListener('click', handleCancel);
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) handleCancel();
+        });
+        
+        // ESC billentyű
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') handleCancel();
+        };
+        document.addEventListener('keydown', handleEsc);
+        
+        setTimeout(() => {
+            modal.classList.add('active');
+            confirmBtn.focus();
+        }, 10);
+        
+        // Cleanup
+        modal.addEventListener('transitionend', () => {
+            if (!modal.classList.contains('active')) {
+                modal.remove();
+                document.removeEventListener('keydown', handleEsc);
+            }
+        });
+    });
+}
+    </script>
+
+    // Add hozzá ezt a kódot a review-editor.html fájl végére, a meglévő scriptek után:
+
+<script>
+    /**
+     * Új blokk hozzáadása a szerkesztő eszköztárához
+     */
+    function initializeNewBlockButtons() {
+        const toolbar = document.querySelector('.editor-toolbar');
+        if (!toolbar) return;
+
+        // Két gomb konténer létrehozása bal oldalra
+        const leftButtonsContainer = document.createElement('div');
+        leftButtonsContainer.style.cssText = `
+            display: flex;
+            gap: 10px;
+            margin-right: auto;
+            align-items: center;
+        `;
+
+        // 1. Módosítások mentése gomb
+        const saveChangesBtn = document.createElement('button');
+        saveChangesBtn.type = 'button';
+        saveChangesBtn.className = 'toolbar-btn';
+        saveChangesBtn.innerHTML = '<ion-icon name="save-outline"></ion-icon> Módosítások mentése';
+        saveChangesBtn.style.cssText = `
+            background: #20c997 !important;
+            color: white !important;
+            border-color: #20c997 !important;
+            font-weight: 500;
+        `;
+        saveChangesBtn.onclick = async function() {
+            await saveBlocksToServer();
+        };
+
+        // 2. Új blokk hozzáadása gomb
+        const addBlockBtn = document.createElement('button');
+        addBlockBtn.type = 'button';
+        addBlockBtn.className = 'toolbar-btn';
+        addBlockBtn.innerHTML = '<ion-icon name="add-outline"></ion-icon> Új blokk hozzáadása';
+        addBlockBtn.onclick = function() {
+            openBlockSelector();
+        };
+
+        // Gombok hozzáadása a konténerhez
+        leftButtonsContainer.appendChild(saveChangesBtn);
+        leftButtonsContainer.appendChild(addBlockBtn);
+
+        // Keresd meg a blokkos nézet gombot
+        const blockViewBtn = document.getElementById('block-view-toggle');
+        if (blockViewBtn) {
+            // Beszúrás a blokkos nézet gomb elé
+            toolbar.insertBefore(leftButtonsContainer, blockViewBtn);
+        } else {
+            // Ha nincs blokkos nézet gomb, adjuk hozzá az elejére
+            toolbar.insertBefore(leftButtonsContainer, toolbar.firstChild);
+        }
+
+        // Stílusok hozzáadása a hover állapothoz
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Mentés gomb hover állapot */
+            .toolbar-btn[onclick*="saveBlocksToServer"]:hover {
+                background: #1aa179 !important;
+                border-color: #1aa179 !important;
+                transform: translateY(-1px);
+            }
+            
+            /* Új blokk gomb hover állapot */
+            .toolbar-btn[onclick*="openBlockSelector"]:hover {
+                background: #1891d1 !important;
+                border-color: #1891d1 !important;
+                transform: translateY(-1px);
+            }
+            
+            /* Toolbar gombok alap stílus */
+            .toolbar-btn {
+                transition: all 0.2s ease !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 5px !important;
+                font-family: 'Abril Fatface', cursive !important;
+            }
+            
+            /* Bal oldali gombok konténer animáció */
+            #left-toolbar-buttons {
+                animation: fadeInLeft 0.5s ease-out;
+            }
+            
+            @keyframes fadeInLeft {
+                from {
+                    opacity: 0;
+                    transform: translateX(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Adjunk ID-t a konténernek animációhoz
+        leftButtonsContainer.id = 'left-toolbar-buttons';
+    }
+
+    /**
+     * Blokk kiválasztó modal megnyitása
+     */
+    function openBlockSelector() {
+        const modalHTML = `
+            <div class="block-selector-modal active" id="block-selector-modal">
+                <div class="block-selector-content">
+                    <div class="block-selector-header">
+                        <h3>Blokk típus kiválasztása</h3>
+                        <button class="close-block-selector">
+                            <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                    </div>
+                    
+                    <div class="block-selector-grid">
+                        <div class="block-type-card" data-type="heading" onclick="addNewBlock('heading')">
+                            <div class="block-type-icon">
+                                <ion-icon name="text-outline"></ion-icon>
+                            </div>
+                            <div class="block-type-info">
+                                <h4>Címsor</h4>
+                                <p>Főcím vagy alcím hozzáadása</p>
+                            </div>
+                        </div>
+                        
+                        <div class="block-type-card" data-type="paragraph" onclick="addNewBlock('paragraph')">
+                            <div class="block-type-icon">
+                                <ion-icon name="text-outline"></ion-icon>
+                            </div>
+                            <div class="block-type-info">
+                                <h4>Bekezdés</h4>
+                                <p>Szöveges tartalom hozzáadása</p>
+                            </div>
+                        </div>
+                        
+                        <div class="block-type-card" data-type="image" onclick="addNewBlock('image')">
+                            <div class="block-type-icon">
+                                <ion-icon name="image-outline"></ion-icon>
+                            </div>
+                            <div class="block-type-info">
+                                <h4>Kép</h4>
+                                <p>Kép beillesztése URL vagy feltöltés útján</p>
+                            </div>
+                        </div>
+                        
+                        <div class="block-type-card" data-type="quote" onclick="addNewBlock('quote')">
+                            <div class="block-type-icon">
+                                <ion-icon name="quote-outline"></ion-icon>
+                            </div>
+                            <div class="block-type-info">
+                                <h4>Idézet</h4>
+                                <p>Idézet hozzáadása szerzővel</p>
+                            </div>
+                        </div>
+                        
+                        <div class="block-type-card" data-type="list" onclick="addNewBlock('list')">
+                            <div class="block-type-icon">
+                                <ion-icon name="list-outline"></ion-icon>
+                            </div>
+                            <div class="block-type-info">
+                                <h4>Lista</h4>
+                                <p>Pontozott vagy számozott lista</p>
+                            </div>
+                        </div>
+                        
+                        <div class="block-type-card" data-type="code" onclick="addNewBlock('code')">
+                            <div class="block-type-icon">
+                                <ion-icon name="code-slash-outline"></ion-icon>
+                            </div>
+                            <div class="block-type-info">
+                                <h4>Kód</h4>
+                                <p>Kódrészlet programozási nyelvvel</p>
+                            </div>
+                        </div>
+                        
+                        <div class="block-type-card" data-type="divider" onclick="addNewBlock('divider')">
+                            <div class="block-type-icon">
+                                <ion-icon name="remove-outline"></ion-icon>
+                            </div>
+                            <div class="block-type-info">
+                                <h4>Elválasztó</h4>
+                                <p>Vízszintes elválasztó sor</p>
+                            </div>
+                        </div>
+                        
+                        <div class="block-type-card" data-type="embed" onclick="addNewBlock('embed')">
+                            <div class="block-type-icon">
+                                <ion-icon name="link-outline"></ion-icon>
+                            </div>
+                            <div class="block-type-info">
+                                <h4>Beágyazás</h4>
+                                <p>YouTube, Twitter, stb. tartalom</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="block-selector-footer">
+                        <button type="button" class="btn-secondary close-block-selector-btn">
+                            <span style="font-family: 'Abril Fatface'; font-size: 16px">Mégse
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                .block-selector-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s;
+                }
+                
+                .block-selector-modal.active {
+                    opacity: 1;
+                    visibility: visible;
+                }
+                
+                .block-selector-content {
+                    background: white;
+                    border-radius: 12px;
+                    width: 90%;
+                    max-width: 800px;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                    transform: translateY(-20px);
+                    transition: transform 0.3s;
+                }
+                
+                .block-selector-modal.active .block-selector-content {
+                    transform: translateY(0);
+                }
+                
+                .block-selector-header {
+                    padding: 20px;
+                    border-bottom: 1px solid #e2e8f0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                
+                .block-selector-header h3 {
+                    margin: 0;
+                    color: #2d3748;
+                }
+                
+                .block-selector-header .close-block-selector {
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    color: #718096;
+                }
+                
+                .block-selector-grid {
+                    padding: 20px;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                    gap: 15px;
+                }
+                
+                .block-type-card {
+                    border: 2px solid #e2e8f0;
+                    border-radius: 8px;
+                    padding: 15px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 12px;
+                }
+                
+                .block-type-card:hover {
+                    border-color: #1891d1;
+                    background: #f0f9ff;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(24, 145, 209, 0.1);
+                }
+                
+                .block-type-icon {
+                    background: #1891d1;
+                    color: white;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 20px;
+                    flex-shrink: 0;
+                }
+                
+                .block-type-icon ion-icon {
+                    font-size: 20px;
+                }
+                
+                .block-type-info h4 {
+                    margin: 0 0 5px 0;
+                    color: #2d3748;
+                    font-size: 15px;
+                }
+                
+                .block-type-info p {
+                    margin: 0;
+                    color: #718096;
+                    font-size: 13px;
+                    line-height: 1.4;
+                }
+                
+                .block-selector-footer {
+                    padding: 20px;
+                    border-top: 1px solid #e2e8f0;
+                    text-align: right;
+                }
+                
+                @media (max-width: 768px) {
+                    .block-selector-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            </style>
+        `;
+
+        const modalContainer = document.createElement('div');
+        modalContainer.innerHTML = modalHTML;
+        document.body.appendChild(modalContainer);
+
+        const modal = document.getElementById('block-selector-modal');
+        const closeButtons = modalContainer.querySelectorAll('.close-block-selector, .close-block-selector-btn');
+
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                closeBlockSelector();
+            });
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeBlockSelector();
+            }
+        });
+
+        document.addEventListener('keydown', function onEsc(e) {
+            if (e.key === 'Escape') {
+                closeBlockSelector();
+                document.removeEventListener('keydown', onEsc);
+            }
+        });
+
+        function closeBlockSelector() {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modalContainer.remove();
+            }, 300);
+        }
+
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    /**
+     * Új blokk hozzáadása a szerkesztőhöz
+     */
+    function addNewBlock(blockType) {
+        // Ellenőrizzük, hogy a blokk szerkesztő látható-e
+        const blockEditor = document.getElementById('block-editor-container');
+        const isBlockView = blockEditor.style.display !== 'none';
+
+        // Ha nem a blokk nézetben vagyunk, váltunk rá
+        if (!isBlockView) {
+            toggleBlockView();
+        }
+
+        // Új blokk létrehozása
+        const newBlock = createNewBlock(blockType);
+        
+        // Hozzáadás a blokk listához
+        if (window.editorBlocks) {
+            window.editorBlocks.push(newBlock);
+        } else {
+            window.editorBlocks = [newBlock];
+        }
+
+        // Frissítjük a megjelenítést
+        refreshBlockDisplay();
+
+        // Modal bezárása
+        const modal = document.getElementById('block-selector-modal');
+        if (modal) {
+            modal.querySelector('.close-block-selector').click();
+        }
+
+        // Sikeres üzenet
+        showSuccessNotification(`Új ${getBlockTypeName(blockType)} blokk hozzáadva!`, 'success');
+        
+        // Görgetés az új blokkhoz
+        setTimeout(() => {
+            const blocks = document.querySelectorAll('.review-block');
+            if (blocks.length > 0) {
+                blocks[blocks.length - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }, 100);
+    }
+
+    /**
+     * Új blokk objektum létrehozása
+     */
+    function createNewBlock(blockType) {
+        const blockId = `block_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
+        const baseBlock = {
+            id: blockId,
+            type: blockType,
+            content: '',
+            attributes: {},
+            styles: {},
+            position: window.editorBlocks ? window.editorBlocks.length : 0
+        };
+
+        switch(blockType) {
+            case 'heading':
+                baseBlock.content = 'Új címsor';
+                baseBlock.attributes.level = 'h2';
+                break;
+                
+            case 'paragraph':
+                baseBlock.content = 'Új bekezdés szövege...';
+                break;
+                
+            case 'image':
+                baseBlock.content = '';
+                baseBlock.attributes.alt = '';
+                baseBlock.attributes.caption = '';
+                break;
+                
+            case 'quote':
+                baseBlock.content = 'Új idézet szövege...';
+                baseBlock.attributes.author = '';
+                break;
+                
+            case 'list':
+                baseBlock.content = ['Első elem', 'Második elem', 'Harmadik elem'];
+                baseBlock.attributes.type = 'ul';
+                break;
+                
+            case 'code':
+                baseBlock.content = 'console.log("Hello World!");';
+                baseBlock.attributes.language = 'javascript';
+                break;
+                
+            case 'divider':
+                baseBlock.content = 'divider';
+                break;
+                
+            case 'embed':
+                baseBlock.content = '';
+                baseBlock.attributes.type = '';
+                break;
+        }
+
+        return baseBlock;
+    }
+
+    /**
+     * Inicializáljuk a gombot, amikor az oldal betöltődik
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+        // Várunk egy kicsit, hogy minden betöltődjön
+        setTimeout(() => {
+            initializeNewBlockButtons();
+        }, 1000);
+    });
+
+    // CSS stílusok hozzáadása a meglévő stílusokhoz
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Új blokk gomb stílusai */
+        .toolbar-btn[onclick*="openBlockSelector"] {
+            background: #20c997 !important;
+            color: white !important;
+            border-color: #20c997 !important;
+        }
+        
+        .toolbar-btn[onclick*="openBlockSelector"]:hover {
+            background: #1aa179 !important;
+            border-color: #1aa179 !important;
+        }
+        
+        /* Succes notification animation */
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10001;
+            animation: slideInUp 0.3s ease-out;
+            border-left: 4px solid #20c997;
+        }
+        
+        .notification.success {
+            border-left-color: #20c997;
+        }
+        
+        .notification.error {
+            border-left-color: #e74c3c;
+        }
+        
+        .notification.warning {
+            border-left-color: #f39c12;
+        }
+        
+        .notification.info {
+            border-left-color: #3498db;
+        }
+        
+        .notification ion-icon {
+            font-size: 20px;
+        }
+        
+        .notification.success ion-icon {
+            color: #20c997;
+        }
+        
+        .notification.error ion-icon {
+            color: #e74c3c;
+        }
+        
+        .notification.warning ion-icon {
+            color: #f39c12;
+        }
+        
+        .notification.info ion-icon {
+            color: #3498db;
+        }
+    `;
+    document.head.appendChild(style);
+
+    /**
+     * Sikeres üzenet megjelenítése
+     */
+    function showSuccessNotification(message, type = 'success') {
+        // Távolítsuk el a korábbi értesítéseket
+        document.querySelectorAll('.notification').forEach(n => n.remove());
+
+        const iconName = {
+            'success': 'checkmark-circle-outline',
+            'error': 'alert-circle-outline',
+            'warning': 'warning-outline',
+            'info': 'information-circle-outline'
+        }[type] || 'information-circle-outline';
+
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <ion-icon name="${iconName}"></ion-icon>
+            <span>${message}</span>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Automatikus eltávolítás 3 másodperc után
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(100%)';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+
+
+    // 6. Kép nagyító lightbox - ÚJ függvény
+function showImageLightbox(imageUrl, altText) {
+    const lightboxHTML = `
+        <div class="image-lightbox active">
+            <div class="lightbox-overlay"></div>
+            <div class="lightbox-content">
+                <div class="lightbox-header">
+                    <h4>Kép előnézet</h4>
+                    <button class="close-lightbox">
+                        <ion-icon name="close-outline"></ion-icon>
+                    </button>
+                </div>
+                <div class="lightbox-image-container">
+                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(altText)}" class="lightbox-image">
+                </div>
+                <div class="lightbox-footer">
+                    <div class="image-info">
+                        <div class="info-item">
+                            <span class="label">URL:</span>
+                            <span class="value">${imageUrl.length > 50 ? imageUrl.substring(0, 50) + '...' : imageUrl}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Alt szöveg:</span>
+                            <span class="value">${altText || 'Nincs megadva'}</span>
+                        </div>
+                    </div>
+                    <div class="lightbox-actions">
+                        <button class="btn-secondary" onclick="copyImageUrl('${escapeHtml(imageUrl)}')">
+                            <ion-icon name="copy-outline"></ion-icon>
+                            URL másolása
+                        </button>
+                        <a href="${escapeHtml(imageUrl)}" target="_blank" class="btn-primary">
+                            <ion-icon name="open-outline"></ion-icon>
+                            Megnyitás új lapon
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const lightboxContainer = document.createElement('div');
+    lightboxContainer.innerHTML = lightboxHTML;
+    document.body.appendChild(lightboxContainer);
+    
+    const lightbox = lightboxContainer.querySelector('.image-lightbox');
+    const closeBtn = lightboxContainer.querySelector('.close-lightbox');
+    const overlay = lightboxContainer.querySelector('.lightbox-overlay');
+    
+    // Bezárás
+    const closeLightbox = () => {
+        lightbox.classList.remove('active');
+        setTimeout(() => lightboxContainer.remove(), 300);
+    };
+    
+    closeBtn.addEventListener('click', closeLightbox);
+    overlay.addEventListener('click', closeLightbox);
+    
+    // ESC billentyű
+    const handleEsc = (e) => {
+        if (e.key === 'Escape') closeLightbox();
+    };
+    document.addEventListener('keydown', handleEsc);
+    
+    // URL másolása
+    window.copyImageUrl = function(url) {
+        navigator.clipboard.writeText(url).then(() => {
+            showSuccessNotification('URL másolva a vágólapra!', 'success');
+        }).catch(() => {
+            showSuccessNotification('Nem sikerült másolni!', 'error');
+        });
+    };
+    
+    // Stílusok hozzáadása
+    const lightboxStyle = document.createElement('style');
+    lightboxStyle.textContent = `
+        .image-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .image-lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .lightbox-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+        
+        .lightbox-content {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .image-lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+        
+        .lightbox-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .lightbox-header h4 {
+            margin: 0;
+            color: #2d3748;
+        }
+        
+        .close-lightbox {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+            padding: 5px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-lightbox:hover {
+            background: #f8f9fa;
+            color: #495057;
+        }
+        
+        .lightbox-image-container {
+            max-height: 60vh;
+            overflow: auto;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 55vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .lightbox-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .image-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .info-item .label {
+            font-weight: 500;
+            color: #495057;
+            min-width: 80px;
+        }
+        
+        .info-item .value {
+            color: #6c757d;
+            flex: 1;
+            word-break: break-all;
+        }
+        
+        .lightbox-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .lightbox-actions .btn-secondary,
+        .lightbox-actions .btn-primary {
+            padding: 10px 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .lightbox-actions .btn-primary {
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .lightbox-actions {
+                flex-direction: column;
+            }
+            
+            .lightbox-image-container {
+                padding: 10px;
+            }
+        }
+    `;
+    document.head.appendChild(lightboxStyle);
+}
+</script>
 </body>
 </html>

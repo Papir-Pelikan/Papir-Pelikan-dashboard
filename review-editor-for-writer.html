@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poszt szerkesztése - Író</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <style>
+        /* Stílusok megtartása a review-editor-ből, de a lektorálási elemek eltávolítása */
+        .review-editor-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .editor-header h1 {
+            color: #1891d1;
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .editor-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        .editor-main {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .editor-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .info-card, .history-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .info-card h3, .history-card h3 {
+            color: #1891d1;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 18px;
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            color: #333;
+            font-size: 15px;
+        }
+        
+        /* Űrlap stílusok */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 15px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #1891d1;
+            box-shadow: 0 0 0 3px rgba(24, 145, 209, 0.1);
+            background: white;
+        }
+        
+        textarea.form-control {
+            min-height: 250px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        /* Kategória chip-ek */
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            background: #1891d1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .category-chip ion-icon {
+            margin-right: 6px;
+            font-size: 16px;
+        }
+        
+        /* Szerzők stílusok */
+        .author-chip {
+            display: inline-flex;
+            align-items: center;
+            background: #4a6cf7;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .author-chip ion-icon {
+            margin-right: 6px;
+            font-size: 16px;
+        }
+        
+        .current-author {
+            background: #20c997;
+        }
+        
+        /* Toolbar */
+        .editor-toolbar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .toolbar-btn {
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .toolbar-btn:hover {
+            background: #1891d1;
+            color: white;
+            border-color: #1891d1;
+        }
+        
+        /* Gombok */
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .action-buttons button {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: #1891d1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1477ad;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #20c997;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1aa179;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        /* Betöltés */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .loading ion-icon {
+            font-size: 48px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+            color: #1891d1;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Reszponzív */
+        @media (max-width: 992px) {
+            .editor-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .editor-header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            
+            .editor-actions {
+                width: 100%;
+            }
+            
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .editor-main, .info-card, .history-card {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .review-editor-container {
+                padding: 15px;
+            }
+            
+            .editor-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Blokk nézet stílusok */
+        #block-editor-container {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 300px;
+            margin-bottom: 20px;
+        }
+        
+        .review-block {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .review-block:hover {
+            border-color: #1891d1;
+            box-shadow: 0 2px 8px rgba(24, 145, 209, 0.1);
+        }
+        
+        .draggable-block.dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+        
+        .draggable-block.drag-over {
+            box-shadow: 0 0 0 2px #1891d1;
+            background: #f0f9ff;
+        }
+        
+        /* Warn állapot a lektorálásra váró posztokhoz */
+        .warning-status {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-status ion-icon {
+            color: #f39c12;
+        }
+        
+        /* Törlés megerősítés gomb más színnel */
+        .btn-danger-confirm {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger-confirm:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="review-editor-container">
+        <!-- Fejléc -->
+        <div class="editor-header">
+            <div>
+                <h1 id="editor-title">Poszt szerkesztése</h1>
+                <p id="editor-subtitle" style="color: #718096; margin-top: 8px; font-size: 14px;">
+                    ID: <span id="post-id" style="font-weight: 500;">...</span> • 
+                    <span id="post-status-badge" style="background: #ffc107; color: #856404; padding: 4px 8px; border-radius: 12px; font-size: 12px;">
+                        Szerkesztés alatt
+                    </span>
+                </p>
+            </div>
+            <div class="editor-actions">
+                <a href="dashboard.html#articles" class="back-btn">
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                    Vissza a cikkekhez
+                </a>
+            </div>
+        </div>
+        
+        <!-- Figyelmeztetés, ha a poszt már lektorálásra vár -->
+        <div id="pending-warning" class="warning-status" style="display: none;">
+            <ion-icon name="time-outline"></ion-icon>
+            <div>
+                <strong>Figyelem!</strong> Ez a poszt már benyújtásra került lektorálásra. 
+                További szerkesztések újabb lektorálási kérelmet fognak generálni.
+            </div>
+        </div>
+        
+        <!-- Tartalom -->
+        <div class="editor-content">
+            <!-- Bal oldal: Szerkesztő -->
+            <div class="editor-main">
+                <!-- Betöltés állapot -->
+                <div class="loading" id="loading" style="display: none;">
+                    <ion-icon name="sync-outline"></ion-icon>
+                    <p>Adatok betöltése...</p>
+                </div>
+                
+                <!-- Űrlap -->
+                <form id="review-edit-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="edit-title">Cím</label>
+                        <input type="text" id="edit-title" class="form-control" placeholder="Poszt címe..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Kategória</label>
+                        <div id="category-display" style="
+                            padding: 15px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            border: 1px solid #e2e8f0;
+                            min-height: 50px;
+                            display: flex;
+                            flex-wrap: wrap;
+                            align-items: center;
+                            gap: 8px;
+                        ">
+                            <div style="color: #718096; font-style: italic;">
+                                Kategória betöltése...
+                            </div>
+                        </div>
+                        <input type="hidden" id="edit-category">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-excerpt">Rövid leírás</label>
+                        <textarea id="edit-excerpt" class="form-control" rows="3" 
+                                  placeholder="Rövid összefoglaló a posztról..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-content">Tartalom</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="toolbar-btn" onclick="formatText('bold')">
+                                <ion-icon name="text-outline"></ion-icon>
+                                <span style="font-family: 'Abril Fatface'; font-size: 14px">Félkövér</span>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatText('italic')">
+                                <ion-icon name="text-outline"></ion-icon>
+                                <span style="font-family: 'Abril Fatface'; font-size: 14px">Dőlt</span>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertList()">
+                                <ion-icon name="list-outline"></ion-icon>
+                                <span style="font-family: 'Abril Fatface'; font-size: 14px">Lista</span>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="insertLink()">
+                                <ion-icon name="link-outline"></ion-icon>
+                                <span style="font-family: 'Abril Fatface'; font-size: 14px">Link</span>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="toggleBlockView()" id="block-view-toggle">
+                                <ion-icon name="grid-outline"></ion-icon>
+                                <span style="font-family: 'Abril Fatface'; font-size: 14px">Blokkos nézet</span>
+                            </button>
+                        </div>
+                        
+                        <div id="block-editor-container" style="display: none; margin-top: 20px;">
+                            <div id="no-blocks-message" style="
+                                text-align: center;
+                                padding: 40px 20px;
+                                color: #718096;
+                                border: 2px dashed #e2e8f0;
+                                border-radius: 8px;
+                                margin-bottom: 20px;
+                            ">
+                                <ion-icon name="cube-outline" style="font-size: 48px; margin-bottom: 16px;"></ion-icon>
+                                <h3 style="margin: 0 0 10px 0; color: #4a5568;">Blokkos szerkesztő</h3>
+                                <p>Itt jelennek majd meg a poszt blokkjai.</p>
+                            </div>
+                        </div>
+                        
+                        <textarea id="edit-content" class="form-control" rows="15" 
+                                  placeholder="Írd ide a poszt tartalmát..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-notes">Megjegyzések a szerkesztéshez (opcionális)</label>
+                        <textarea id="edit-notes" class="form-control" rows="3" 
+                                  placeholder="Ide írhatod a szerkesztéssel kapcsolatos megjegyzéseidet..."></textarea>
+                    </div>
+                    
+                    <!-- Műveleti gombok - Író számára -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="saveDraft()">
+                            <ion-icon name="save-outline"></ion-icon>
+                            Mentés vázlatként
+                        </button>
+                        <button type="submit" class="btn-success">
+                            <ion-icon name="paper-plane-outline"></ion-icon>
+                            Beküldés lektorálásra
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Jobb oldal: Információk -->
+            <div class="editor-sidebar">
+                <!-- Poszt információk -->
+                <div class="info-card">
+                    <h3>Poszt információk</h3>
+                    <div class="info-item">
+                        <span class="info-label">Lapszám:</span>
+                        <span class="info-value" id="info-number">...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Státusz:</span>
+                        <span class="info-value">
+                            <span id="info-status" style="
+                                background: #ffc107; 
+                                color: #856404; 
+                                padding: 4px 12px; 
+                                border-radius: 20px;
+                                font-size: 13px;
+                                font-weight: 500;
+                            ">Szerkesztés alatt</span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Létrehozva:</span>
+                        <span class="info-value" id="info-created">...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Utolsó szerkesztés:</span>
+                        <span class="info-value" id="info-last-edited">Még nem</span>
+                    </div>
+                </div>
+                
+                <!-- Szerzők -->
+                <div class="info-card">
+                    <h3>Szerzők</h3>
+                    <div id="authors-container" style="
+                        padding: 15px;
+                        background: #f8f9fa;
+                        border-radius: 8px;
+                        border: 1px solid #e2e8f0;
+                        min-height: 50px;
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 8px;
+                    ">
+                        <div style="color: #718096; font-style: italic;">
+                            Szerzők betöltése...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gyors műveletek - Író számára -->
+                <div class="info-card">
+                    <h3>Gyors műveletek</h3>
+                    <div class="quick-actions">
+                        <button type="button" class="btn-danger" onclick="requestDeletePost()">
+                            <ion-icon name="trash-outline"></ion-icon>
+                            Poszt törlésének kérése
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript kód -->
+    <script>
+        // URL paraméterek
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('pid');
+        const isEdit = urlParams.get('edit') === 'true';
+        
+        // Globális változók
+        let originalPost = null;
+        let currentUser = null;
+        let allUsers = {};
+        let postStatus = 'draft';
+        
+        // Betöltés után
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Író szerkesztő betöltve');
+            console.log('Post ID:', postId);
+            console.log('Is edit mode:', isEdit);
+            
+            if (!postId) {
+                alert('Nincs poszt ID megadva!');
+                window.location.href = 'dashboard.html#articles';
+                return;
+            }
+            
+            // Betöltés megjelenítése
+            showLoading(true);
+            
+            // Beállítjuk a címben a poszt ID-t
+            document.getElementById('post-id').textContent = postId;
+            
+            try {
+                // 1. Felhasználó betöltése
+                await loadCurrentUser();
+                
+                // 2. Ellenőrizzük, hogy az író saját posztját szerkeszti-e
+                await verifyPostOwnership();
+                
+                // 3. Összes felhasználó betöltése (szerzők neveihez)
+                await loadAllUsers();
+                
+                // 4. Poszt betöltése
+                await loadPostData();
+                
+                // 5. Űrlap eseménykezelő
+                document.getElementById('review-edit-form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    await submitForReview();
+                });
+                
+                // Űrlap megjelenítése
+                document.getElementById('review-edit-form').style.display = 'block';
+                showLoading(false);
+                
+            } catch (error) {
+                console.error('Hiba a betöltés során:', error);
+                alert(`Hiba történt: ${error.message}`);
+                window.location.href = 'dashboard.html#articles';
+            }
+        });
+        
+        // Felhasználó betöltése
+        async function loadCurrentUser() {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                const response = await fetch('/api/user/get', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        get: 'uid, email, alias, full_name, roles'
+                    })
+                });
+                
+                if (response.ok) {
+                    currentUser = await response.json();
+                    console.log('Felhasználó betöltve:', currentUser);
+                } else {
+                    throw new Error('Nem sikerült betölteni a felhasználói adatokat');
+                }
+            } catch (error) {
+                console.error('Hiba a felhasználó betöltése során:', error);
+                throw error;
+            }
+        }
+        
+        // Poszt tulajdonjogának ellenőrzése
+        async function verifyPostOwnership() {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                // Lekérjük a felhasználó saját posztjait
+                const response = await fetch('/api/post/get/written?edited=false', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Nem sikerült ellenőrizni a poszt tulajdonjogát');
+                }
+                
+                const userPosts = await response.json();
+                const pid = parseInt(postId);
+                
+                // Ellenőrizzük, hogy a poszt a felhasználóé-e
+                if (!userPosts[pid]) {
+                    throw new Error('Ez a poszt nem a tied, vagy nem létezik!');
+                }
+                
+                console.log('Poszt tulajdonjoga ellenőrizve');
+                
+            } catch (error) {
+                console.error('Hiba a tulajdonjog ellenőrzése során:', error);
+                throw error;
+            }
+        }
+        
+        // Összes felhasználó betöltése
+        async function loadAllUsers() {
+            try {
+                const token = getAuthToken();
+                if (!token) return;
+                
+                const response = await fetch('/api/user/getall', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    allUsers = await response.json();
+                    console.log('Összes felhasználó betöltve:', allUsers);
+                }
+            } catch (error) {
+                console.error('Hiba a felhasználók betöltése során:', error);
+            }
+        }
+        
+        // Poszt adatok betöltése
+        async function loadPostData() {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                // Lekérjük a poszt tartalmát
+                const response = await fetch('/api/post/get/contents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        post: parseInt(postId),
+                        edited: false
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Hiba a poszt betöltése során: ${response.status}`);
+                }
+                
+                const postData = await response.json();
+                console.log('Poszt adatok betöltve:', postData);
+                
+                // Elmentjük az eredeti adatokat
+                originalPost = { ...postData };
+                
+                // Lekérjük a poszt státuszát
+                await loadPostStatus();
+                
+                // Kitöltjük az űrlapot
+                populateForm(postData);
+                
+                // Kitöltjük az információkat
+                await populateInfo(postData);
+                
+            } catch (error) {
+                console.error('Hiba a poszt betöltése során:', error);
+                throw error;
+            }
+        }
+        
+        // Poszt státusz lekérése
+        async function loadPostStatus() {
+            try {
+                const token = getAuthToken();
+                if (!token) return;
+                
+                const response = await fetch(`/api/post/get/status?post=${postId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const statusData = await response.json();
+                    postStatus = statusData.status;
+                    
+                    // Ha a poszt már lektorálásra vár, megjelenítjük a figyelmeztetést
+                    if (postStatus === 'pending') {
+                        document.getElementById('pending-warning').style.display = 'flex';
+                        document.getElementById('info-status').textContent = 'Lektorálásra vár';
+                        document.getElementById('info-status').style.background = '#ffc107';
+                        document.getElementById('post-status-badge').textContent = 'Lektorálásra vár';
+                    }
+                }
+            } catch (error) {
+                console.error('Hiba a státusz lekérése során:', error);
+            }
+        }
+        
+        // Űrlap kitöltése
+        function populateForm(postData) {
+            document.getElementById('edit-title').value = postData.title || '';
+            document.getElementById('edit-excerpt').value = postData.minimal_desc || '';
+            
+            // Blokk nézet gomb megjelenítése, ha van blocks_json
+            const blockToggle = document.getElementById('block-view-toggle');
+            if (blockToggle && postData.blocks_json) {
+                blockToggle.style.display = 'flex';
+                displayBlocksFromPost(postData.blocks_json);
+            }
+            
+            // Kategória megjelenítése
+            displayCategory(postData.category);
+            
+            // Ha nincs blocks_json, akkor a desc tartalmat betöltjük
+            if (!postData.blocks_json && postData.desc) {
+                document.getElementById('edit-content').value = postData.desc || '';
+            }
+        }
+        
+        // Kategória megjelenítése
+        function displayCategory(categoryName) {
+            const container = document.getElementById('category-display');
+            const hiddenInput = document.getElementById('edit-category');
+            
+            if (!categoryName || categoryName.trim() === '') {
+                container.innerHTML = `
+                    <div style="color: #718096; font-style: italic;">
+                        Nincs kategória megadva
+                    </div>
+                `;
+                hiddenInput.value = '';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="category-chip">
+                    <ion-icon name="folder-outline"></ion-icon>
+                    ${categoryName}
+                </div>
+            `;
+            hiddenInput.value = categoryName;
+        }
+        
+        // Információk kitöltése
+        async function populateInfo(postData) {
+            document.getElementById('info-number').textContent = postData.number || 'N/A';
+            document.getElementById('info-created').textContent = formatDate(postData.created) || 'N/A';
+            
+            if (postData.last_edited) {
+                document.getElementById('info-last-edited').textContent = formatDate(postData.last_edited);
+            }
+            
+            // Szerzők megjelenítése
+            await displayAuthors(postData.authors);
+        }
+        
+        // Szerzők megjelenítése
+        async function displayAuthors(authorIds) {
+            const container = document.getElementById('authors-container');
+            
+            if (!authorIds || !Array.isArray(authorIds) || authorIds.length === 0) {
+                container.innerHTML = `
+                    <div style="color: #718096; font-style: italic;">
+                        Nincsenek szerzők
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            for (const authorId of authorIds) {
+                const authorInfo = allUsers[authorId];
+                let displayName = `UID: ${authorId}`;
+                let isCurrentUser = false;
+                
+                if (authorInfo) {
+                    displayName = authorInfo.alias || authorInfo.full_name || authorInfo.email || displayName;
+                    
+                    if (currentUser && currentUser.uid == authorId) {
+                        isCurrentUser = true;
+                    }
+                }
+                
+                html += `
+                    <div class="author-chip ${isCurrentUser ? 'current-author' : ''}">
+                        <ion-icon name="person-outline"></ion-icon>
+                        ${displayName}
+                        ${isCurrentUser ? '<small style="margin-left: 5px; opacity: 0.9;">(én)</small>' : ''}
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Beküldés lektorálásra
+        async function submitForReview() {
+            if (!confirm('Biztosan beküldöd lektorálásra a változtatásokat?')) {
+                return;
+            }
+
+            try {
+                showLoading(true);
+                
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                // Összeállítjuk a frissítendő adatokat
+                const updateData = {
+                    post: parseInt(postId)
+                };
+                
+                // Csak azokat a mezőket adjuk hozzá, amik változtak
+                const title = document.getElementById('edit-title').value;
+                const category = document.getElementById('edit-category').value;
+                const excerpt = document.getElementById('edit-excerpt').value;
+                const notes = document.getElementById('edit-notes').value;
+                
+                // Tartalom lekérése
+                let content = '';
+                const isBlockView = document.getElementById('block-editor-container').style.display !== 'none';
+                
+                if (isBlockView && window.editorBlocks) {
+                    // Ha blokk nézetben vagyunk, HTML generálása a blokkokból
+                    content = generateHTMLFromBlocks();
+                    updateData.blocks_json = JSON.stringify(window.editorBlocks);
+                    updateData.content_type = 'blocks';
+                } else {
+                    // Ha szöveges nézetben vagyunk
+                    content = document.getElementById('edit-content').value;
+                }
+                
+                if (title !== originalPost.title) updateData.title = title;
+                if (category !== originalPost.category) updateData.category = category;
+                if (excerpt !== originalPost.minimal_desc) updateData.minimal_desc = excerpt;
+                if (content !== originalPost.desc) updateData.desc = content;
+                
+                if (Object.keys(updateData).length <= 1) {
+                    alert('Nincs változás a szerkesztésben!');
+                    showLoading(false);
+                    return;
+                }
+                
+                // Ha vannak megjegyzések, hozzáadjuk
+                if (notes.trim() !== '') {
+                    updateData.notes = notes;
+                }
+                
+                console.log('Beküldési adatok:', updateData);
+                
+                // Küldjük a szerkesztési kérelmet
+                const editResponse = await fetch('/api/post/edit', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                if (!editResponse.ok) {
+                    const errorText = await editResponse.text();
+                    throw new Error(`Szerkesztési hiba: ${errorText}`);
+                }
+                
+                alert('Szerkesztés sikeresen beküldve lektorálásra!');
+                window.location.href = 'dashboard.html#articles';
+                
+            } catch (error) {
+                console.error('Hiba a beküldés során:', error);
+                alert(`Hiba történt: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Vázlat mentése
+        async function saveDraft() {
+            try {
+                showLoading(true);
+                
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                const updateData = {
+                    post: parseInt(postId),
+                    title: document.getElementById('edit-title').value,
+                    category: document.getElementById('edit-category').value,
+                    minimal_desc: document.getElementById('edit-excerpt').value,
+                    desc: document.getElementById('edit-content').value
+                };
+                
+                const notes = document.getElementById('edit-notes').value;
+                if (notes.trim() !== '') {
+                    updateData.notes = notes;
+                }
+                
+                const response = await fetch('/api/post/edit', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                if (response.ok) {
+                    alert('Vázlat sikeresen mentve!');
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(`Mentési hiba: ${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('Hiba a vázlat mentése során:', error);
+                alert(`Hiba történt: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Poszt törlésének kérése
+        async function requestDeletePost() {
+            if (!confirm('Biztosan kérni szeretnéd a poszt törlését? Ez a kérés a lektorokhoz és direktorokhoz fog eljutni, akik eldöntik, hogy törlik-e a posztot.')) {
+                return;
+            }
+            
+            try {
+                showLoading(true);
+                
+                const token = getAuthToken();
+                if (!token) {
+                    throw new Error('Nincs bejelentkezve');
+                }
+                
+                // Jelenleg csak egy figyelmeztetést jelenítünk meg
+                // A jövőben implementálható egy külön API végpont a törlési kérésekhez
+                alert('A törlési kérésedet rögzítettük. A lektorok és direktorok értesítést kaptak, és hamarosan foglalkoznak a kéréseddel.');
+                
+            } catch (error) {
+                console.error('Hiba a törlési kérés során:', error);
+                alert(`Hiba történt: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Segédfüggvények
+        function getAuthToken() {
+            return localStorage.getItem('secret') || sessionStorage.getItem('secret');
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('hu-HU', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+        
+        function showLoading(show) {
+            const loadingElement = document.getElementById('loading');
+            const formElement = document.getElementById('review-edit-form');
+            
+            if (show) {
+                loadingElement.style.display = 'flex';
+                if (formElement) formElement.style.display = 'none';
+            } else {
+                loadingElement.style.display = 'none';
+                if (formElement) formElement.style.display = 'block';
+            }
+        }
+        
+        // Text formázó függvények
+        function formatText(command) {
+            const textarea = document.getElementById('edit-content');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            let newText = '';
+            let selectionLength = 0;
+            
+            switch(command) {
+                case 'bold':
+                    newText = `**${selectedText}**`;
+                    selectionLength = 2;
+                    break;
+                case 'italic':
+                    newText = `*${selectedText}*`;
+                    selectionLength = 1;
+                    break;
+            }
+            
+            textarea.value = textarea.value.substring(0, start) + 
+                           newText + 
+                           textarea.value.substring(end);
+            
+            textarea.focus();
+            textarea.setSelectionRange(start + selectionLength, end + selectionLength);
+        }
+        
+        function insertList() {
+            const textarea = document.getElementById('edit-content');
+            const start = textarea.selectionStart;
+            const newText = '\n- ';
+            
+            textarea.value = textarea.value.substring(0, start) + 
+                           newText + 
+                           textarea.value.substring(start);
+            
+            textarea.focus();
+            textarea.setSelectionRange(start + newText.length, start + newText.length);
+        }
+        
+        function insertLink() {
+            const url = prompt('Add meg a URL-t:', 'https://');
+            if (!url) return;
+            
+            const text = prompt('Add meg a link szövegét:', 'link');
+            if (text === null) return;
+            
+            const textarea = document.getElementById('edit-content');
+            const start = textarea.selectionStart;
+            const linkText = `[${text}](${url})`;
+            
+            textarea.value = textarea.value.substring(0, start) + 
+                           linkText + 
+                           textarea.value.substring(textarea.selectionEnd);
+            
+            textarea.focus();
+            textarea.setSelectionRange(start + linkText.length, start + linkText.length);
+        }
+        
+        // Blokk nézet váltása
+        function toggleBlockView() {
+            const blockEditor = document.getElementById('block-editor-container');
+            const textEditor = document.getElementById('edit-content');
+            const toggleBtn = document.getElementById('block-view-toggle');
+            
+            if (blockEditor.style.display === 'none') {
+                // Blokk nézetre váltás
+                blockEditor.style.display = 'block';
+                textEditor.style.display = 'none';
+                toggleBtn.innerHTML = '<ion-icon name="document-text-outline"></ion-icon> Szöveges nézet';
+                
+                // Blokkok betöltése, ha még nem történt meg
+                if (!window.editorBlocks && originalPost && originalPost.blocks_json) {
+                    try {
+                        const blocks = JSON.parse(originalPost.blocks_json);
+                        loadBlocksForEditing(blocks);
+                    } catch (error) {
+                        console.error('Hiba a blokkok betöltése során:', error);
+                    }
+                }
+            } else {
+                // Szöveges nézetre váltás
+                blockEditor.style.display = 'none';
+                textEditor.style.display = 'block';
+                toggleBtn.innerHTML = '<ion-icon name="grid-outline"></ion-icon> Blokkos nézet';
+            }
+        }
+        
+        // Blokkok betöltése szerkesztéshez (egyszerűsített változat)
+        async function loadBlocksForEditing(blocks) {
+            const container = document.getElementById('block-editor-container');
+            const noBlocksMsg = document.getElementById('no-blocks-message');
+            
+            if (!blocks || !Array.isArray(blocks) || blocks.length === 0) {
+                if (noBlocksMsg) noBlocksMsg.style.display = 'block';
+                return;
+            }
+            
+            if (noBlocksMsg) noBlocksMsg.style.display = 'none';
+            
+            // Elmentjük a blokkokat globális változóba
+            window.editorBlocks = [...blocks];
+            console.log('Editor blocks inicializálva:', window.editorBlocks.length, 'blokk');
+            
+            container.innerHTML = '';
+            
+            // Egyszerű megjelenítés blokkoknak
+            blocks.forEach((block, index) => {
+                const blockDiv = document.createElement('div');
+                blockDiv.className = 'review-block';
+                blockDiv.dataset.blockIndex = index;
+                
+                let content = '';
+                switch(block.type) {
+                    case 'heading':
+                        content = `<strong>📝 Címsor:</strong> ${block.content || ''}`;
+                        break;
+                    case 'paragraph':
+                        content = `<strong>📄 Bekezdés:</strong> ${block.content || ''}`;
+                        break;
+                    case 'image':
+                        content = `<strong>🖼️ Kép:</strong> ${block.content || ''}`;
+                        break;
+                    case 'quote':
+                        content = `<strong>💬 Idézet:</strong> ${block.content || ''}`;
+                        break;
+                    case 'list':
+                        content = `<strong>📋 Lista:</strong> ${Array.isArray(block.content) ? block.content.join(', ') : block.content}`;
+                        break;
+                    default:
+                        content = `<strong>📦 Blokk:</strong> ${JSON.stringify(block)}`;
+                }
+                
+                blockDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="background: #1891d1; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                            ${getBlockTypeName(block.type)}
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button onclick="editBlock(${index})" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px;">
+                                Szerkesztés
+                            </button>
+                            <button onclick="deleteBlock(${index})" style="background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px;">
+                                Törlés
+                            </button>
+                        </div>
+                    </div>
+                    <div style="padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                        ${content}
+                    </div>
+                `;
+                
+                container.appendChild(blockDiv);
+            });
+        }
+        
+        function getBlockTypeName(type) {
+            const names = {
+                'paragraph': 'Bekezdés',
+                'heading': 'Címsor',
+                'image': 'Kép',
+                'quote': 'Idézet',
+                'list': 'Lista',
+                'code': 'Kód',
+                'divider': 'Elválasztó',
+                'embed': 'Beágyazás'
+            };
+            return names[type] || 'Ismeretlen';
+        }
+        
+        // HTML generálása blokkokból
+        function generateHTMLFromBlocks() {
+            if (!window.editorBlocks || !Array.isArray(window.editorBlocks)) {
+                return '';
+            }
+            
+            let html = '';
+            window.editorBlocks.forEach((block, index) => {
+                const blockHtml = generateHTMLFromBlock(block);
+                if (blockHtml) {
+                    html += blockHtml + '\n\n';
+                }
+            });
+            
+            return html.trim();
+        }
+        
+        function generateHTMLFromBlock(block) {
+            if (!block || !block.type) return '';
+            
+            let html = '';
+            switch(block.type) {
+                case 'paragraph':
+                    html = `<p>${escapeHtml(block.content || '')}</p>`;
+                    break;
+                case 'heading':
+                    const level = block.attributes?.level || 'h2';
+                    html = `<${level}>${escapeHtml(block.content || '')}</${level}>`;
+                    break;
+                case 'image':
+                    html = `<figure><img src="${escapeHtml(block.content || '')}" alt="${escapeHtml(block.attributes?.alt || '')}"><figcaption>${escapeHtml(block.attributes?.caption || '')}</figcaption></figure>`;
+                    break;
+                default:
+                    html = `<div>${escapeHtml(JSON.stringify(block))}</div>`;
+            }
+            
+            return html;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Blokkok megjelenítése a szerkesztőben
+        function displayBlocksFromPost(blocksJson) {
+            try {
+                console.log('DisplayBlocksFromPost hívva');
+                const container = document.getElementById('edit-content');
+                
+                if (!container) return;
+                
+                let blocks = blocksJson;
+                if (typeof blocksJson === 'string') {
+                    blocks = JSON.parse(blocksJson);
+                }
+                
+                if (!Array.isArray(blocks)) return;
+                
+                // HTML generálása blokkokból a textarea-hoz
+                let htmlContent = '';
+                blocks.forEach(block => {
+                    const blockHtml = generateHTMLFromBlock(block);
+                    if (blockHtml) {
+                        htmlContent += blockHtml + '\n\n';
+                    }
+                });
+                
+                container.value = htmlContent.trim();
+                
+            } catch (error) {
+                console.error('Hiba a blokkok megjelenítése során:', error);
+            }
+        }
+        
+        // Egyszerű blokk szerkesztő funkciók
+        function editBlock(index) {
+            alert('Blokk szerkesztése még fejlesztés alatt áll. Kérjük, használd a szöveges szerkesztőt!');
+        }
+        
+        function deleteBlock(index) {
+            if (!confirm('Biztosan törlöd ezt a blokkot?')) return;
+            
+            if (window.editorBlocks && window.editorBlocks[index]) {
+                window.editorBlocks.splice(index, 1);
+                refreshBlockDisplay();
+            }
+        }
+        
+        function refreshBlockDisplay() {
+            const container = document.getElementById('block-editor-container');
+            if (!container || !window.editorBlocks) return;
+            
+            container.innerHTML = '';
+            loadBlocksForEditing(window.editorBlocks);
+            
+            // Textarea frissítése
+            const textarea = document.getElementById('edit-content');
+            if (textarea) {
+                textarea.value = generateHTMLFromBlocks();
+            }
+        }
+        
+        // Új blokk hozzáadása gomb inicializálása
+        function initializeNewBlockButtons() {
+            const toolbar = document.querySelector('.editor-toolbar');
+            if (!toolbar) return;
+            
+            const addBlockBtn = document.createElement('button');
+            addBlockBtn.type = 'button';
+            addBlockBtn.className = 'toolbar-btn';
+            addBlockBtn.innerHTML = '<ion-icon name="add-outline"></ion-icon> Új blokk hozzáadása';
+            addBlockBtn.onclick = function() {
+                alert('Új blokk hozzáadása jelenleg csak a szöveges szerkesztőben érhető el. Használd a formázó gombokat!');
+            };
+            
+            // Beszúrás a toolbar elejére
+            toolbar.insertBefore(addBlockBtn, toolbar.firstChild);
+        }
+        
+        // Gombok inicializálása
+        setTimeout(() => {
+            initializeNewBlockButtons();
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papír-Pelikán | Cikk</title>
+    <link rel="icon" type="image/x-icon" href="/papirpelikan_hatternelkul.png">
+    <link rel="stylesheet" href="/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <style>
+        /* ... (a korábbi CSS marad változatlan) ... */
+        :root {
+            --profile-primary: #1891d1;
+            --profile-secondary: #f8f9fa;
+            --profile-text: #2d3748;
+            --profile-text-light: #6b7280;
+            --profile-border: #e5e7eb;
+            --profile-card-bg: white;
+        }
+        
+        body {
+            background-color: #fdf7eb;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .article-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .article-header {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .article-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px;
+            background: var(--profile-primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .category-icon {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .article-title {
+            font-family: 'Abril Fatface', serif;
+            font-size: 48px;
+            color: var(--profile-text);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--profile-border);
+            border-bottom: 1px solid var(--profile-border);
+            margin: 30px 0;
+            font-size: 14px;
+            color: var(--profile-text-light);
+        }
+        
+        .article-authors {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .author-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--profile-secondary);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--profile-text);
+            transition: background 0.2s;
+        }
+        
+        .author-item:hover {
+            background: #e5e7eb;
+        }
+        
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .article-date {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .article-content {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+            line-height: 1.8;
+        }
+        
+        .article-content h2, .article-content h3, .article-content h4 {
+            font-family: 'Abril Fatface', serif;
+            margin: 40px 0 20px 0;
+            color: var(--profile-text);
+        }
+        
+        .article-content h2 {
+            font-size: 32px;
+        }
+        
+        .article-content h3 {
+            font-size: 26px;
+        }
+        
+        .article-content h4 {
+            font-size: 22px;
+        }
+        
+        .article-content p {
+            margin-bottom: 24px;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .article-image-left {
+            float: left;
+            margin: 0 20px 20px 0;
+            max-width: 40%;
+        }
+        
+        .article-image-right {
+            float: right;
+            margin: 0 0 20px 20px;
+            max-width: 40%;
+        }
+        
+        .article-footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--profile-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .article-stats {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--profile-text-light);
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--profile-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        
+        .back-button:hover {
+            background: #1474a9;
+        }
+        
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            font-size: 18px;
+            color: var(--profile-text-light);
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #6b7280;
+            display: none;
+        }
+        
+        .debug-toggle {
+            background: #e5e7eb;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .article-image-featured {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 20px 0 40px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 32px;
+            }
+            
+            .article-header,
+            .article-content {
+                padding: 20px;
+            }
+            
+            .article-meta {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .article-authors {
+                flex-wrap: wrap;
+            }
+            
+            .article-image-left,
+            .article-image-right {
+                float: none;
+                max-width: 100%;
+                margin: 20px 0;
+            }
+            
+            .article-footer {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            
+            .article-image-featured {
+                max-height: 250px;
+            }
+        }
+
+        .tooltip {
+    position: relative;
+    cursor: pointer;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Ha nincs tooltip class-od, itt hozd létre */
+.tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.article-meta-header {
+    background: linear-gradient(135deg, #006188 0%, #004466 100%);
+    color: white;
+    margin: 30px 0;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 98, 136, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.article-meta-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.meta-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    min-width: 0;
+}
+
+.meta-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+}
+
+.meta-category-icon {
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1);
+    object-fit: contain;
+}
+
+.meta-icon {
+    font-size: 24px;
+    color: white;
+}
+
+.meta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.meta-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.meta-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.meta-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+.divider-line {
+    width: 1px;
+    height: 20px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.5), transparent);
+}
+
+.divider-dot {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.authors-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+
+.author-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+}
+
+.author-chip:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.author-chip .author-name {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: help;
+    margin-left: 4px;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: normal;
+    white-space: nowrap;
+    z-index: 100;
+    margin-bottom: 8px;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Reszponzív design */
+@media (max-width: 1024px) {
+    .meta-header-container {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .meta-item {
+        flex: 1 1 calc(50% - 15px);
+        min-width: 200px;
+    }
+    
+    .meta-divider {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .meta-item {
+        flex: 1 1 100%;
+    }
+    
+    .article-meta-header {
+        padding: 15px;
+    }
+    
+    .author-chip {
+        font-size: 13px;
+        padding: 5px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .meta-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .meta-text {
+        align-items: center;
+    }
+    
+    .authors-list {
+        justify-content: center;
+    }
+    
+    .author-chip {
+        max-width: 100%;
+    }
+    
+    .author-chip .author-name {
+        max-width: 120px;
+    }
+}
+
+.article-meta-header {
+    background: linear-gradient(135deg, #006188 0%, #004466 100%);
+    color: white;
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 40px rgba(0, 98, 136, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.article-meta-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent);
+}
+
+.meta-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex: 1;
+    min-width: 0;
+    padding: 8px 0;
+}
+
+.meta-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.meta-icon-wrapper:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.meta-category-icon {
+    width: 32px;
+    height: 32px;
+    filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    object-fit: contain;
+}
+
+.meta-icon {
+    font-size: 28px;
+    color: white;
+}
+
+.meta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.meta-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.meta-value-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 4px 0;
+}
+
+.meta-value-category:hover {
+    color: #a3e4ff;
+    transform: translateX(3px);
+}
+
+.category-name {
+    position: relative;
+    padding-bottom: 2px;
+}
+
+.category-name::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #a3e4ff, #ffffff);
+    transition: width 0.3s ease;
+    border-radius: 1px;
+}
+
+.meta-value-category:hover .category-name::after {
+    width: 100%;
+}
+
+.external-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.meta-value-category:hover .external-icon {
+    opacity: 1;
+    transform: translateX(2px);
+}
+
+.meta-value {
+    font-size: 17px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.number-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.meta-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.divider-line {
+    width: 2px;
+    height: 24px;
+    background: linear-gradient(to bottom, 
+        transparent, 
+        rgba(255, 255, 255, 0.6), 
+        transparent);
+}
+
+.divider-dot {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: bold;
+}
+
+.authors-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.author-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px 8px 12px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    border-radius: 50px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+    gap: 10px;
+}
+
+.author-chip:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.author-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.author-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.author-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: help;
+}
+
+.info-icon {
+    font-size: 16px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.tooltip:hover .info-icon {
+    opacity: 1;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: normal;
+    white-space: nowrap;
+    z-index: 100;
+    margin-bottom: 10px;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.95) transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Animációk */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.article-meta-header {
+    animation: slideUpFade 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Reszponzív design */
+@media (max-width: 1200px) {
+    .meta-header-container {
+        gap: 20px;
+    }
+    
+    .meta-item {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .meta-header-container {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .meta-item {
+        flex: 1 1 calc(50% - 15px);
+        min-width: 250px;
+    }
+    
+    .meta-divider {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .article-meta-header {
+        padding: 20px;
+        border-radius: 16px;
+    }
+    
+    .meta-item {
+        flex: 1 1 100%;
+        flex-direction: row;
+        text-align: left;
+    }
+    
+    .meta-icon-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .meta-category-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .author-chip {
+        padding: 6px 14px 6px 10px;
+        font-size: 13px;
+    }
+    
+    .author-avatar,
+    .author-avatar-placeholder {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .article-meta-header {
+        padding: 16px;
+        margin: 20px 0;
+    }
+    
+    .meta-item {
+        gap: 12px;
+    }
+    
+    .meta-icon-wrapper {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+    }
+    
+    .meta-text {
+        gap: 4px;
+    }
+    
+    .meta-label {
+        font-size: 12px;
+    }
+    
+    .meta-value-category {
+        font-size: 16px;
+    }
+    
+    .meta-value {
+        font-size: 15px;
+    }
+    
+    .number-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+    
+    .authors-list {
+        gap: 6px;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Fejléc és navigáció ide kerülhet (másold be a főoldal fejlécét) -->
+    
+    <div class="article-container">
+        <div id="loading" class="loading-container">
+            <div>
+                <ion-icon name="document-text-outline" style="font-size: 48px; margin-bottom: 20px; color: #d1d5db;"></ion-icon>
+                <p style="text-align: center;">Cikk betöltése...</p>
+                <p id="loading-details" style="text-align: center; font-size: 14px; color: #9ca3af;"></p>
+            </div>
+        </div>
+        
+        <div id="article-content" style="display: none;">
+            <!-- Tartalom ide töltődik -->
+        </div>
+        
+        <div id="article-error" style="display: none; text-align: center; padding: 60px 20px;">
+            <div style="font-size: 72px; color: #d1d5db; margin-bottom: 20px;">😕</div>
+            <h2 id="error-title" style="color: #2d3748; margin-bottom: 15px;">Hiba történt</h2>
+            <p id="error-message" style="color: #6b7280; margin-bottom: 30px;">
+                A keresett cikk nem található, vagy nincs publikus hozzáférése.
+            </p>
+            <button class="debug-toggle" onclick="toggleDebugInfo()">Hibakeresési információk mutatása</button>
+            <div id="debug-info" class="debug-info"></div>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 30px;">
+                <a href="/" class="back-button">
+                    <ion-icon name="home-outline"></ion-icon>
+                    Főoldal
+                </a>
+                <a href="javascript:history.back()" class="back-button" style="background: #6b7280;">
+                    <ion-icon name="arrow-back-outline"></ion-icon>
+                    Vissza
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let debugData = {
+            url: '',
+            requestData: '',
+            responseStatus: '',
+            responseText: '',
+            error: ''
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Cikk oldal betöltve');
+            
+            // URL paraméterek kinyerése
+            const urlParams = new URLSearchParams(window.location.search);
+            const pid = urlParams.get('pid');
+            const edited = urlParams.get('edited') === 'true';
+            
+            document.getElementById('loading-details').textContent = `Cikk ID: ${pid || 'nincs'} | Edited: ${edited}`;
+            
+            if (pid) {
+                loadArticle(pid, edited);
+            } else {
+                showError('Nincs cikk ID megadva');
+            }
+        });
+        
+        async function getAuthToken() {
+            const tokenSources = {
+                'localStorage': localStorage.getItem('secret'),
+                'sessionStorage': sessionStorage.getItem('secret'),
+                'URL paraméter': new URLSearchParams(window.location.search).get('token')
+            };
+            
+            let token = tokenSources['URL paraméter'];
+            
+            if (!token && tokenSources['localStorage']) {
+                token = tokenSources['localStorage'];
+            }
+            
+            if (!token && tokenSources['sessionStorage']) {
+                token = tokenSources['sessionStorage'];
+            }
+            
+            if (tokenSources['URL paraméter'] && !tokenSources['localStorage']) {
+                localStorage.setItem('secret', tokenSources['URL paraméter']);
+                const newUrl = window.location.pathname + window.location.search;
+                window.history.replaceState({}, document.title, newUrl.split('?')[0]);
+            }
+            
+            return token;
+        }
+        
+        async function loadArticle(pid, edited = false) {
+            console.log(`Cikk betöltése: ${pid}, edited: ${edited}`);
+            
+            const token = await getAuthToken();
+            const requestData = {
+                post: parseInt(pid),
+                edited: edited
+            };
+            
+            debugData.url = '/api/post/get/contents';
+            debugData.requestData = JSON.stringify(requestData);
+            
+            try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                // Ha van token, adjuk hozzá a header-hez
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                
+                document.getElementById('loading-details').textContent = `API hívás: /api/post/get/contents`;
+                
+                const response = await fetch('/api/post/get/contents', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(requestData)
+                });
+                
+                debugData.responseStatus = `${response.status} ${response.statusText}`;
+                
+                const responseText = await response.text();
+                debugData.responseText = responseText.substring(0, 500) + (responseText.length > 500 ? '...' : '');
+                
+                console.log('API válasz státusz:', response.status);
+                console.log('API válasz szöveg:', responseText.substring(0, 200));
+                
+                if (response.ok) {
+                    try {
+                        const data = JSON.parse(responseText);
+                        console.log('API válasz adatok:', data);
+                        displayArticle(data);
+                    } catch (parseError) {
+                        console.error('Nem sikerült JSON-ként értelmezni:', parseError);
+                        showError('Hibás adatok érkeztek a szervertől');
+                    }
+                } else if (response.status === 403) {
+                    showError('Nincs jogosultságod megtekinteni ezt a cikket. Lehet, hogy még nem jelent meg, vagy nem vagy bejelentkezve.');
+                } else if (response.status === 404) {
+                    showError('A cikk nem található');
+                } else if (response.status === 500) {
+                    showError('Szerverhiba történt. Kérlek, próbáld újra később.');
+                } else {
+                    showError(`Hiba történt: ${response.status} ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                debugData.error = error.message;
+                console.error('Hálózati hiba:', error);
+                showError('Hálózati hiba történt. Ellenőrizd az internetkapcsolatod.');
+            }
+        }
+        
+async function displayArticle(articleData) {
+    const loading = document.getElementById('loading');
+    const articleContent = document.getElementById('article-content');
+    const articleError = document.getElementById('article-error');
+    
+    loading.style.display = 'none';
+    articleError.style.display = 'none';
+    
+    if (!articleData || typeof articleData !== 'object') {
+        showError('Érvénytelen adatok érkeztek');
+        return;
+    }
+    
+    // Kategória beállítása
+    const category = articleData.category || 'Általános';
+    const categoryIcon = getCategoryIcon(category);
+    const categoryColor = getCategoryColor(category);
+    
+    // Lapszám
+    const number = articleData.number || 'Ismeretlen';
+    
+    // Dátum formázása
+    const createdDate = formatDate(articleData.created);
+    
+    // Szerzők betöltése
+    const authors = await loadAuthorNames(articleData.authors || []);
+    
+    // HTML generálás
+    let html = `
+        <div class="article-header">
+            <div class="article-category" style="background-color: ${categoryColor}">
+                <img src="${categoryIcon}" alt="${category}" class="category-icon">
+                <span>${category}</span>
+            </div>
+            
+            ${number ? `
+                <div style="margin-bottom: 10px; color: var(--profile-text-light); font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                    <ion-icon name="book-outline"></ion-icon>
+                    <span>Lapszám: ${number}</span>
+                </div>
+            ` : ''}
+            
+            <h1 class="article-title">${escapeHtml(articleData.title) || 'Cím nélkül'}</h1>
+            
+<div class="article-meta-header">
+    <div class="meta-header-container">
+        <!-- Kategória/Rovat -->
+        <div class="meta-item meta-category">
+            <div class="meta-icon-wrapper">
+                <img src="${categoryIcon}" alt="${category}" class="meta-category-icon">
+            </div>
+            <div class="meta-text">
+                <span class="meta-label">Rovat</span>
+
+                <div class="article-category" style="background-color: ${categoryColor}">
+                    <a href="Rovatok/Rovatok-oldal/?category=${encodeURIComponent(category)}-cikkeink.html" class="meta-value-category">
+                <img src="${categoryIcon}" alt="${category}" class="category-icon" style="width: 150px; height: 20px;">
+                    </a>
+            </div>
+
+                
+            </div>
+        </div>
+        
+        <!-- Középen egy díszített elválasztó -->
+        <div class="meta-divider">
+            <div class="divider-line"></div>
+            <div class="divider-dot">•</div>
+            <div class="divider-line"></div>
+        </div>
+        
+        <!-- Lapszám -->
+        <div class="meta-item meta-number">
+            <div class="meta-icon-wrapper">
+                <ion-icon name="book-outline" class="meta-icon"></ion-icon>
+            </div>
+            <div class="meta-text">
+                <span class="meta-label">Lapszám</span>
+                <span class="meta-value">
+                <div class="article-category" style="background-color: ${categoryColor}">
+
+                    <span class="number-badge" style="font-family: 'Abril Fatface'; color: white; font-weight: 100">${number}</span>
+                    <span class="tooltip">
+                        <ion-icon name="information-circle-outline" class="info-icon"></ion-icon>
+                        <span class="tooltip-text">Megjelent: ${createdDate}</span>
+                    </span>
+                   
+                    </div>
+                    </span>
+            </div>
+        </div>
+        
+        <!-- Középen egy díszített elválasztó -->
+        <div class="meta-divider">
+            <div class="divider-line"></div>
+            <div class="divider-dot">•</div>
+            <div class="divider-line"></div>
+        </div>
+        
+        <!-- Szerzők -->
+        <div class="meta-item meta-authors">
+            <div class="meta-icon-wrapper">
+                <ion-icon name="people-outline" class="meta-icon"></ion-icon>
+            </div>
+            <div class="meta-text">
+                <span class="meta-label">Szerző(k)</span>
+
+                
+                <div class="authors-list" >
+                    ${authors.map(author => `
+                        <a href="/user-profile.html?uid=${author.id}" class="author-chip" style="background-color: ${categoryColor}">
+                            ${author.avatar ? `
+                                <img src="${author.avatar}" alt="${author.name}" class="author-avatar">
+                            ` : `
+                                <div class="author-avatar-placeholder">${getInitials(author.name)}</div>
+                            `}
+                            <span class="author-name" style="font-family: 'Abril Fatface'; color: white;">${author.name}</span>
+                        </a>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            
+            <div class="article-meta">
+                <div id="article-authors" class="article-authors">
+                    <!-- Szerzők részletesebben -->
+                </div>
+                <div class="article-date">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    <span>${createdDate}</span>
+                </div>
+            </div>
+            
+            ${articleData.minimal_desc ? `
+                <div style="color: var(--profile-text-light); font-style: italic; margin-top: 20px; padding: 15px; background: var(--profile-secondary); border-radius: 8px;">
+                    ${escapeHtml(articleData.minimal_desc)}
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    // Kiemelt kép
+    if (articleData.image) {
+        html += `
+            <div style="margin-bottom: 30px;">
+                <img src="${articleData.image}" alt="${escapeHtml(articleData.title)}" class="article-image-featured">
+            </div>
+        `;
+    }
+    
+    // Cikk tartalma
+    html += `
+        <div class="article-content">
+            ${articleData.desc || '<p style="text-align: center; color: #6b7280; font-style: italic;">A cikk tartalma jelenleg nem elérhető.</p>'}
+        </div>
+    `;
+    
+    // Lábléc
+    html += `
+        <div class="article-footer">
+            <div class="article-stats">
+                ${articleData.eid ? `
+                    <div class="stat-item">
+                        <ion-icon name="create-outline"></ion-icon>
+                        <span>Utoljára szerkesztve: ${formatDate(articleData.last_edited)}</span>
+                    </div>
+                ` : ''}
+                <div class="stat-item">
+                    <ion-icon name="information-circle-outline"></ion-icon>
+                    <span>Cikk ID: ${articleData.post}</span>
+                </div>
+            </div>
+            <a href="javascript:history.back()" class="back-button">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+                Vissza
+            </a>
+        </div>
+    `;
+    
+    articleContent.innerHTML = html;
+    articleContent.style.display = 'block';
+    
+    // Betöltjük a szerzők részletes adatait
+    await loadAuthorDetails(articleData.authors || []);
+}
+
+// Szerzők neveinek betöltése
+async function loadAuthorNames(authorIds) {
+    if (!Array.isArray(authorIds) || authorIds.length === 0) {
+        return [{ id: 0, name: 'Ismeretlen szerző' }];
+    }
+    
+    const authors = [];
+    
+    for (const authorId of authorIds) {
+        try {
+            const response = await fetch(`/api/user/getone?uid=${authorId}`);
+            if (response.ok) {
+                const authorData = await response.json();
+                authors.push({
+                    id: authorId,
+                    name: authorData.alias || authorData.full_name || `Szerző ${authorId}`
+                });
+            } else {
+                authors.push({
+                    id: authorId,
+                    name: `Szerző ${authorId}`
+                });
+            }
+        } catch (error) {
+            console.error(`Hiba a szerző betöltése során (${authorId}):`, error);
+            authors.push({
+                id: authorId,
+                name: `Szerző ${authorId}`
+            });
+        }
+    }
+    
+    return authors;
+}
+
+// Szerzők részletes adatainak betöltése (profilkép stb.)
+async function loadAuthorDetails(authorIds) {
+    const authorsContainer = document.getElementById('article-authors');
+    if (!authorsContainer || !Array.isArray(authorIds) || authorIds.length === 0) {
+        authorsContainer.innerHTML = '<span>Ismeretlen szerző</span>';
+        return;
+    }
+    
+    authorsContainer.innerHTML = '';
+    
+    for (const authorId of authorIds) {
+        try {
+            const response = await fetch(`/api/user/getone?uid=${authorId}`);
+            if (response.ok) {
+                const authorData = await response.json();
+                
+                const authorLink = document.createElement('a');
+                authorLink.className = 'author-item';
+                authorLink.href = `/user-profile.html?uid=${authorId}`;
+                
+                const authorName = authorData.alias || authorData.full_name || `Szerző ${authorId}`;
+                const authorAvatar = authorData.pfp || getDefaultAvatar(authorName);
+                
+                authorLink.innerHTML = `
+                    <img src="${authorAvatar}" 
+                         alt="${authorName}" 
+                         class="author-avatar">
+                    <span>${authorName}</span>
+                `;
+                
+                authorsContainer.appendChild(authorLink);
+            }
+        } catch (error) {
+            console.error(`Hiba a szerző részleteinek betöltése során (${authorId}):`, error);
+        }
+    }
+}
+
+
+        async function loadAuthors(authorIds) {
+            const authorsContainer = document.getElementById('article-authors');
+            if (!authorsContainer || !Array.isArray(authorIds) || authorIds.length === 0) {
+                authorsContainer.innerHTML = '<span>Ismeretlen szerző</span>';
+                return;
+            }
+            
+            // Töltsük be a szerzők adatait
+            const authors = [];
+            
+            for (const authorId of authorIds) {
+                try {
+                    const response = await fetch(`/api/user/getone?uid=${authorId}`);
+                    if (response.ok) {
+                        const authorData = await response.json();
+                        authors.push(authorData);
+                    } else {
+                        // Ha nem sikerül, használjunk alapértelmezett adatokat
+                        authors.push({
+                            uid: authorId,
+                            name: `Szerző ${authorId}`,
+                            pfp: null
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Hiba a szerző betöltése során (${authorId}):`, error);
+                    authors.push({
+                        uid: authorId,
+                        name: `Szerző ${authorId}`,
+                        pfp: null
+                    });
+                }
+            }
+            
+            // Jelenítsük meg a szerzőket
+            authorsContainer.innerHTML = '';
+            authors.forEach(author => {
+                const authorLink = document.createElement('a');
+                authorLink.className = 'author-item';
+                authorLink.href = `/user-profile.html?uid=${author.uid || author.id || ''}`;
+                authorLink.innerHTML = `
+                    <img src="${author.pfp || getDefaultAvatar(author.name || `Szerző ${author.uid}`)}" 
+                         alt="${author.name || `Szerző ${author.uid}`}" 
+                         class="author-avatar">
+                    <span>${author.name || `Szerző ${author.uid}`}</span>
+                `;
+                authorsContainer.appendChild(authorLink);
+            });
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'Ismeretlen dátum';
+            
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('hu-HU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                return dateString;
+            }
+        }
+        
+        function getDefaultAvatar(name) {
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1891d1&color=fff&size=32&format=png`;
+        }
+        
+        function showError(message) {
+            const loading = document.getElementById('loading');
+            const articleContent = document.getElementById('article-content');
+            const articleError = document.getElementById('article-error');
+            
+            loading.style.display = 'none';
+            articleContent.style.display = 'none';
+            articleError.style.display = 'block';
+            
+            document.getElementById('error-message').textContent = message;
+            
+            console.error('Hiba:', message);
+        }
+        
+        function toggleDebugInfo() {
+            const debugInfo = document.getElementById('debug-info');
+            debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+            
+            debugInfo.innerHTML = `
+                <strong>URL:</strong> ${debugData.url || 'N/A'}<br>
+                <strong>Request:</strong> ${debugData.requestData || 'N/A'}<br>
+                <strong>Státusz:</strong> ${debugData.responseStatus || 'N/A'}<br>
+                <strong>Válasz:</strong> ${debugData.responseText || 'N/A'}<br>
+                <strong>Hiba:</strong> ${debugData.error || 'N/A'}<br>
+                <strong>Dátum:</strong> ${new Date().toLocaleString()}<br>
+                <strong>Token:</strong> ${localStorage.getItem('secret') ? 'Van (rejtve)' : 'Nincs'}
+            `;
+        }
+        
+        // Kategória ikonok és színek
+        function getCategoryIcon(categoryName) {
+            const iconMap = {
+                'hitelet': '/Rovatok/Rovatok-ikon/hitelet.svg',
+                'onallo': '/Rovatok/Rovatok-ikon/onallo.svg',
+                'deutschblick': '/Rovatok/Rovatok-ikon/deutschblick.svg',
+                'rangers': '/Rovatok/Rovatok-ikon/rangers.svg',
+                'iskolank elete': '/Rovatok/Rovatok-ikon/iskolankelete.svg',
+                'Iskolánk élete': '/Rovatok/Rovatok-ikon/iskolankelete.svg',
+                'divatrovat': '/Rovatok/Rovatok-ikon/divat.svg',
+                'divat': '/Rovatok/Rovatok-ikon/divatrovat.svg',
+                'ajánlóink': '/Rovatok/Rovatok-ikon/ajanloink.svg',
+                'lic-tech': '/Rovatok/Rovatok-ikon/lictech.svg',
+                'lictech': '/Rovatok/Rovatok-ikon/lictech.svg',
+                'tech': '/Rovatok/Rovatok-ikon/lictech.svg',
+                'irodalom': '/Rovatok/Rovatok-ikon/irodalom.svg',
+                'művészet': '/Rovatok/Rovatok-ikon/muveszet.svg',
+                'muveszet': '/Rovatok/Rovatok-ikon/muveszet.svg',
+                'érdekességek a világból': '/Rovatok/Rovatok-ikon/erdekessegek.svg',
+                'erdekessegek': '/Rovatok/Rovatok-ikon/erdekessegek.svg',
+                'érdekességek': '/Rovatok/Rovatok-ikon/erdekessegek.svg',
+                'világ': '/Rovatok/Rovatok-ikon/erdekessegek.svg',
+                'horgászrovat': '/Rovatok/Rovatok-ikon/horgaszrovat.svg',
+                'horgász': '/Rovatok/Rovatok-ikon/horgaszrovat.svg',
+                'receptrovat': '/Rovatok/Rovatok-ikon/receptrovat.svg',
+                'recept': '/Rovatok/Rovatok-ikon/receptrovat.svg',
+                'általános': '/Rovatok/Rovatok-ikon/altalanos.svg',
+                'altalanos': '/Rovatok/Rovatok-ikon/altalanos.svg',
+                'egyéb': '/Rovatok/Rovatok-ikon/altalanos.svg',
+                'más': '/Rovatok/Rovatok-ikon/altalanos.svg'
+            };
+            
+            const normalizedCategory = (categoryName || '')
+                .toLowerCase()
+                .trim()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            
+            if (iconMap[normalizedCategory]) {
+                return iconMap[normalizedCategory];
+            }
+            
+            for (const [key, value] of Object.entries(iconMap)) {
+                if (normalizedCategory.includes(key) && key !== 'általános' && key !== 'altalanos' && key !== 'egyéb' && key !== 'más') {
+                    return value;
+                }
+            }
+            
+            return iconMap['altalanos'] || '/Rovatok/Rovatok-ikon/altalanos.svg';
+        }
+        
+        function getCategoryColor(categoryName) {
+            const colorMap = {
+                'hitelet': '#424485',
+                'onallo': '#9BC2D3',
+                'deutschblick': '#F59E0B',
+                'rangers': '#C50225',
+                'iskolank elete': '#006188',
+                'divatrovat': '#006188',
+                'divat': '#006188',
+                'ajanloink': '#5D729C',
+                'lic-tech': '#00563F',
+                'lictech': '#00563F',
+                'tech': '#00563F',
+                'irodalom': '#8B5CF6',
+                'művészet': '#F59E0B',
+                'muveszet': '#F59E0B',
+                'érdekességek a világból': '#10B981',
+                'erdekessegek': '#10B981',
+                'érdekességek': '#10B981',
+                'világ': '#10B981',
+                'horgászrovat': '#3B82F6',
+                'horgász': '#3B82F6',
+                'receptrovat': '#F59E0B',
+                'recept': '#F59E0B',
+                'általános': '#6B7280',
+                'altalanos': '#6B7280',
+                'egyéb': '#6B7280',
+                'más': '#6B7280'
+            };
+            
+            const normalizedCategory = (categoryName || '')
+                .toLowerCase()
+                .trim()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            
+            if (colorMap[normalizedCategory]) {
+                return colorMap[normalizedCategory];
+            }
+            
+            for (const [key, value] of Object.entries(colorMap)) {
+                if (normalizedCategory.includes(key) && key !== 'általános' && key !== 'altalanos' && key !== 'egyéb' && key !== 'más') {
+                    return value;
+                }
+            }
+            
+            return colorMap['altalanos'] || '#6B7280';
+        }
+
+        async function loadAuthorNames(authorIds) {
+    if (!Array.isArray(authorIds) || authorIds.length === 0) {
+        return [{ 
+            id: 0, 
+            name: 'Ismeretlen szerző',
+            avatar: getDefaultAvatar('Ismeretlen szerző')
+        }];
+    }
+    
+    const authors = [];
+    
+    for (const authorId of authorIds) {
+        try {
+            const response = await fetch(`/api/user/getone?uid=${authorId}`);
+            if (response.ok) {
+                const authorData = await response.json();
+                authors.push({
+                    id: authorId,
+                    name: authorData.alias || authorData.full_name || `Szerző ${authorId}`,
+                    avatar: authorData.pfp || getDefaultAvatar(authorData.alias || authorData.full_name || `Szerző ${authorId}`)
+                });
+            } else {
+                authors.push({
+                    id: authorId,
+                    name: `Szerző ${authorId}`,
+                    avatar: getDefaultAvatar(`Szerző ${authorId}`)
+                });
+            }
+        } catch (error) {
+            console.error(`Hiba a szerző betöltése során (${authorId}):`, error);
+            authors.push({
+                id: authorId,
+                name: `Szerző ${authorId}`,
+                avatar: getDefaultAvatar(`Szerző ${authorId}`)
+            });
+        }
+    }
+    
+    return authors;
+}
+
+// Segédfüggvény a kezdőbetűk kinyeréséhez
+function getInitials(name) {
+    if (!name) return '?';
+    return name
+        .split(' ')
+        .map(word => word[0])
+        .join('')
+        .toUpperCase()
+        .substring(0, 2);
+}
+    </script>
+</body>
+</html>

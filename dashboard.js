@@ -130,7 +130,7 @@ async function checkUserPermissions() {
     
     console.log('Token:', token ? token.substring(0, 10) + '...' : 'Nincs');
     
-    const response = await fetch('/api/settings/get', {
+    const response = await fetch('/api/number/get', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -1312,9 +1312,7 @@ async function prepareBlockPostData() {
 /**
  * Egyetlen blokk feldolgozása
  */
-/**
- * Egyetlen blokk feldolgozása - JAVÍTOTT VERZIÓ
- */
+
 async function processSingleBlock(block) {
     const blockType = block.getAttribute('data-block-type');
     const blockId = block.getAttribute('data-block-id') || generateBlockId();
@@ -1521,6 +1519,7 @@ function stripHTML(html) {
 function updateAutoPreview(title, excerpt) {
     const titlePreview = document.getElementById('auto-title-preview');
     const excerptPreview = document.getElementById('auto-excerpt-preview');
+    
     
     if (titlePreview) {
         titlePreview.textContent = title;
@@ -1826,7 +1825,7 @@ async function updateExistingPost(pid, data) {
 
 async function updateNextNumber(newNumber, token) {
     try {
-        const response = await fetch('/api/settings/update', {
+        const response = await fetch('/api/number/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -2706,7 +2705,7 @@ async function displayUserArticles(articlesData, container) {
                 <div class="table-col">${article.number || '-'}</div>
                 <div class="table-col">
                     <div class="action-buttons">
-                        <button class="btn-action" title="Szerkesztés" onclick="editArticle(${pid})">
+                        <button class="btn-action" title="Szerkesztés" onclick="editArticleForWriter(${pid})">
                             <ion-icon name="create-outline"></ion-icon>
                         </button>
                         <button class="btn-action" title="Megtekintés" onclick="viewArticle(${pid})">
@@ -2727,6 +2726,7 @@ async function displayUserArticles(articlesData, container) {
     // Filter gombok eseménykezelői
     setupArticleFilters();
 }
+
 
 async function getStatusesForArticles(articleList) {
     const token = await getAuthToken();
@@ -2995,6 +2995,52 @@ async function editArticle(pid) {
     }
 }
 
+
+async function editArticleForWriter(pid) {
+    console.log(`Cikk szerkesztése íróként: ${pid}`);
+    
+    try {
+        const token = await getAuthToken();
+        if (!token) {
+            alert('Nem vagy bejelentkezve!');
+            return;
+        }
+        
+        // Ellenőrizzük, hogy a felhasználó író-e
+        const hasPermission = await checkUserPermissions();
+        if (!hasPermission) {
+            alert('Nincs jogosultságod cikket szerkeszteni! Szükséges jogosultságok: writer, director, lector');
+            return;
+        }
+        
+        // Ellenőrizzük, hogy a cikk a felhasználóé-e
+        const response = await fetch('/api/post/get/written?edited=false', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const userPosts = await response.json();
+            
+            if (!userPosts[pid]) {
+                alert('Ez a cikk nem a tied, vagy nem létezik!');
+                return;
+            }
+            
+            // Átirányítás a szerkesztő oldalra
+            window.location.href = `review-editor-for-writer.html?pid=${pid}&edit=true`;
+            
+        } else {
+            alert('Hiba történt a cikk ellenőrzése során!');
+        }
+        
+    } catch (error) {
+        console.error('Hiba a cikk szerkesztése során:', error);
+        alert('Hiba történt a szerkesztés indításakor!');
+    }
+}
 /**
  * Cikk megtekintése
  */
@@ -3657,7 +3703,6 @@ async function checkReviewPermissions() {
         const data = await response.json();
         console.log('API válasz teljes:', data);
         
-        // Ellenőrizzük a válasz struktúrát
         if (!data) {
             console.error('Üres válasz érkezett');
             return false;
@@ -3665,34 +3710,18 @@ async function checkReviewPermissions() {
         
         let rolesArray = [];
         
-        // 1. Ha a roles már tömb formátumban van
+        // Feldolgozzuk a rangokat
         if (Array.isArray(data.roles)) {
             rolesArray = data.roles;
-        } 
-        // 2. Ha a roles stringként van (JSON string)
-        else if (typeof data.roles === 'string') {
+        } else if (typeof data.roles === 'string') {
             try {
-                // Először próbáljuk meg parse-olni JSON-ként
                 rolesArray = JSON.parse(data.roles);
-                
-                // Ha nem tömb, akkor vesszővel elválasztott string
                 if (!Array.isArray(rolesArray)) {
-                    console.log('A parse-olt érték nem tömb, vesszővel elválasztott stringként kezeljük');
                     rolesArray = data.roles.split(',').map(role => role.trim());
                 }
             } catch (e) {
-                console.log('JSON parse hiba, vesszővel elválasztott stringként kezeljük:', e);
                 rolesArray = data.roles.split(',').map(role => role.trim());
             }
-        }
-        // 3. Ha a roles nem szerepel, de van user objektum
-        else if (data.user && data.user.roles) {
-            rolesArray = Array.isArray(data.user.roles) ? data.user.roles : data.user.roles.split(',');
-        }
-        // 4. Ha a teljes válasz egy objektum ami tartalmazza a rangokat
-        else if (data.roles && typeof data.roles === 'object' && !Array.isArray(data.roles)) {
-            // Konvertáljuk a kulcsokat tömbbé
-            rolesArray = Object.keys(data.roles);
         }
         
         console.log('Feldolgozott rangok:', rolesArray);
@@ -3702,13 +3731,18 @@ async function checkReviewPermissions() {
             return false;
         }
         
+        // **JAVÍTOTT RESZ: A * rang ellenőrzése**
         // Ellenőrizzük, hogy van-e valamelyik szükséges jogosultság
         const requiredRoles = ['lector', 'director', '*'];
-        const hasPermission = rolesArray.some(role => 
-            requiredRoles.some(requiredRole => 
-                role.toLowerCase().includes(requiredRole.toLowerCase())
-            )
-        );
+        
+        // Ha van * rang, akkor minden jogosultsága van
+        if (rolesArray.includes('*')) {
+            console.log('Felhasználónak * rangja van, minden jogosultság megvan');
+            return true;
+        }
+        
+        // Ellenkező esetben ellenőrizzük a konkrét rangokat
+        const hasPermission = rolesArray.some(role => requiredRoles.includes(role));
         
         console.log('Szükséges rangok:', requiredRoles);
         console.log('Felhasználó rangjai:', rolesArray);
@@ -3721,7 +3755,6 @@ async function checkReviewPermissions() {
         return false;
     }
 }
-
 
 
 
@@ -4071,10 +4104,11 @@ async function displayReviews(pendingData, editedData, container) {
                             <ion-icon name="eye-outline"></ion-icon>
                             Szerkesztés megtekintése
                         </button>
-                        <button class="btn-primary review-edit" onclick="editReviewPost(${pid})">
-                            <ion-icon name="create-outline"></ion-icon>
-                            Szerkesztés elfogadása
-                        </button>
+                         
+<button class="btn-primary review-edit" onclick="console.log('Button clicked!'); acceptEditImmediately(${pid})">
+    <ion-icon name="checkmark-outline"></ion-icon>
+    Szerkesztés elfogadása
+</button>
                         <button class="btn-danger review-delete" onclick="deleteReviewPost(${pid})">
                             <ion-icon name="trash-outline"></ion-icon>
                             Törlés
@@ -4215,15 +4249,34 @@ async function viewEditedPost(pid) {
 /**
  * Szerkesztés elfogadása (lektor/director által)
  */
+/**
+ * Szerkesztés elfogadása (lektor/director által) - JAVÍTOTT VERZIÓ
+ */
 async function editReviewPost(pid) {
-    if (!confirm('Biztosan szeretnéd elfogadni a szerkesztést? Ez azonnal érvénybe lép, és a változtatások láthatóvá válnak.')) {
-        return;
-    }
+    console.log(`Szerkesztés elfogadása: ${pid}`);
     
     try {
-        const token = await getAuthToken();
+        // Ellenőrizzük a jogosultságokat
+        const hasPermission = await checkReviewPermissions();
+        if (!hasPermission) {
+            alert('Nincs jogosultságod szerkesztéseket elfogadni!');
+            return;
+        }
         
-        // Először lekérjük a szerkesztett verziót
+        // Megerősítés kérése
+        const result = await showConfirmModal({
+            title: 'Szerkesztés elfogadása',
+            message: 'Biztosan elfogadod ezt a szerkesztést?',
+            subMessage: 'A változtatások azonnal életbe lépnek.',
+            icon: 'checkmark-outline',
+            confirmText: 'Igen, elfogadom',
+            cancelText: 'Mégse'
+        });
+        
+        if (!result) return;
+        
+        // 1. ELŐSZÖR: Lekérjük a szerkesztett verziót
+        const token = await getAuthToken();
         const response = await fetch('/api/post/get/contents', {
             method: 'POST',
             headers: {
@@ -4232,7 +4285,7 @@ async function editReviewPost(pid) {
             },
             body: JSON.stringify({
                 post: parseInt(pid),
-                edited: true
+                edited: true  // Fontos: a szerkesztett verziót kérem
             })
         });
         
@@ -4241,20 +4294,22 @@ async function editReviewPost(pid) {
         }
         
         const editedPost = await response.json();
+        console.log('Szerkesztett post adatok:', editedPost);
         
-        // Összeállítjuk a frissítendő adatokat
+        // 2. MOST: Azonnali szerkesztés (lektor/director joggal)
         const updateData = {
             post: parseInt(pid)
         };
         
+        // Csak a ténylegesen változott mezők frissítése
         if (editedPost.title) updateData.title = editedPost.title;
         if (editedPost.category) updateData.category = editedPost.category;
-        if (editedPost.number) updateData.number = editedPost.number;
         if (editedPost.minimal_desc) updateData.minimal_desc = editedPost.minimal_desc;
         if (editedPost.desc) updateData.desc = editedPost.desc;
         if (editedPost.image) updateData.image = editedPost.image;
         
-        // API hívás a szerkesztés elfogadásához
+        console.log('Frissítési adatok:', updateData);
+        
         const editResponse = await fetch('/api/post/edit', {
             method: 'PUT',
             headers: {
@@ -4264,20 +4319,63 @@ async function editReviewPost(pid) {
             body: JSON.stringify(updateData)
         });
         
+        console.log('Szerkesztés API válasz státusz:', editResponse.status);
+        
         if (editResponse.ok) {
             const result = await editResponse.json();
-            alert('Szerkesztés sikeresen elfogadva!');
+            console.log('Szerkesztés eredménye:', result);
             
-            // Lista frissítése
-            loadPendingReviews();
+            // 3. HA SIKERES: Azonnali publikálás is (ha szükséges)
+            // Ellenőrizzük a poszt státuszát
+            const statusResponse = await fetch(`/api/post/get/status?post=${pid}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (statusResponse.ok) {
+                const statusData = await statusResponse.json();
+                console.log('Poszt státusz:', statusData);
+                
+                if (statusData.status === 'pending') {
+                    await approveReviewPost2(pid);
+                }
+            }
+            
+            // Sikeres üzenet
+            await showConfirmModal({
+                title: 'Szerkesztés elfogadva',
+                message: 'A szerkesztést sikeresen elfogadtad!',
+                icon: 'checkmark-done-outline',
+                confirmText: 'Rendben',
+                cancelText: undefined,
+                onConfirm: function() {
+                    // Lista frissítése
+                    loadPendingReviews();
+                }
+            });
+            
         } else {
-            const error = await editResponse.text();
-            alert(`Hiba: ${error}`);
+            const errorText = await editResponse.text();
+            console.error('Szerkesztés hiba:', errorText);
+            
+            // Hiba kezelése
+            let errorMessage = 'Ismeretlen hiba a szerkesztés során';
+            if (editResponse.status === 401) {
+                errorMessage = 'Nincs bejelentkezve, vagy lejárt a munkamenet!';
+            } else if (editResponse.status === 403) {
+                errorMessage = 'Nincs jogosultságod szerkeszteni ezt a posztot!';
+            } else if (editResponse.status === 400) {
+                errorMessage = 'Hiányzó vagy hibás adatok!';
+            }
+            
+            alert(`${errorMessage}\n\nRészletek: ${errorText}`);
         }
         
     } catch (error) {
         console.error('Hiba a szerkesztés elfogadása során:', error);
-        alert('Hiba történt a szerkesztés elfogadása során!');
+        alert(`Hiba történt: ${error.message}`);
     }
 }
 
@@ -4318,6 +4416,238 @@ async function approveReviewPost(pid) {
     }
 }
 
+
+/**
+ * Szerkesztés azonnali elfogadása (lektor/director) - ALTERNATÍV
+ */
+/**
+ * Szerkesztés azonnali elfogadása (lektor/director) - JAVÍTOTT
+ */
+
+/**
+ * Debug funkció a szerkesztés gombhoz
+ */
+function debugEditButton(pid) {
+    console.log('=== DEBUG EDIT BUTTON ===');
+    console.log('PID:', pid);
+    console.log('Button clicked!');
+    
+    // Ellenőrizzük, hogy létezik-e a függvény
+    console.log('acceptEditImmediately function exists:', typeof acceptEditImmediately);
+    
+    // Ellenőrizzük a jogosultságokat
+    checkReviewPermissions().then(hasPerm => {
+        console.log('Has permission:', hasPerm);
+    });
+    
+    // Próbáld ki azonnal
+    acceptEditImmediately(pid);
+}
+
+// A gombon használd ezt:
+// onclick="debugEditButton(${pid})"
+
+/**
+ * Szerkesztés azonnali elfogadása és eltávolítása a listából - JAVÍTOTT
+ */
+async function acceptEditImmediately(pid) {
+    console.log(`Szerkesztés azonnali elfogadása: ${pid}`);
+    
+    try {
+        // Ellenőrizzük a jogosultságokat
+        const hasPermission = await checkReviewPermissions();
+        console.log('Jogosultság ellenőrzés eredménye:', hasPermission);
+        
+        if (!hasPermission) {
+            alert('Nincs jogosultságod szerkesztéseket elfogadni!\n\nSzükséges jogosultságok: lector, director');
+            return;
+        }
+        
+        // Megerősítés kérése
+        const result = await showConfirmModal({
+            title: 'Szerkesztés elfogadása',
+            message: 'Biztosan elfogadod ezt a szerkesztést?',
+            subMessage: 'A változtatások azonnal életbe lépnek, és a poszt eltűnik a listából.',
+            icon: 'checkmark-outline',
+            confirmText: 'Igen, elfogadom',
+            cancelText: 'Mégse'
+        });
+        
+        if (!result) {
+            console.log('Művelet megszakítva');
+            return;
+        }
+        
+        const token = await getAuthToken();
+        if (!token) {
+            alert('Nem vagy bejelentkezve!');
+            return;
+        }
+        
+        console.log('1. Szerkesztett verzió lekérése...');
+        const getResponse = await fetch('/api/post/get/contents', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                post: parseInt(pid),
+                edited: true
+            })
+        });
+        
+        console.log('Get response status:', getResponse.status);
+        
+        if (!getResponse.ok) {
+            const errorText = await getResponse.text();
+            throw new Error(`Nem sikerült lekérni a szerkesztett verziót: ${getResponse.status} - ${errorText}`);
+        }
+        
+        const editedPost = await getResponse.json();
+        console.log('Szerkesztett post adatok:', editedPost);
+        
+        // 2. Alkalmazzuk a változtatásokat
+        console.log('2. Szerkesztés alkalmazása...');
+        const editResponse = await fetch('/api/post/edit', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                post: parseInt(pid),
+                title: editedPost.title || '',
+                category: editedPost.category || '',
+                minimal_desc: editedPost.minimal_desc || '',
+                desc: editedPost.desc || '',
+                image: editedPost.image || '/default-post-image.png'
+            })
+        });
+        
+        console.log('Edit response status:', editResponse.status);
+        
+        if (editResponse.ok) {
+            const result = await editResponse.json();
+            console.log('Szerkesztés sikeres:', result);
+            
+            // 3. PRÓBÁLJUK MEG A SZERKESZTÉSI KÉRELMET TÖRÖLNI/ELFOGADNI
+            // Ha van olyan API végpont, ami eltávolítja a szerkesztési kérelmet
+            try {
+                console.log('3. Szerkesztési kérelem törlése/próbálkozás...');
+                
+                // Próbáljuk meg ezt a három módszert:
+                
+                try {
+                    const clearResponse = 
+await fetch('/api/post/edit', {
+    method: 'PUT',
+    body: JSON.stringify({ 
+        post: pid,
+        _clear: true 
+    })
+});
+                    
+                    if (clearResponse.ok) {
+                        console.log('Szerkesztési kérelem törölve');
+                    }
+                } catch (clearError) {
+                    console.log('Nincs clear-edit végpont vagy hiba:', clearError.message);
+                }
+                
+                // b) Vagy próbáljuk meg elfogadni a posztot is (ha még pending)
+                try {
+                    const statusResponse = await fetch(`/api/post/get/status?post=${pid}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (statusResponse.ok) {
+                        const statusData = await statusResponse.json();
+                        console.log('Poszt státusz:', statusData);
+                        
+                        if (statusData.status === 'pending') {
+                            console.log('Poszt még pending, elfogadjuk...');
+                            const approveResponse = await fetch('/api/post/approve', {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ post: parseInt(pid) })
+                            });
+                            
+                            if (approveResponse.ok) {
+                                console.log('Poszt is elfogadva');
+                            }
+                        }
+                    }
+                } catch (statusError) {
+                    console.log('Státusz lekérés hiba:', statusError.message);
+                }
+                
+            } catch (cleanupError) {
+                console.warn('Cleanup hiba, de nem baj:', cleanupError);
+            }
+            
+            // 4. SIKERES ÜZENET ÉS UI FRISSÍTÉS
+            // Először azonnal eltávolítjuk a kártyát a UI-ból
+            const card = document.querySelector(`.review-card[data-pid="${pid}"]`);
+            if (card) {
+                card.style.opacity = '0.5';
+                card.style.transition = 'opacity 0.3s';
+                setTimeout(() => {
+                    card.remove();
+                    
+                    // Ellenőrizzük, üres-e a lista
+                    const remainingCards = document.querySelectorAll('.review-card');
+                    if (remainingCards.length === 0) {
+                        const container = document.getElementById('reviews-container');
+                        if (container) {
+                            container.innerHTML = `
+                                <div class="empty-state">
+                                    <ion-icon name="checkmark-done-outline" style="font-size: 48px; color: #666; margin-bottom: 16px;"></ion-icon>
+                                    <h3>Nincs több szerkesztésre váró poszt</h3>
+                                    <p>Minden szerkesztést elfogadtál!</p>
+                                </div>
+                            `;
+                        }
+                    }
+                }, 300);
+            }
+            
+            // Sikeres üzenet
+            showSuccessNotification('✓ Szerkesztés elfogadva! A poszt eltávolítva a listából.', 'success');
+            
+            // 5. Késleltetett lista frissítés (hátha mégis újra kell tölteni)
+            setTimeout(() => {
+                console.log('Végső lista frissítése...');
+                loadPendingReviews();
+            }, 2000);
+            
+        } else {
+            const errorText = await editResponse.text();
+            console.error('Szerkesztés hiba:', errorText);
+            
+            let errorMessage = 'Ismeretlen hiba történt a szerkesztés során';
+            if (editResponse.status === 401) {
+                errorMessage = 'Nincs bejelentkezve, vagy lejárt a munkamenet!';
+            } else if (editResponse.status === 403) {
+                errorMessage = 'Nincs jogosultságod szerkeszteni ezt a posztot!';
+            } else if (editResponse.status === 400) {
+                errorMessage = 'Hiányzó vagy hibás adatok!';
+            }
+            
+            alert(`${errorMessage}\n\nRészletek: ${errorText}`);
+        }
+        
+    } catch (error) {
+        console.error('Hiba a szerkesztés elfogadása során:', error);
+        alert(`Hiba történt: ${error.message}`);
+    }
+}
 /**
  * Poszt törlése
  */
@@ -4649,16 +4979,11 @@ async function rejectEdit(pid) {
     try {
         const token = await getAuthToken();
         
-        // Szerkesztés elutasítása API hívás
-        // Ez törli a szerkesztett verziót és megtartja az eredetit
-        const response = await fetch('/api/post/reject-edit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ post: parseInt(pid) })
-        });
+        const response =
+        await fetch('/api/post/hide', {
+     method: 'PUT',
+     body: JSON.stringify({ post: pid })
+});
         
         if (response.ok) {
             alert('Szerkesztés elutasítva!');
@@ -4999,42 +5324,98 @@ async function deleteArticle(pid) {
 
 
 async function approveReviewPost2(pid) {
+    console.log(`Poszt elfogadása: ${pid}`);
+    
     try {
+        // 1. Token ellenőrzése előre
+        const token = await getAuthToken();
+        if (!token) {
+            alert('Nem vagy bejelentkezve!');
+            return;
+        }
+        
+        // 2. Jogosultság ellenőrzése
+        const hasPermission = await checkReviewPermissions();
+        if (!hasPermission) {
+            alert('Nincs jogosultságod posztot elfogadni!');
+            return;
+        }
+        
+        // 3. Megerősítés kérése
         const result = await showConfirmModal({
             title: 'Poszt elfogadása',
             message: 'Biztosan ki szeretnéd engedni ezt a posztot?',
             subMessage: 'A poszt meg fog jelenni a címlapon és nyilvános lesz.',
             icon: 'checkmark-outline',
             confirmText: 'Igen, elfogadom',
-            cancelText: 'Mégse'
+            cancelText: 'Mégse',
+            details: [
+                { label: 'Poszt ID', value: pid },
+                { label: 'Jogosultság', value: hasPermission ? 'Van' : 'Nincs' }
+            ]
         });
         
-        if (result) {
-            const token = await getAuthToken();
-            
-            const response = await fetch('/api/post/approve', {
+        if (!result) {
+            console.log('Elfogadás megszakítva');
+            return;
+        }
+        
+        // 4. API hívás
+        console.log(`API hívás indítása: /api/post/approve, PID: ${pid}`);
+        
+        const response = await fetch('/api/post/approve', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ post: parseInt(pid) })
+            body: JSON.stringify({ 
+                post: parseInt(pid) 
+            })
         });
-            
-            if (response.ok) {
+        
+        console.log('API válasz státusz:', response.status);
+        
+        if (response.ok) {
             const result = await response.json();
-            alert('Poszt sikeresen elfogadva!');
+            console.log('API válasz:', result);
             
-            // Lista frissítése
-            loadPendingReviews();
+            // 5. Sikeres üzenet
+            await showConfirmModal({
+                title: 'Sikeres elfogadás',
+                message: 'A posztot sikeresen elfogadtad!',
+                subMessage: 'A poszt mostantól látható lesz a felhasználók számára.',
+                icon: 'checkmark-done-outline',
+                confirmText: 'Rendben',
+                cancelText: undefined,
+                onConfirm: function() {
+                    // Lista frissítése
+                    loadPendingReviews();
+                }
+            });
+            
         } else {
-            const error = await response.text();
-            alert(`Hiba: ${error}`);
+            // 6. Hiba kezelése
+            const errorText = await response.text();
+            console.error('API hiba:', errorText);
+            
+            let errorMessage = 'Ismeretlen hiba';
+            if (response.status === 401) {
+                errorMessage = 'Nem vagy bejelentkezve, vagy lejárt a munkamenet!';
+            } else if (response.status === 403) {
+                errorMessage = 'Nincs jogosultságod posztot elfogadni!';
+            } else if (response.status === 404) {
+                errorMessage = 'A poszt nem található!';
+            } else {
+                errorMessage = `Hiba: ${response.status} - ${errorText}`;
+            }
+            
+            alert(errorMessage);
         }
-        }
+        
     } catch (error) {
         console.error('Hiba a poszt elfogadása során:', error);
-        alert('Hiba történt a poszt elfogadása során!');
+        alert('Hálózati hiba történt a poszt elfogadása során!');
     }
 }
 
@@ -6059,3 +6440,4 @@ function getAuthorsDisplayText(authors) {
             escapeHtml(author.name);
     }).join(', ');
 }
+

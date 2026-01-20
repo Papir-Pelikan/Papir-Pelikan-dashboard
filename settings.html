@@ -292,6 +292,34 @@
     background-color: #ffeaea;
 }
 
+/* Fájlfeltöltő gomb stílusok */
+.btn-secondary {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+/* Előnézet konténerek */
+#profile-preview, #background-preview {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
     </style>
 </head>
@@ -395,6 +423,48 @@
                     <div class="settings-card">
                         <h3><ion-icon name="person-circle-outline"></ion-icon> Profil beállítások</h3>
                         <form id="profile-form">
+                            <!-- HÁTTÉRKÉP FELTÖLTÉS (alternatíva URL helyett) -->
+<!-- A settings.html fájlban, a profil beállítások formban -->
+<div class="form-group">
+    <label>Háttérkép feltöltése</label>
+    <input type="file" id="profile-background-upload" accept="image/*" style="display: none;" onchange="handleProfileBackgroundUpload(event)">
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('profile-background-upload').click()" style="flex: 1;">
+            <ion-icon name="image-outline"></ion-icon> Háttérkép kiválasztása
+        </button>
+        <button type="button" class="btn-secondary" onclick="clearProfileBackgroundUpload()">
+            <ion-icon name="close-outline"></ion-icon>
+        </button>
+    </div>
+</div>
+
+<!-- Háttérkép előnézet -->
+<div id="profile-background-preview" style="display: none; margin-bottom: 15px;">
+    <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Háttérkép előnézet:</div>
+    <img id="profile-bg-preview" src="" alt="Háttérkép előnézet" style="width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid #e5e7eb;">
+</div>
+
+        <!-- PROFILKÉP FELTÖLTÉS -->
+<div class="form-group">
+    <label>Profilkép feltöltése</label>
+    <input type="file" id="profile-upload" accept="image/*" style="display: none;" onchange="handleProfileUpload(event)">
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <button type="button" class="btn-secondary" onclick="document.getElementById('profile-upload').click()" style="flex: 1;">
+            <ion-icon name="cloud-upload-outline"></ion-icon> Kép kiválasztása
+        </button>
+        <button type="button" class="btn-secondary" onclick="clearProfileUpload()">
+            <ion-icon name="close-outline"></ion-icon>
+        </button>
+    </div>
+</div>
+
+<!-- PROFILKÉP ELŐNÉZET -->
+<div id="profile-preview" style="display: none; margin-bottom: 15px;">
+    <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Előnézet:</div>
+    <img id="pfp-preview" src="" alt="Profilkép előnézet" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #e5e7eb;">
+</div>
+
+
                             <div class="form-group">
                                 <label for="profile-alias">Írói név / Alias</label>
                                 <input type="text" id="profile-alias" placeholder="Írd be az írói neved...">
@@ -444,11 +514,11 @@
                             <h4 style="margin-bottom: 15px; color: #374151;">Lapszám frissítése</h4>
                             <div class="form-group">
                                 <label for="new-number">Új lapszám</label>
-                                <input type="number" id="new-number" min="1" placeholder="Adja meg az új lapszámot...">
+                                <input type="number" id="new-number" min="1" placeholder="Add meg az új lapszámot...">
                             </div>
                             <div class="form-group">
                                 <label for="new-motto">Új jelmondat</label>
-                                <textarea id="new-motto" rows="3" placeholder="Írja be az új jelmondatot..."></textarea>
+                                <textarea id="new-motto" rows="3" placeholder="Írdd be az új jelmondatot..."></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="new-motto-author">Jelmondat szerzője</label>
@@ -694,48 +764,199 @@
     <script src="profildropdown.js"></script>
 
     
-    <script>
-    
+<script>
 
+    // PROFILKÉP FELTÖLTÉS (bázis64)
+let profileBase64 = null;
 
-
-// Remeljuk betolti a profilt
-async function loadUserProfile() {
-    console.log('===== FELHASZNÁLÓI PROFIL BETÖLTÉSE =====');
+function handleProfileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
     
-    // Token lekérése
-    const token = getAuthToken();
-    console.log('Token állapot:', token ? 'Megvan' : 'Nincs');
-    
-    if (!token) {
-        console.log('Nincs token - felhasználó nincs bejelentkezve vagy token hiányzik');
-        showGuestProfile();
+    // Ellenőrzés
+    if (!file.type.match('image.*')) {
+        showConfirmModal({
+            title: 'Hiba',
+            message: 'Kérlek, csak képet tölts fel!',
+            icon: 'alert-circle-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
         return;
     }
     
-    console.log('Token első 10 karaktere:', token.substring(0, 10) + '...');
-    
-    try {
-        console.log('API hívás indítása...');
-        const userData = await fetchUserProfile(token);
-        
-        if (userData && Object.keys(userData).length > 0) {
-            console.log('Sikeresen megérkeztek a felhasználói adatok:', userData);
-            updateProfileDisplay(userData);
-            updateDropdownContent(userData);
-        } else {
-            console.log('API válasz üres vagy hibás');
-            showGuestProfile();
-        }
-    } catch (error) {
-        console.error('Hiba történt a profil betöltése során:', error);
-        showGuestProfile();
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        showConfirmModal({
+            title: 'Hiba',
+            message: 'A kép mérete túl nagy!',
+            subMessage: 'Maximum 2MB lehet.',
+            icon: 'alert-circle-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+        return;
     }
+    
+    // Bázis64 konvertálás
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        profileBase64 = e.target.result; // Bázis64 string
+        
+        // Előnézet megjelenítése
+        const pfpPreview = document.getElementById('pfp-preview');
+        const previewContainer = document.getElementById('profile-preview');
+        
+        if (pfpPreview && previewContainer) {
+            pfpPreview.src = profileBase64;
+            previewContainer.style.display = 'block';
+        }
+    };
+    reader.readAsDataURL(file);
 }
 
 
-async function fetchUserProfile(token) {
-    console.log('fetchUserProfile hívása token:', token.substring(0, 10) + '...');
+function clearProfileUpload() {
+    document.getElementById('profile-upload').value = '';
+    document.getElementById('profile-preview').style.display = 'none';
+    document.getElementById('pfp-preview').src = '';
+    profileBase64 = null;
+}
+
+let backgroundBase64 = null;
+
+function handleBackgroundUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.match('image.*')) {
+        alert('Kérlek, csak képet tölts fel!');
+        return;
+    }
+    
+    if (file.size > 2 * 1024 * 1024) {
+        alert('A kép mérete túl nagy! Maximum 2MB lehet.');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        backgroundBase64 = e.target.result;
+        
+        const bgPreview = document.getElementById('bg-preview');
+        const previewContainer = document.getElementById('background-preview');
+        
+        if (bgPreview && previewContainer) {
+            bgPreview.src = backgroundBase64;
+            previewContainer.style.display = 'block';
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearBackgroundUpload() {
+    document.getElementById('background-upload').value = '';
+    document.getElementById('background-preview').style.display = 'none';
+    document.getElementById('bg-preview').src = '';
+    backgroundBase64 = null;
+}
+
+// Settings oldal JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Settings oldal betöltve');
+    
+    // Navigáció beállítása
+    setupSettingsNavigation();
+    
+    // Profil betöltése
+    loadUserProfile();
+    
+    // Lapszám információk betöltése
+    loadCurrentNumber();
+    
+    // Rendszer állapot ellenőrzése
+    checkSystemStatus();
+    
+    // Ha a felhasználónak direktor joga van, megjelenítjük a lapszám frissítő formot
+    setTimeout(() => {
+        checkDirectorPermissions();
+    }, 1000);
+});
+
+function setupSettingsNavigation() {
+    const navItems = document.querySelectorAll('.navList');
+    const sections = document.querySelectorAll('.overview, .data-table');
+    
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Aktív állapot
+            navItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Oldalsáv bezárása mobilon
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) {
+                    sidebar.classList.remove('active');
+                }
+            }
+            
+            const targetId = this.dataset.target;
+            
+            // Összes oldal elrejtése
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Céloldal megjelenítése
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                
+                // Speciális oldalak betöltése
+                if (targetId === 'user-management') {
+                    loadAllUsers();
+                }
+            }
+        });
+    });
+    
+    // Mobile menu kezelése
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const closeSidebar = document.querySelector('.close-sidebar');
+
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+    }
+
+    if (closeSidebar) {
+        closeSidebar.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+        });
+    }
+
+    document.addEventListener('click', function(event) {
+        const isClickInsideSidebar = sidebar.contains(event.target);
+        const isClickOnMenuBtn = mobileMenuBtn.contains(event.target);
+        
+        if (!isClickInsideSidebar && !isClickOnMenuBtn && sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+        }
+    });
+}
+
+async function loadUserProfile() {
+    const token = await getAuthToken();
+    if (!token) {
+        showGuestProfile();
+        return;
+    }
     
     try {
         const response = await fetch('/api/user/get', {
@@ -745,43 +966,887 @@ async function fetchUserProfile(token) {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                get: 'email, first_name, full_name, alias, roles, pfp'
+                get: 'alias, description, dc, yt, insta, wattpad, roles, pfp'
             })
         });
         
-        console.log('API válasz státusz:', response.status);
-        
-        if (!response.ok) {
-            console.error('API hiba:', response.status, response.statusText);
-          
-            if (response.status === 401 || response.status === 403) {
-                clearAuth();
-                return null;
+        if (response.ok) {
+            const userData = await response.json();
+            console.log('Profil adatok:', userData);
+            
+            // Profil űrlap kitöltése
+            const fields = {
+                'profile-alias': 'alias',
+                'profile-description': 'description',
+                'profile-dc': 'dc',
+                'profile-yt': 'yt',
+                'profile-instagram': 'insta',
+                'profile-wattpad': 'wattpad'
+            };
+            
+            for (const [fieldId, dataKey] of Object.entries(fields)) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = userData[dataKey] || '';
+                }
             }
-            return null;
+            
+            // Profil kép frissítése a navigációban
+            updateProfileDisplay(userData);
         }
-        
-        const data = await response.json();
-        console.log('API válasz:', data);
-        
-        return data;
-        
     } catch (error) {
-        console.error('Hálózati hiba:', error);
-        return null;
+        console.error('Hiba a profil betöltése során:', error);
     }
 }
 
 
-    function updateProfileDisplay(userData) {
-    console.log('Profil megjelenítés frissítése:', userData);
+function resetProfileForm() {
+    document.getElementById('profile-form').reset();
+    clearProfileUpload();
+}
+
+async function loadCurrentNumber() {
+    try {
+        const response = await fetch('/api/number/front', {
+            method: 'GET'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('current-number').textContent = data.number || '-';
+            document.getElementById('current-motto').textContent = data.text || '-';
+            document.getElementById('current-motto-author').textContent = data.author || '-';
+            document.getElementById('current-background').textContent = data.image ? 'Feltöltve' : '-';
+        }
+    } catch (error) {
+        console.error('Hiba a lapszám betöltése során:', error);
+    }
+}
+
+async function checkDirectorPermissions() {
+    const token = await getAuthToken();
+    if (!token) return;
     
+    try {
+        const response = await fetch('/api/user/get', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                get: 'roles'
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            let rolesArray = [];
+            
+            if (typeof data.roles === 'string') {
+                try {
+                    rolesArray = JSON.parse(data.roles);
+                } catch (e) {
+                    rolesArray = data.roles.split(',');
+                }
+            } else if (Array.isArray(data.roles)) {
+                rolesArray = data.roles;
+            }
+            
+            // Ellenőrizzük, hogy van-e direktor vagy * jogosultság
+            const isDirector = rolesArray.some(role => 
+                role.toLowerCase().includes('director') || role === '*'
+            );
+            
+            if (isDirector) {
+                // Megjelenítjük a lapszám frissítő formot
+                document.getElementById('number-update-form').style.display = 'block';
+                document.getElementById('number-update-form').classList.remove('admin-only');
+                
+                // Megjelenítjük a felhasználókezelést
+                document.getElementById('user-management').classList.remove('admin-only');
+            }
+        }
+    } catch (error) {
+        console.error('Hiba a jogosultságok ellenőrzése során:', error);
+    }
+}
+
+// LAPSZÁM FRISSÍTÉS
+async function updateNumber() {
+    const token = await getAuthToken();
+    if (!token) {
+        alert('Nem vagy bejelentkezve!');
+        return;
+    }
+    
+    const newNumber = document.getElementById('new-number').value;
+    const newMotto = document.getElementById('new-motto').value.trim();
+    const newMottoAuthor = document.getElementById('new-motto-author').value.trim();
+    
+    if (!newNumber) {
+        alert('Kérjük, add meg az új lapszámot!');
+        return;
+    }
+    
+    const updateData = {
+        new: parseInt(newNumber)
+    };
+    
+    if (newMotto) updateData.text = newMotto;
+    if (newMottoAuthor) updateData.author = newMottoAuthor;
+    if (backgroundBase64) updateData.image = backgroundBase64; // Bázis64 hozzáadva
+    
+    if (!confirm(`Biztosan frissíted a lapszámot ${newNumber}-re?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/number/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updateData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            alert('Lapszám sikeresen frissítve!');
+            console.log('Lapszám frissítés:', result);
+            
+            // Űrlap ürítése és adatok újratöltése
+            document.getElementById('new-number').value = '';
+            document.getElementById('new-motto').value = '';
+            document.getElementById('new-motto-author').value = '';
+            clearProfileBackgroundUpload();
+            
+            loadCurrentNumber();
+        } else {
+            const error = await response.text();
+            alert(`Hiba: ${error}`);
+        }
+    } catch (error) {
+        console.error('Hiba a lapszám frissítése során:', error);
+        alert('Hiba történt a lapszám frissítése során!');
+    }
+}
+
+async function loadAllUsers() {
+    const container = document.getElementById('users-container');
+    const loadingElement = document.getElementById('users-loading');
+    
+    container.innerHTML = '';
+    loadingElement.style.display = 'flex';
+    
+    const token = await getAuthToken();
+    if (!token) {
+        loadingElement.style.display = 'none';
+        container.innerHTML = `
+            <div class="empty-state">
+                <ion-icon name="log-in-outline" style="font-size: 48px; color: #666; margin-bottom: 16px;"></ion-icon>
+                <h3>Nincs bejelentkezve</h3>
+                <p>Jelentkezz be a felhasználók megtekintéséhez!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/user/getall', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        loadingElement.style.display = 'none';
+        
+        if (response.ok) {
+            const usersData = await response.json();
+            console.log('Felhasználók betöltve:', usersData);
+            displayAllUsers(usersData, container);
+        } else {
+            throw new Error(`API hiba: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Hiba a felhasználók betöltése során:', error);
+        loadingElement.style.display = 'none';
+        
+        container.innerHTML = `
+            <div class="empty-state error">
+                <ion-icon name="alert-circle-outline" style="font-size: 48px; color: #e74c3c; margin-bottom: 16px;"></ion-icon>
+                <h3>Hiba történt</h3>
+                <p>${error.message}</p>
+                <button class="btn-secondary" onclick="loadAllUsers()">
+                    <ion-icon name="refresh-outline"></ion-icon>
+                    Újrapróbálkozás
+                </button>
+            </div>
+        `;
+    }
+}
+
+function displayAllUsers(usersData, container) {
+    if (!usersData || Object.keys(usersData).length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <ion-icon name="people-outline" style="font-size: 48px; color: #666; margin-bottom: 16px;"></ion-icon>
+                <h3>Nincsenek felhasználók</h3>
+                <p>Nem található egyetlen felhasználó sem.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = `
+        <div class="user-management-table">
+            <div class="user-row header">
+                <div>Avatar</div>
+                <div>Név</div>
+                <div>Email</div>
+                <div>Rangok</div>
+                <div>Műveletek</div>
+            </div>
+    `;
+    
+    Object.entries(usersData).forEach(([uid, user]) => {
+        const roles = parseRoles(user.roles);
+        const avatarUrl = user.pfp || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.alias || user.full_name || 'U')}&background=1891d1&color=fff`;
+        
+        html += `
+            <div class="user-row" data-uid="${uid}">
+                <div class="user-avatar">
+                    <img src="${avatarUrl}" alt="${user.alias || user.full_name}">
+                </div>
+                <div>
+                    <div style="font-weight: 500;">${user.alias || user.full_name || 'Névtelen'}</div>
+                    <div style="font-size: 12px; color: #6b7280;">UID: ${uid}</div>
+                </div>
+                <div>${user.email || 'Nincs email'}</div>
+                <div class="user-roles">
+                    ${roles.map(role => `
+                        <span class="role-badge role-${role.toLowerCase()}">${role}</span>
+                    `).join('')}
+                </div>
+                <div class="role-actions">
+                    <button class="btn-role add" onclick="addRole(${uid})" title="Rang hozzáadása">
+                        +
+                    </button>
+                    <button class="btn-role remove" onclick="removeRole(${uid})" title="Rang elvétele">
+                        -
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `</div>`;
+    container.innerHTML = html;
+    
+    // Frissítés gomb eseménykezelője
+    document.getElementById('refresh-users-btn')?.addEventListener('click', function() {
+        loadAllUsers();
+    });
+}
+
+function parseRoles(rolesString) {
+    if (!rolesString) return [];
+    
+    try {
+        if (typeof rolesString === 'string') {
+            // Próbáljuk meg parse-olni JSON-ként
+            const parsed = JSON.parse(rolesString);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+            // Ha nem tömb, akkor vesszővel elválasztott string
+            return rolesString.split(',').map(r => r.trim()).filter(r => r);
+        } else if (Array.isArray(rolesString)) {
+            return rolesString;
+        }
+    } catch (e) {
+        // Ha JSON parse hiba, akkor vesszővel elválasztott stringként kezeljük
+        return rolesString.split(',').map(r => r.trim()).filter(r => r);
+    }
+    
+    return [];
+}
+
+async function addRole(uid) {
+    // Először modal ablak a rang megadásához
+    const roleInput = await showRoleInputModal('Rang hozzáadása', 'Add meg a hozzáadandó rangot:');
+    if (!roleInput) return;
+    
+    const validRoles = ['writer', 'lector', 'director', 'frontend', 'backend', '*'];
+    const role = roleInput.toLowerCase();
+    
+    if (!validRoles.includes(role)) {
+        showConfirmModal({
+            title: 'Érvénytelen rang',
+            message: `Használd a következők egyikét: ${validRoles.join(', ')}`,
+            icon: 'alert-circle-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+        return;
+    }
+    
+    const token = await getAuthToken();
+    if (!token) {
+        showConfirmModal({
+            title: 'Nincs bejelentkezve',
+            message: 'Jelentkezz be a módosításhoz!',
+            icon: 'log-in-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+        return;
+    }
+    
+    // Megerősítő modal a rang hozzáadásához
+    const confirmed = await showConfirmModal({
+        title: 'Rang hozzáadása',
+        message: `Biztosan hozzá szeretnéd adni a(z) ${role} rangot?`,
+        details: [
+            { label: 'Felhasználó ID', value: uid },
+            { label: 'Rang', value: role }
+        ],
+        icon: 'add-circle-outline',
+        confirmText: 'Hozzáadás',
+        cancelText: 'Mégse'
+    });
+    
+    if (!confirmed) return;
+    
+    try {
+        const response = await fetch('/api/user/role/add', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                uid: parseInt(uid),
+                role: role
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showConfirmModal({
+                title: 'Sikeres művelet',
+                message: result.message,
+                icon: 'checkmark-circle-outline',
+                confirmText: 'Rendben',
+                cancelText: '',
+                onConfirm: () => {
+                    loadAllUsers(); // Lista frissítése
+                }
+            });
+        } else {
+            const error = await response.text();
+            showConfirmModal({
+                title: 'Hiba',
+                message: error,
+                icon: 'alert-circle-outline',
+                confirmText: 'Rendben',
+                cancelText: '',
+                onConfirm: () => {}
+            });
+        }
+    } catch (error) {
+        console.error('Hiba a rang hozzáadása során:', error);
+        showConfirmModal({
+            title: 'Hiba',
+            message: 'Hiba történt a rang hozzáadása során!',
+            icon: 'alert-circle-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+    }
+}
+
+// Segédfüggvény input modal megjelenítéséhez
+async function showRoleInputModal(title, message) {
+    return new Promise((resolve) => {
+        const modalId = 'input-modal-' + Date.now();
+        
+        const modalHTML = `
+            <div class="confirm-modal active" id="${modalId}">
+                <div class="confirm-modal-content" style="max-width: 500px;">
+                    <div class="confirm-modal-header">
+                        <ion-icon name="ribbon-outline"></ion-icon>
+                        <h3>${title}</h3>
+                    </div>
+                    
+                    <div class="confirm-modal-body">
+                        <div class="confirm-modal-message">
+                            <h4>${message}</h4>
+                            <p style="font-size: 14px; color: #666; margin-top: 5px;">
+                                Érvényes rangok: writer, lector, director, frontend, backend, *
+                            </p>
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            <input type="text" 
+                                   id="${modalId}-input" 
+                                   placeholder="Írd be a rangot..."
+                                   style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px;"
+                                   autocomplete="off">
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button type="button" class="btn-secondary" style="flex: 1;" id="${modalId}-cancel">
+                                <ion-icon name="close-outline"></ion-icon>
+                                <span style="font-family: 'Abril Fatface'; font-size: 16px;">Mégse</span>
+                            </button>
+                            <button type="button" class="btn-primary" style="flex: 1;" id="${modalId}-confirm">
+                                <ion-icon name="checkmark-outline"></ion-icon>
+                                <span style="font-family: 'Abril Fatface'; font-size: 16px;">OK</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Modal hozzáadása a body-hoz
+        const modalContainer = document.createElement('div');
+        modalContainer.innerHTML = modalHTML;
+        document.body.appendChild(modalContainer);
+        
+        const modal = document.getElementById(modalId);
+        const confirmBtn = document.getElementById(`${modalId}-confirm`);
+        const cancelBtn = document.getElementById(`${modalId}-cancel`);
+        const inputField = document.getElementById(`${modalId}-input`);
+        
+        // Fókusz az input mezőre
+        setTimeout(() => {
+            inputField.focus();
+        }, 100);
+        
+        // Eseménykezelők
+        const handleConfirm = () => {
+            const value = inputField.value.trim();
+            closeModal();
+            resolve(value);
+        };
+        
+        const handleCancel = () => {
+            closeModal();
+            resolve(null);
+        };
+        
+        const closeModal = () => {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modalContainer.remove();
+            }, 300);
+        };
+        
+        confirmBtn.addEventListener('click', handleConfirm);
+        cancelBtn.addEventListener('click', handleCancel);
+        
+        // Enter gombra is reagáljon
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleConfirm();
+            }
+        });
+        
+        // ESC billentyű
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') {
+                handleCancel();
+                document.removeEventListener('keydown', handleEsc);
+            }
+        };
+        
+        document.addEventListener('keydown', handleEsc);
+        
+        // Kattintás a modalon kívül
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                handleCancel();
+            }
+        });
+    });
+}
+
+
+async function removeRole(uid) {
+    // Először modal ablak a rang megadásához
+    const roleInput = await showRoleInputModal('Rang eltávolítása', 'Add meg az elvenni kívánt rangot:');
+    if (!roleInput) return;
+    
+    const validRoles = ['writer', 'lector', 'director', 'frontend', 'backend', '*'];
+    const role = roleInput.toLowerCase();
+    
+    if (!validRoles.includes(role)) {
+        showConfirmModal({
+            title: 'Érvénytelen rang',
+            message: `Használd a következők egyikét: ${validRoles.join(', ')}`,
+            icon: 'alert-circle-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+        return;
+    }
+    
+    const token = await getAuthToken();
+    if (!token) {
+        showConfirmModal({
+            title: 'Nincs bejelentkezve',
+            message: 'Nem vagy bejelentkezve!',
+            icon: 'log-in-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+        return;
+    }
+    
+    // Megerősítő modal a rang eltávolításához
+    const confirmed = await showConfirmModal({
+        title: 'Rang eltávolítása',
+        message: `Biztosan el szeretnéd venni a(z) ${role} rangot a felhasználótól?`,
+        details: [
+            { label: 'Felhasználó ID', value: uid },
+            { label: 'Rang', value: role }
+        ],
+        icon: 'warning-outline',
+        confirmText: 'Eltávolítás',
+        cancelText: 'Mégse'
+    });
+    
+    if (!confirmed) return;
+    
+    try {
+        const response = await fetch('/api/user/role/remove', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                uid: parseInt(uid),
+                role: role
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showConfirmModal({
+                title: 'Sikeres művelet',
+                message: result.message,
+                icon: 'checkmark-circle-outline',
+                confirmText: 'Rendben',
+                cancelText: '',
+                onConfirm: () => {
+                    loadAllUsers(); // Lista frissítése
+                }
+            });
+        } else {
+            const error = await response.text();
+            showConfirmModal({
+                title: 'Hiba',
+                message: error,
+                icon: 'alert-circle-outline',
+                confirmText: 'Rendben',
+                cancelText: '',
+                onConfirm: () => {}
+            });
+        }
+    } catch (error) {
+        console.error('Hiba a rang elvétele során:', error);
+        showConfirmModal({
+            title: 'Hiba',
+            message: 'Hiba történt a rang elvétele során!',
+            icon: 'alert-circle-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+    }
+}
+
+async function checkSystemStatus() {
+    const apiStatus = document.getElementById('api-status');
+    const dbStatus = document.getElementById('db-status');
+    const tokenStatus = document.getElementById('token-status');
+    
+    // API státusz ellenőrzése
+    try {
+        const response = await fetch('/api/number/get', { method: 'GET' });
+        if (response.ok) {
+            apiStatus.textContent = 'Elérhető';
+            apiStatus.style.background = '#d1fae5';
+            apiStatus.style.color = '#065f46';
+        } else {
+            apiStatus.textContent = 'Nem elérhető';
+            apiStatus.style.background = '#fee2e2';
+            apiStatus.style.color = '#991b1b';
+        }
+    } catch (error) {
+        apiStatus.textContent = 'Hiba';
+        apiStatus.style.background = '#fee2e2';
+        apiStatus.style.color = '#991b1b';
+    }
+    
+    // Token státusz ellenőrzése
+    const token = await getAuthToken();
+    if (token) {
+        try {
+            const response = await fetch('/api/user/get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ get: 'email' })
+            });
+            
+            if (response.ok) {
+                tokenStatus.textContent = 'Érvényes';
+                tokenStatus.style.background = '#d1fae5';
+                tokenStatus.style.color = '#065f46';
+            } else {
+                tokenStatus.textContent = 'Érvénytelen';
+                tokenStatus.style.background = '#fee2e2';
+                tokenStatus.style.color = '#991b1b';
+            }
+        } catch (error) {
+            tokenStatus.textContent = 'Hiba';
+            tokenStatus.style.background = '#fee2e2';
+            tokenStatus.style.color = '#991b1b';
+        }
+    } else {
+        tokenStatus.textContent = 'Nincs token';
+        tokenStatus.style.background = '#f3f4f6';
+        tokenStatus.style.color = '#6b7280';
+    }
+    
+    // Adatbázis státusz (közvetve az API-n keresztül)
+    try {
+        const response = await fetch('/api/user/getall', { method: 'GET' });
+        if (response.ok) {
+            dbStatus.textContent = 'Elérhető';
+            dbStatus.style.background = '#d1fae5';
+            dbStatus.style.color = '#065f46';
+        } else {
+            dbStatus.textContent = 'Nem elérhető';
+            dbStatus.style.background = '#fee2e2';
+            dbStatus.style.color = '#991b1b';
+        }
+    } catch (error) {
+        dbStatus.textContent = 'Hiba';
+        dbStatus.style.background = '#fee2e2';
+        dbStatus.style.color = '#991b1b';
+    }
+    
+    // Jogosultságok megjelenítése
+    displayCurrentUserRoles();
+}
+
+async function displayCurrentUserRoles() {
+    const container = document.getElementById('current-user-roles');
+    const token = await getAuthToken();
+    
+    if (!token) {
+        container.innerHTML = '<span style="color: #6b7280;">Nincs bejelentkezve</span>';
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/user/get', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                get: 'roles, alias'
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const roles = parseRoles(data.roles);
+            const name = data.alias || 'Felhasználó';
+            
+            let html = `<div style="margin-bottom: 5px;"><strong>${name}</strong></div>`;
+            html += '<div class="user-roles">';
+            
+            roles.forEach(role => {
+                html += `<span class="role-badge role-${role.toLowerCase()}">${role}</span>`;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+    } catch (error) {
+        console.error('Hiba a jogosultságok betöltése során:', error);
+    }
+}
+
+// Hibakeresési funkciók
+function logDebug(message) {
+    const debugOutput = document.getElementById('debug-output');
+    const timestamp = new Date().toLocaleTimeString();
+    debugOutput.innerHTML += `[${timestamp}] ${message}<br>`;
+    debugOutput.scrollTop = debugOutput.scrollHeight;
+}
+
+async function testUserAPI() {
+    logDebug('=== Felhasználó API teszt indítása ===');
+    
+    const token = await getAuthToken();
+    if (!token) {
+        logDebug('Nincs token a teszteléshez');
+        return;
+    }
+    
+    try {
+        // 1. GETALL teszt
+        logDebug('1. /api/user/getall teszt...');
+        const getAllResponse = await fetch('/api/user/getall', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        logDebug(`   Státusz: ${getAllResponse.status}`);
+        
+        // 2. GET teszt
+        logDebug('2. /api/user/get teszt...');
+        const getResponse = await fetch('/api/user/get', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ get: 'email, alias, roles' })
+        });
+        logDebug(`   Státusz: ${getResponse.status}`);
+        
+        if (getResponse.ok) {
+            const data = await getResponse.json();
+            logDebug(`   Válasz: ${JSON.stringify(data)}`);
+        }
+        
+        logDebug('=== Felhasználó API teszt befejezve ===');
+        
+    } catch (error) {
+        logDebug(`Hiba: ${error.message}`);
+    }
+}
+
+async function testPostAPI() {
+    logDebug('=== Poszt API teszt indítása ===');
+    
+    const token = await getAuthToken();
+    if (!token) {
+        logDebug('Nincs token a teszteléshez');
+        return;
+    }
+    
+    try {
+        // GET /written teszt
+        logDebug('1. /api/post/get/written teszt...');
+        const writtenResponse = await fetch('/api/post/get/written?edited=false', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        logDebug(`   Státusz: ${writtenResponse.status}`);
+        
+        // GET /pending teszt (ha lektor/direktor)
+        logDebug('2. /api/post/get/pending teszt...');
+        const pendingResponse = await fetch('/api/post/get/pending', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        logDebug(`   Státusz: ${pendingResponse.status}`);
+        
+        logDebug('=== Poszt API teszt befejezve ===');
+        
+    } catch (error) {
+        logDebug(`Hiba: ${error.message}`);
+    }
+}
+
+async function testNumberAPI() {
+    logDebug('=== Lapszám API teszt indítása ===');
+    
+    try {
+        // GET /number/get teszt
+        logDebug('1. /api/number/get teszt...');
+        const numberResponse = await fetch('/api/number/get', {
+            method: 'GET'
+        });
+        logDebug(`   Státusz: ${numberResponse.status}`);
+        
+        if (numberResponse.ok) {
+            const data = await numberResponse.json();
+            logDebug(`   Válasz: ${JSON.stringify(data)}`);
+        }
+        
+        // GET /number/front teszt
+        logDebug('2. /api/number/front teszt...');
+        const frontResponse = await fetch('/api/number/front', {
+            method: 'GET'
+        });
+        logDebug(`   Státusz: ${frontResponse.status}`);
+        
+        if (frontResponse.ok) {
+            const data = await frontResponse.json();
+            logDebug(`   Válasz: ${JSON.stringify(data)}`);
+        }
+        
+        logDebug('=== Lapszám API teszt befejezve ===');
+        
+    } catch (error) {
+        logDebug(`Hiba: ${error.message}`);
+    }
+}
+
+// Függvények a dashboard.js-ből
+async function getAuthToken() {
+    console.log('Token lekérése...');
+    
+    const tokenSources = {
+        'localStorage': localStorage.getItem('secret'),
+        'sessionStorage': sessionStorage.getItem('secret'),
+        'URL paraméter': new URLSearchParams(window.location.search).get('token')
+    };
+    
+    let token = tokenSources['URL paraméter'];
+    
+    if (!token && tokenSources['localStorage']) {
+        token = tokenSources['localStorage'];
+    }
+    
+    if (!token && tokenSources['sessionStorage']) {
+        token = tokenSources['sessionStorage'];
+    }
+    
+    if (tokenSources['URL paraméter'] && !tokenSources['localStorage']) {
+        localStorage.setItem('secret', tokenSources['URL paraméter']);
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+    
+    return token;
+}
+
+function updateProfileDisplay(userData) {
     const userProfileImage = document.getElementById('user-profile-image');
-    const userDisplayName = document.getElementById('user-display-name');
+    const userDisplayName = document.querySelector('.user-name');
     
     if (!userData || Object.keys(userData).length === 0) {
-        console.log('Nincs felhasználói adat - vendég mód');
-        showGuestProfile();
         return;
     }
     
@@ -805,14 +1870,12 @@ async function fetchUserProfile(token) {
         if (userData.pfp && 
             userData.pfp.trim() !== '' && 
             userData.pfp !== 'null' && 
-            userData.pfp !== 'undefined' &&
-            (userData.pfp.startsWith('http://') || userData.pfp.startsWith('https://'))) {
+            userData.pfp !== 'undefined') {
             
             const img = new Image();
             img.onload = function() {
                 userProfileImage.src = userData.pfp;
                 userProfileImage.alt = displayName;
-                console.log('Profilkép betöltve:', userData.pfp);
             };
             img.onerror = function() {
                 createAvatar(displayName, userProfileImage);
@@ -829,982 +1892,23 @@ function createAvatar(name, imgElement) {
     const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(nameForAvatar)}&background=1891d1&color=fff&bold=true&size=128`;
     imgElement.src = avatarUrl;
     imgElement.alt = name;
-    console.log('Avatar generálva:', avatarUrl);
 }
 
-    function showGuestProfile() {
-    console.log('Vendég profil megjelenítése');
-    
+function showGuestProfile() {
     const userProfileImage = document.getElementById('user-profile-image');
-    const userDisplayName = document.getElementById('user-display-name');
+    const userDisplayName = document.querySelector('.user-name');
     
     if (userDisplayName) {
-        userDisplayName.textContent = 'kérünk, jelentkezz be a kezdéshez';
+        userDisplayName.textContent = 'Vendég';
     }
     
     if (userProfileImage) {
         userProfileImage.src = 'https://ui-avatars.com/api/?name=Vendég&background=1891d1&color=fff';
         userProfileImage.alt = 'Vendég';
     }
-    
-    updateDropdownContent(null);
 }
 
-    
-    function updateDropdownContent(userData) {
-    console.log('Dropdown tartalom frissítése');
-    
-    const dropdownContent = document.getElementById('dropdown-content');
-    if (!dropdownContent) {
-        console.error('Dropdown content elem nem található!');
-        return;
-    }
-    
-    if (userData && Object.keys(userData).length > 0) {
-        console.log('Bejelentkezett felhasználó dropdown tartalom');
-        
-        let rolesText = 'Nincs';
-        if (userData.roles) {
-            try {
-                if (typeof userData.roles === 'string') {
-                    const roles = JSON.parse(userData.roles);
-                    rolesText = Array.isArray(roles) ? roles.join(', ') : roles;
-                } else if (Array.isArray(userData.roles)) {
-                    rolesText = userData.roles.join(', ');
-                }
-            } catch (e) {
-                console.error('Hiba a rangok feldolgozásában:', e);
-            }
-        }
-        
-        const displayName = userData.alias || userData.full_name || userData.first_name || 'Felhasználó';
-        const email = userData.email || '';
-        
-        dropdownContent.innerHTML = `
-            <div class="dropdown-header">
-                <div class="dropdown-user-info">
-                    <div class="dropdown-user-name">${displayName}</div>
-                    <div class="dropdown-user-email">${email}</div>
-                    <div class="dropdown-user-roles" style="font-size: 10px; margin-top: 4px; color: #666;">Rangok: ${rolesText}</div>
-                </div>
-            </div>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item" id="view-profile-btn">
-                <ion-icon name="person-outline"></ion-icon>
-                <span>Profil megtekintése</span>
-            </a>
-            <a href="#" class="dropdown-item" id="edit-profile-btn">
-                <ion-icon name="create-outline"></ion-icon>
-                <span>Profil szerkesztése</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item logout" id="logout-btn">
-                <ion-icon name="log-out-outline"></ion-icon>
-                <span>Kijelentkezés</span>
-            </a>
-        `;
-        
-        // 
-        setTimeout(() => {
-            document.getElementById('view-profile-btn')?.addEventListener('click', function(e) {
-                e.preventDefault();
-                showProfileDetails(userData);
-            });
-            
-            document.getElementById('edit-profile-btn')?.addEventListener('click', function(e) {
-                e.preventDefault();
-                editProfile(userData);
-            });
-            
-            document.getElementById('logout-btn')?.addEventListener('click', function(e) {
-                e.preventDefault();
-                logout();
-            });
-        }, 10);
-        
-    } else {
-        console.log('Nem bejelentkezett felhasználó dropdownja');
-        
-        dropdownContent.innerHTML = `
-            <div class="dropdown-header">
-                <div class="dropdown-user-info">
-                    <div class="dropdown-user-name">Nincs bejelentkezve.</div>
-                    <div class="dropdown-user-email">Jelentkezz be a funkciók használatához</div>
-                </div>
-            </div>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item" id="login-btn">
-                <ion-icon name="log-in-outline"></ion-icon>
-                <span>Bejelentkezés Google fiókkal</span>
-            </a>
-        `;
-        
-        setTimeout(() => {
-            document.getElementById('login-btn')?.addEventListener('click', function(e) {
-                e.preventDefault();
-                const currentPath = window.location.pathname + window.location.search;
-                window.location.href = `/api/login/google?redirect=${encodeURIComponent(currentPath)}`;
-            });
-        }, 10);
-    }
-}</script>
-    <script>
-    // Settings oldal JavaScript
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Settings oldal betöltve');
-        
-        // Navigáció beállítása
-        setupSettingsNavigation();
-        
-        // Profil betöltése
-        loadUserProfile();
-        
-        // Lapszám információk betöltése
-        loadCurrentNumber();
-        
-        // Rendszer állapot ellenőrzése
-        checkSystemStatus();
-        
-        // Ha a felhasználónak direktor joga van, megjelenítjük a lapszám frissítő formot
-        setTimeout(() => {
-            checkDirectorPermissions();
-        }, 1000);
-    });
-
-    function setupSettingsNavigation() {
-        const navItems = document.querySelectorAll('.navList');
-        const sections = document.querySelectorAll('.overview, .data-table');
-        
-        navItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Aktív állapot
-                navItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Oldalsáv bezárása mobilon
-                if (window.innerWidth <= 768) {
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar) {
-                        sidebar.classList.remove('active');
-                    }
-                }
-                
-                const targetId = this.dataset.target;
-                
-                // Összes oldal elrejtése
-                sections.forEach(section => {
-                    section.style.display = 'none';
-                });
-                
-                // Céloldal megjelenítése
-                const targetSection = document.getElementById(targetId);
-                if (targetSection) {
-                    targetSection.style.display = 'block';
-                    
-                    // Speciális oldalak betöltése
-                    if (targetId === 'user-management') {
-                        loadAllUsers();
-                    }
-                }
-            });
-        });
-        
-        // Mobile menu kezelése
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const sidebar = document.getElementById('sidebar');
-        const closeSidebar = document.querySelector('.close-sidebar');
-
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-        }
-
-        if (closeSidebar) {
-            closeSidebar.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-            });
-        }
-
-        document.addEventListener('click', function(event) {
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnMenuBtn = mobileMenuBtn.contains(event.target);
-            
-            if (!isClickInsideSidebar && !isClickOnMenuBtn && sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-            }
-        });
-    }
-
-    async function loadUserProfile() {
-        const token = await getAuthToken();
-        if (!token) {
-            showGuestProfile();
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/user/get', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    get: 'alias, description, dc, yt, insta, wattpad, roles'
-                })
-            });
-            
-            if (response.ok) {
-                const userData = await response.json();
-                console.log('Profil adatok:', userData);
-                
-                // Profil űrlap kitöltése
-                document.getElementById('profile-alias').value = userData.alias || '';
-                document.getElementById('profile-description').value = userData.description || '';
-                document.getElementById('profile-dc').value = userData.dc || '';
-                document.getElementById('profile-yt').value = userData.yt || '';
-                document.getElementById('profile-instagram').value = userData.insta || '';
-                document.getElementById('profile-wattpad').value = userData.wattpad || '';
-                
-                // Profil kép frissítése
-                updateProfileDisplay(userData);
-            }
-        } catch (error) {
-            console.error('Hiba a profil betöltése során:', error);
-        }
-    }
-
-    // Profil űrlap mentése
-    document.getElementById('profile-form')?.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const token = await getAuthToken();
-        if (!token) {
-            alert('Nem vagy bejelentkezve!');
-            return;
-        }
-        
-        const updateData = {};
-        
-        // Csak azokat a mezőket küldjük, amelyek változtak
-        const alias = document.getElementById('profile-alias').value.trim();
-        const description = document.getElementById('profile-description').value.trim();
-        const dc = document.getElementById('profile-dc').value.trim();
-        const yt = document.getElementById('profile-yt').value.trim();
-        const instagram = document.getElementById('profile-instagram').value.trim();
-        const wattpad = document.getElementById('profile-wattpad').value.trim();
-        
-        if (alias) updateData.alias = alias;
-        if (description) updateData.description = description;
-        if (dc) updateData.dc = dc;
-        if (yt) updateData.yt = yt;
-        if (instagram) updateData.insta = instagram;
-        if (wattpad) updateData.wattpad = wattpad;
-        
-        if (Object.keys(updateData).length === 0) {
-            alert('Nincs módosítandó adat!');
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/user/set', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(updateData)
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                alert('Profil sikeresen frissítve!');
-                console.log('Profil frissítés:', result);
-            } else {
-                const error = await response.text();
-                alert(`Hiba: ${error}`);
-            }
-        } catch (error) {
-            console.error('Hiba a profil frissítése során:', error);
-            alert('Hiba történt a profil frissítése során!');
-        }
-    });
-
-    function resetProfileForm() {
-        document.getElementById('profile-form').reset();
-    }
-
-    async function loadCurrentNumber() {
-        try {
-            const response = await fetch('/api/number/front', {
-                method: 'GET'
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('current-number').textContent = data.number || '-';
-                document.getElementById('current-motto').textContent = data.text || '-';
-                document.getElementById('current-motto-author').textContent = data.author || '-';
-                document.getElementById('current-background').textContent = data.image || '-';
-            }
-        } catch (error) {
-            console.error('Hiba a lapszám betöltése során:', error);
-        }
-    }
-
-    async function checkDirectorPermissions() {
-        const token = await getAuthToken();
-        if (!token) return;
-        
-        try {
-            const response = await fetch('/api/user/get', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    get: 'roles'
-                })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                let rolesArray = [];
-                
-                if (typeof data.roles === 'string') {
-                    try {
-                        rolesArray = JSON.parse(data.roles);
-                    } catch (e) {
-                        rolesArray = data.roles.split(',');
-                    }
-                } else if (Array.isArray(data.roles)) {
-                    rolesArray = data.roles;
-                }
-                
-                // Ellenőrizzük, hogy van-e direktor vagy * jogosultság
-                const isDirector = rolesArray.some(role => 
-                    role.toLowerCase().includes('director') || role === '*'
-                );
-                
-                if (isDirector) {
-                    // Megjelenítjük a lapszám frissítő formot
-                    document.getElementById('number-update-form').style.display = 'block';
-                    document.getElementById('number-update-form').classList.remove('admin-only');
-                    
-                    // Megjelenítjük a felhasználókezelést
-                    document.getElementById('user-management').classList.remove('admin-only');
-                }
-            }
-        } catch (error) {
-            console.error('Hiba a jogosultságok ellenőrzése során:', error);
-        }
-    }
-
-    async function updateNumber() {
-        const token = await getAuthToken();
-        if (!token) {
-            alert('Nem vagy bejelentkezve!');
-            return;
-        }
-        
-        const newNumber = document.getElementById('new-number').value;
-        const newMotto = document.getElementById('new-motto').value.trim();
-        const newMottoAuthor = document.getElementById('new-motto-author').value.trim();
-        const newBackground = document.getElementById('new-background').value.trim();
-        
-        if (!newNumber) {
-            alert('Kérjük, add meg az új lapszámot!');
-            return;
-        }
-        
-        const updateData = {
-            new: parseInt(newNumber)
-        };
-        
-        if (newMotto) updateData.text = newMotto;
-        if (newMottoAuthor) updateData.author = newMottoAuthor;
-        if (newBackground) updateData.image = newBackground;
-        
-        if (!confirm(`Biztosan frissíted a lapszámot ${newNumber}-re?`)) {
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/number/update', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(updateData)
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                alert('Lapszám sikeresen frissítve!');
-                console.log('Lapszám frissítés:', result);
-                
-                // Űrlap ürítése és adatok újratöltése
-                document.getElementById('new-number').value = '';
-                document.getElementById('new-motto').value = '';
-                document.getElementById('new-motto-author').value = '';
-                document.getElementById('new-background').value = '';
-                
-                loadCurrentNumber();
-            } else {
-                const error = await response.text();
-                alert(`Hiba: ${error}`);
-            }
-        } catch (error) {
-            console.error('Hiba a lapszám frissítése során:', error);
-            alert('Hiba történt a lapszám frissítése során!');
-        }
-    }
-
-    async function loadAllUsers() {
-        const container = document.getElementById('users-container');
-        const loadingElement = document.getElementById('users-loading');
-        
-        container.innerHTML = '';
-        loadingElement.style.display = 'flex';
-        
-        const token = await getAuthToken();
-        if (!token) {
-            loadingElement.style.display = 'none';
-            container.innerHTML = `
-                <div class="empty-state">
-                    <ion-icon name="log-in-outline" style="font-size: 48px; color: #666; margin-bottom: 16px;"></ion-icon>
-                    <h3>Nincs bejelentkezve</h3>
-                    <p>Jelentkezz be a felhasználók megtekintéséhez!</p>
-                </div>
-            `;
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/user/getall', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            loadingElement.style.display = 'none';
-            
-            if (response.ok) {
-                const usersData = await response.json();
-                console.log('Felhasználók betöltve:', usersData);
-                displayAllUsers(usersData, container);
-            } else {
-                throw new Error(`API hiba: ${response.status}`);
-            }
-        } catch (error) {
-            console.error('Hiba a felhasználók betöltése során:', error);
-            loadingElement.style.display = 'none';
-            
-            container.innerHTML = `
-                <div class="empty-state error">
-                    <ion-icon name="alert-circle-outline" style="font-size: 48px; color: #e74c3c; margin-bottom: 16px;"></ion-icon>
-                    <h3>Hiba történt</h3>
-                    <p>${error.message}</p>
-                    <button class="btn-secondary" onclick="loadAllUsers()">
-                        <ion-icon name="refresh-outline"></ion-icon>
-                        Újrapróbálkozás
-                    </button>
-                </div>
-            `;
-        }
-    }
-
-    function displayAllUsers(usersData, container) {
-        if (!usersData || Object.keys(usersData).length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <ion-icon name="people-outline" style="font-size: 48px; color: #666; margin-bottom: 16px;"></ion-icon>
-                    <h3>Nincsenek felhasználók</h3>
-                    <p>Nem található egyetlen felhasználó sem.</p>
-                </div>
-            `;
-            return;
-        }
-        
-        let html = `
-            <div class="user-management-table">
-                <div class="user-row header">
-                    <div>Avatar</div>
-                    <div>Név</div>
-                    <div>Email</div>
-                    <div>Rangok</div>
-                    <div>Műveletek</div>
-                </div>
-        `;
-        
-        Object.entries(usersData).forEach(([uid, user]) => {
-            const roles = parseRoles(user.roles);
-            const avatarUrl = user.pfp || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.alias || user.full_name || 'U')}&background=1891d1&color=fff`;
-            
-            html += `
-                <div class="user-row" data-uid="${uid}">
-                    <div class="user-avatar">
-                        <img src="${avatarUrl}" alt="${user.alias || user.full_name}">
-                    </div>
-                    <div>
-                        <div style="font-weight: 500;">${user.alias || user.full_name || 'Névtelen'}</div>
-                        <div style="font-size: 12px; color: #6b7280;">UID: ${uid}</div>
-                    </div>
-                    <div>${user.email || 'Nincs email'}</div>
-                    <div class="user-roles">
-                        ${roles.map(role => `
-                            <span class="role-badge role-${role.toLowerCase()}">${role}</span>
-                        `).join('')}
-                    </div>
-                    <div class="role-actions">
-                        <button class="btn-role add" onclick="addRole(${uid})" title="Rang hozzáadása">
-                            +
-                        </button>
-                        <button class="btn-role remove" onclick="removeRole(${uid})" title="Rang elvétele">
-                            -
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-        
-        html += `</div>`;
-        container.innerHTML = html;
-        
-        // Frissítés gomb eseménykezelője
-        document.getElementById('refresh-users-btn')?.addEventListener('click', function() {
-            loadAllUsers();
-        });
-    }
-
-    function parseRoles(rolesString) {
-        if (!rolesString) return [];
-        
-        try {
-            if (typeof rolesString === 'string') {
-                // Próbáljuk meg parse-olni JSON-ként
-                const parsed = JSON.parse(rolesString);
-                if (Array.isArray(parsed)) {
-                    return parsed;
-                }
-                // Ha nem tömb, akkor vesszővel elválasztott string
-                return rolesString.split(',').map(r => r.trim()).filter(r => r);
-            } else if (Array.isArray(rolesString)) {
-                return rolesString;
-            }
-        } catch (e) {
-            // Ha JSON parse hiba, akkor vesszővel elválasztott stringként kezeljük
-            return rolesString.split(',').map(r => r.trim()).filter(r => r);
-        }
-        
-        return [];
-    }
-
-    async function addRole(uid) {
-        const role = prompt('Add meg a hozzáadandó rangot (writer, lector, director, frontend, backend, *):');
-        if (!role) return;
-        
-        const validRoles = ['writer', 'lector', 'director', 'frontend', 'backend', '*'];
-        if (!validRoles.includes(role.toLowerCase())) {
-            alert(`Érvénytelen rang! Használd a következők egyikét: ${validRoles.join(', ')}`);
-            return;
-        }
-        
-        const token = await getAuthToken();
-        if (!token) {
-            alert('Nem vagy bejelentkezve!');
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/user/role/add', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    uid: parseInt(uid),
-                    role: role.toLowerCase()
-                })
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                alert(`Rang hozzáadva: ${result.message}`);
-                loadAllUsers(); // Lista frissítése
-            } else {
-                const error = await response.text();
-                alert(`Hiba: ${error}`);
-            }
-        } catch (error) {
-            console.error('Hiba a rang hozzáadása során:', error);
-            alert('Hiba történt a rang hozzáadása során!');
-        }
-    }
-
-    async function removeRole(uid) {
-        const role = prompt('Add meg az elvenni kívánt rangot (writer, lector, director, frontend, backend, *):');
-        if (!role) return;
-        
-        const token = await getAuthToken();
-        if (!token) {
-            alert('Nem vagy bejelentkezve!');
-            return;
-        }
-        
-        if (!confirm(`Biztosan el szeretnéd venni a(z) ${role} rangot a felhasználótól?`)) {
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/user/role/remove', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    uid: parseInt(uid),
-                    role: role.toLowerCase()
-                })
-            });
-            
-            if (response.ok) {
-                const result = await response.json();
-                alert(`Rang elvéve: ${result.message}`);
-                loadAllUsers(); // Lista frissítése
-            } else {
-                const error = await response.text();
-                alert(`Hiba: ${error}`);
-            }
-        } catch (error) {
-            console.error('Hiba a rang elvétele során:', error);
-            alert('Hiba történt a rang elvétele során!');
-        }
-    }
-
-    async function checkSystemStatus() {
-        const apiStatus = document.getElementById('api-status');
-        const dbStatus = document.getElementById('db-status');
-        const tokenStatus = document.getElementById('token-status');
-        
-        // API státusz ellenőrzése
-        try {
-            const response = await fetch('/api/number/get', { method: 'GET' });
-            if (response.ok) {
-                apiStatus.textContent = 'Elérhető';
-                apiStatus.style.background = '#d1fae5';
-                apiStatus.style.color = '#065f46';
-            } else {
-                apiStatus.textContent = 'Nem elérhető';
-                apiStatus.style.background = '#fee2e2';
-                apiStatus.style.color = '#991b1b';
-            }
-        } catch (error) {
-            apiStatus.textContent = 'Hiba';
-            apiStatus.style.background = '#fee2e2';
-            apiStatus.style.color = '#991b1b';
-        }
-        
-        // Token státusz ellenőrzése
-        const token = await getAuthToken();
-        if (token) {
-            try {
-                const response = await fetch('/api/user/get', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ get: 'email' })
-                });
-                
-                if (response.ok) {
-                    tokenStatus.textContent = 'Érvényes';
-                    tokenStatus.style.background = '#d1fae5';
-                    tokenStatus.style.color = '#065f46';
-                } else {
-                    tokenStatus.textContent = 'Érvénytelen';
-                    tokenStatus.style.background = '#fee2e2';
-                    tokenStatus.style.color = '#991b1b';
-                }
-            } catch (error) {
-                tokenStatus.textContent = 'Hiba';
-                tokenStatus.style.background = '#fee2e2';
-                tokenStatus.style.color = '#991b1b';
-            }
-        } else {
-            tokenStatus.textContent = 'Nincs token';
-            tokenStatus.style.background = '#f3f4f6';
-            tokenStatus.style.color = '#6b7280';
-        }
-        
-        // Adatbázis státusz (közvetve az API-n keresztül)
-        try {
-            const response = await fetch('/api/user/getall', { method: 'GET' });
-            if (response.ok) {
-                dbStatus.textContent = 'Elérhető';
-                dbStatus.style.background = '#d1fae5';
-                dbStatus.style.color = '#065f46';
-            } else {
-                dbStatus.textContent = 'Nem elérhető';
-                dbStatus.style.background = '#fee2e2';
-                dbStatus.style.color = '#991b1b';
-            }
-        } catch (error) {
-            dbStatus.textContent = 'Hiba';
-            dbStatus.style.background = '#fee2e2';
-            dbStatus.style.color = '#991b1b';
-        }
-        
-        // Jogosultságok megjelenítése
-        displayCurrentUserRoles();
-    }
-
-    async function displayCurrentUserRoles() {
-        const container = document.getElementById('current-user-roles');
-        const token = await getAuthToken();
-        
-        if (!token) {
-            container.innerHTML = '<span style="color: #6b7280;">Nincs bejelentkezve</span>';
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/user/get', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    get: 'roles, alias'
-                })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                const roles = parseRoles(data.roles);
-                const name = data.alias || 'Felhasználó';
-                
-                let html = `<div style="margin-bottom: 5px;"><strong>${name}</strong></div>`;
-                html += '<div class="user-roles">';
-                
-                roles.forEach(role => {
-                    html += `<span class="role-badge role-${role.toLowerCase()}">${role}</span>`;
-                });
-                
-                html += '</div>';
-                container.innerHTML = html;
-            }
-        } catch (error) {
-            console.error('Hiba a jogosultságok betöltése során:', error);
-        }
-    }
-
-    // Hibakeresési funkciók
-    function logDebug(message) {
-        const debugOutput = document.getElementById('debug-output');
-        const timestamp = new Date().toLocaleTimeString();
-        debugOutput.innerHTML += `[${timestamp}] ${message}<br>`;
-        debugOutput.scrollTop = debugOutput.scrollHeight;
-    }
-
-    async function testUserAPI() {
-        logDebug('=== Felhasználó API teszt indítása ===');
-        
-        const token = await getAuthToken();
-        if (!token) {
-            logDebug('Nincs token a teszteléshez');
-            return;
-        }
-        
-        try {
-            // 1. GETALL teszt
-            logDebug('1. /api/user/getall teszt...');
-            const getAllResponse = await fetch('/api/user/getall', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            logDebug(`   Státusz: ${getAllResponse.status}`);
-            
-            // 2. GET teszt
-            logDebug('2. /api/user/get teszt...');
-            const getResponse = await fetch('/api/user/get', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ get: 'email, alias, roles' })
-            });
-            logDebug(`   Státusz: ${getResponse.status}`);
-            
-            if (getResponse.ok) {
-                const data = await getResponse.json();
-                logDebug(`   Válasz: ${JSON.stringify(data)}`);
-            }
-            
-            logDebug('=== Felhasználó API teszt befejezve ===');
-            
-        } catch (error) {
-            logDebug(`Hiba: ${error.message}`);
-        }
-    }
-
-    async function testPostAPI() {
-        logDebug('=== Poszt API teszt indítása ===');
-        
-        const token = await getAuthToken();
-        if (!token) {
-            logDebug('Nincs token a teszteléshez');
-            return;
-        }
-        
-        try {
-            // GET /written teszt
-            logDebug('1. /api/post/get/written teszt...');
-            const writtenResponse = await fetch('/api/post/get/written?edited=false', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            logDebug(`   Státusz: ${writtenResponse.status}`);
-            
-            // GET /pending teszt (ha lektor/direktor)
-            logDebug('2. /api/post/get/pending teszt...');
-            const pendingResponse = await fetch('/api/post/get/pending', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            logDebug(`   Státusz: ${pendingResponse.status}`);
-            
-            logDebug('=== Poszt API teszt befejezve ===');
-            
-        } catch (error) {
-            logDebug(`Hiba: ${error.message}`);
-        }
-    }
-
-    async function testNumberAPI() {
-        logDebug('=== Lapszám API teszt indítása ===');
-        
-        try {
-            // GET /number/get teszt
-            logDebug('1. /api/number/get teszt...');
-            const numberResponse = await fetch('/api/number/get', {
-                method: 'GET'
-            });
-            logDebug(`   Státusz: ${numberResponse.status}`);
-            
-            if (numberResponse.ok) {
-                const data = await numberResponse.json();
-                logDebug(`   Válasz: ${JSON.stringify(data)}`);
-            }
-            
-            // GET /number/front teszt
-            logDebug('2. /api/number/front teszt...');
-            const frontResponse = await fetch('/api/number/front', {
-                method: 'GET'
-            });
-            logDebug(`   Státusz: ${frontResponse.status}`);
-            
-            if (frontResponse.ok) {
-                const data = await frontResponse.json();
-                logDebug(`   Válasz: ${JSON.stringify(data)}`);
-            }
-            
-            logDebug('=== Lapszám API teszt befejezve ===');
-            
-        } catch (error) {
-            logDebug(`Hiba: ${error.message}`);
-        }
-    }
-
-    // Függvények a dashboard.js-ből
-    async function getAuthToken() {
-        // Ez a függvény a dashboard.js-ből származik
-        console.log('Token lekérése...');
-        
-        const tokenSources = {
-            'localStorage': localStorage.getItem('secret'),
-            'sessionStorage': sessionStorage.getItem('secret'),
-            'URL paraméter': new URLSearchParams(window.location.search).get('token')
-        };
-        
-        let token = tokenSources['URL paraméter'];
-        
-        if (!token && tokenSources['localStorage']) {
-            token = tokenSources['localStorage'];
-        }
-        
-        if (!token && tokenSources['sessionStorage']) {
-            token = tokenSources['sessionStorage'];
-        }
-        
-        if (tokenSources['URL paraméter'] && !tokenSources['localStorage']) {
-            localStorage.setItem('secret', tokenSources['URL paraméter']);
-            const newUrl = window.location.pathname;
-            window.history.replaceState({}, document.title, newUrl);
-        }
-        
-        return token;
-    }
-
-    function updateProfileDisplay(userData) {
-        const userProfileImage = document.getElementById('user-profile-image');
-        const userDisplayName = document.querySelector('.user-name');
-        
-        if (!userData || Object.keys(userData).length === 0) {
-            return;
-        }
-        
-        let displayName = 'Felhasználó';
-        
-        if (userData.alias && userData.alias.trim() !== '') {
-            displayName = userData.alias;
-        } else if (userData.full_name && userData.full_name.trim() !== '') {
-            displayName = userData.full_name;
-        } else if (userData.first_name && userData.first_name.trim() !== '') {
-            displayName = userData.first_name;
-        } else if (userData.email) {
-            displayName = userData.email.split('@')[0];
-        }
-        
-        if (userDisplayName) {
-            userDisplayName.textContent = displayName;
-        }
-        
-        if (userProfileImage) {
-            const nameForAvatar = displayName.replace(/\s+/g, '+').substring(0, 20);
-            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(nameForAvatar)}&background=1891d1&color=fff&bold=true&size=128`;
-            userProfileImage.src = avatarUrl;
-            userProfileImage.alt = displayName;
-        }
-    }
-
-    function showGuestProfile() {
-        const userProfileImage = document.getElementById('user-profile-image');
-        const userDisplayName = document.querySelector('.user-name');
-        
-        if (userDisplayName) {
-            userDisplayName.textContent = 'Vendég';
-        }
-        
-        if (userProfileImage) {
-            userProfileImage.src = 'https://ui-avatars.com/api/?name=Vendég&background=1891d1&color=fff';
-            userProfileImage.alt = 'Vendég';
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard betöltve - profil kezelés inicializálása');
     
     const profileToggleBtn = document.getElementById('profile-toggle-btn');
@@ -1828,6 +1932,299 @@ function createAvatar(name, imgElement) {
     loadUserProfile();
 });
 
-    </script>
+</script>
+
+<script>
+
+    // PROFIL HÁTTÉRKÉP FELTÖLTÉS
+let profileBackgroundBase64 = null;
+
+function handleProfileBackgroundUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.match('image.*')) {
+        alert('Kérlek, csak képet tölts fel!');
+        return;
+    }
+    
+    if (file.size > 2 * 1024 * 1024) {
+        alert('A kép mérete túl nagy! Maximum 2MB lehet.');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        profileBackgroundBase64 = e.target.result;
+        
+        const bgPreview = document.getElementById('profile-bg-preview');
+        const previewContainer = document.getElementById('profile-background-preview');
+        
+        if (bgPreview && previewContainer) {
+            bgPreview.src = profileBackgroundBase64;
+            previewContainer.style.display = 'block';
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearProfileBackgroundUpload() {
+    document.getElementById('profile-background-upload').value = '';
+    document.getElementById('profile-background-preview').style.display = 'none';
+    document.getElementById('profile-bg-preview').src = '';
+    profileBackgroundBase64 = null;
+}
+
+// PROFIL MENTÉS FRISSÍTÉSE (hozzáadjuk a background mezőt)
+document.getElementById('profile-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const token = await getAuthToken();
+    if (!token) {
+        showConfirmModal({
+            title: 'Nincs bejelentkezve',
+            message: 'Nem vagy bejelentkezve!',
+            icon: 'log-in-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+        return;
+    }
+    
+    const updateData = {};
+    
+    // Mezők összegyűjtése
+    const fields = {
+        alias: 'profile-alias',
+        description: 'profile-description',
+        dc: 'profile-dc',
+        yt: 'profile-yt',
+        insta: 'profile-instagram',
+        wattpad: 'profile-wattpad'
+    };
+    
+    for (const [apiField, inputId] of Object.entries(fields)) {
+        const input = document.getElementById(inputId);
+        if (input) {
+            const value = input.value.trim();
+            if (value) {
+                updateData[apiField] = value;
+            }
+        }
+    }
+    
+    // Ha van új profilkép
+    if (profileBase64) {
+        updateData.pfp = profileBase64;
+    }
+    
+    // Ha van új háttérkép
+    if (profileBackgroundBase64) {
+        updateData.background = profileBackgroundBase64; // Ez az új mező
+    }
+    
+    // Ha nincs semmi változás
+    if (Object.keys(updateData).length === 0 && !profileBase64 && !profileBackgroundBase64) {
+        showConfirmModal({
+            title: 'Nincs változás',
+            message: 'Nincs módosítandó adat!',
+            icon: 'information-circle-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+        return;
+    }
+    
+    try {
+        console.log('Profil frissítés küldés:', updateData);
+        
+        const response = await fetch('/api/user/set', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(updateData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showConfirmModal({
+                title: 'Sikeres mentés',
+                message: 'Profil sikeresen frissítve!',
+                icon: 'checkmark-circle-outline',
+                confirmText: 'Rendben',
+                cancelText: 'Mégse',
+                onConfirm: () => {
+                    // Frissítjük a profilkép megjelenítését
+                    if (profileBase64) {
+                        const userProfileImage = document.getElementById('user-profile-image');
+                        if (userProfileImage) {
+                            userProfileImage.src = profileBase64;
+                        }
+                    }
+                    
+                    // Reset
+                    clearProfileUpload();
+                    clearProfileBackgroundUpload();
+                }
+            });
+            console.log('Profil frissítés:', result);
+        } else {
+            const errorText = await response.text();
+            console.error('API hiba válasz:', errorText);
+            showConfirmModal({
+                title: 'Hiba',
+                message: `Hiba történt: ${errorText}`,
+                icon: 'alert-circle-outline',
+                confirmText: 'Rendben',
+                cancelText: '',
+                onConfirm: () => {}
+            });
+        }
+    } catch (error) {
+        console.error('Hiba a profil frissítése során:', error);
+        showConfirmModal({
+            title: 'Hiba',
+            message: 'Hiba történt a profil frissítése során!',
+            icon: 'alert-circle-outline',
+            confirmText: 'Rendben',
+            cancelText: '',
+            onConfirm: () => {}
+        });
+    }
+});
+
+
+
+
+
+async function showConfirmModal(options = {}) {
+    return new Promise((resolve) => {
+        const modalId = 'confirm-modal-' + Date.now();
+        
+        // Alapértelmezett értékek
+        const config = {
+            title: 'Megerősítés szükséges',
+            message: 'Biztosan szeretnéd végrehajtani ezt a műveletet?',
+            details: [],
+            confirmText: 'Megerősítés',
+            cancelText: 'Mégse',
+            icon: 'alert-circle-outline',
+            onConfirm: () => {},
+            onCancel: () => {},
+            ...options
+        };
+        
+        // Details HTML generálása
+        let detailsHTML = '';
+        if (config.details && config.details.length > 0) {
+            detailsHTML = `
+                <div class="confirm-modal-details">
+                    <strong>Részletek:</strong>
+                    ${config.details.map(item => `
+                        <div class="details-item">
+                            <span class="label">${item.label}:</span>
+                            <span class="value">${item.value}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        // Modal HTML létrehozása
+        const modalHTML = `
+            <div class="confirm-modal active" id="${modalId}">
+                <div class="confirm-modal-content">
+                    <div class="confirm-modal-header">
+                        <ion-icon name="${config.icon}"></ion-icon>
+                        <h3>${config.title}</h3>
+                    </div>
+                    
+                    <div class="confirm-modal-body">
+                        <div class="confirm-modal-icon">
+                            <ion-icon name="${config.icon}"></ion-icon>
+                        </div>
+                        
+                        <div class="confirm-modal-message">
+                            <h4>${config.message}</h4>
+                            ${config.subMessage ? `<p>${config.subMessage}</p>` : ''}
+                        </div>
+                        
+                        ${detailsHTML}
+                    </div>
+                    
+                    <div class="confirm-modal-footer">
+                        <button type="button" class="btn-secondary" id="${modalId}-cancel">
+                            <ion-icon name="close-outline"></ion-icon>
+                             <span style="font-family: 'Abril Fatface'; font-size: 16px">${config.cancelText}</span>
+                        </button>
+                        <button type="button" class="btn-danger" id="${modalId}-confirm">
+                            <ion-icon name="checkmark-outline"></ion-icon>
+                            <span style="font-family: 'Abril Fatface'; font-size: 16px">${config.confirmText}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Modal hozzáadása a body-hoz
+        const modalContainer = document.createElement('div');
+        modalContainer.innerHTML = modalHTML;
+        document.body.appendChild(modalContainer);
+        
+        const modal = document.getElementById(modalId);
+        const confirmBtn = document.getElementById(`${modalId}-confirm`);
+        const cancelBtn = document.getElementById(`${modalId}-cancel`);
+        
+        // Eseménykezelők
+        const handleConfirm = () => {
+            config.onConfirm();
+            closeModal();
+            resolve(true);
+        };
+        
+        const handleCancel = () => {
+            config.onCancel();
+            closeModal();
+            resolve(false);
+        };
+        
+        const closeModal = () => {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modalContainer.remove();
+            }, 300);
+        };
+        
+        confirmBtn.addEventListener('click', handleConfirm);
+        cancelBtn.addEventListener('click', handleCancel);
+        
+        // Kattintás a modalon kívül
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                handleCancel();
+            }
+        });
+        
+        // ESC billentyű
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') {
+                handleCancel();
+                document.removeEventListener('keydown', handleEsc);
+            }
+        };
+        
+        document.addEventListener('keydown', handleEsc);
+        
+        // Fókusz a confirm gombon
+        setTimeout(() => {
+            confirmBtn.focus();
+        }, 100);
+    });
+}
+</script>
 </body>
 </html>

@@ -47,27 +47,17 @@
                         <span class="notification-badge">3</span>
                     </a>
                 </li>
-                <li class="navList" data-target="analytics">
-                    <a href="#">
-                        <ion-icon name="analytics-outline"></ion-icon>
-                        <span class="links">Analytics</span>
+                <!-- Add this in the <ul class="navLinks"> section, after the articles menu item -->
+<li id="manage-posts-menu">
+                    <a href="allposts.html" target="_blank">
+                        <ion-icon name="newspaper-outline"></ion-icon>
+                        <span class="links">Posztok kezelése</span>
                     </a>
                 </li>
-                <li class="navList" data-target="comments">
-                    <a href="#">
-                        <ion-icon name="chatbubble-outline"></ion-icon>
-                        <span class="links">Hozzászólások</span>
-                        <span class="notification-badge">12</span>
-                    </a>
-                </li>
+
             </ul>
             <ul class="bottom-link">
-                <li>
-                    <a href="profile.html">
-                        <ion-icon name="person-circle-outline"></ion-icon>
-                        <span class="links">Profil</span>
-                    </a>
-                </li>
+
                                 <li>
                     <a href="settings.html">
                         <ion-icon name="person-circle-outline"></ion-icon>
@@ -587,7 +577,7 @@
     </div>
 </div>
 
-            <!-- Analytics -->
+            <!-- Analytics 
             <div class="data-table" id="analytics" style="display:none">
                 <div class="table-header">
                     <div class="title"><ion-icon name="analytics-outline"></ion-icon><span class="text">Analytics</span></div>
@@ -672,7 +662,7 @@
                 </div>
             </div>
 
-
+-->
             <!-- Lektorálás -->
 <div class="data-table" id="reviews" style="display:none">
     <div class="table-header">
@@ -680,7 +670,11 @@
             <ion-icon name="checkmark-circle-outline"></ion-icon>
             <span class="text">Lektorálás</span>
         </div>
-        <div class="review-actions">
+         <div class="review-actions">
+            <button class="btn-secondary" id="load-all-posts-btn">
+                <ion-icon name="download-outline"></ion-icon>
+                <span style="font-family: 'Abril Fatface'">Minden poszt betöltése</span>
+            </button>
             <button class="btn-secondary" id="refresh-reviews-btn">
                 <ion-icon name="refresh-outline"></ion-icon>
                 <span style="font-family: 'Abril Fatface'">Frissítés</span>
@@ -690,10 +684,10 @@
     
     
     <!-- Szűrők -->
-   <div class="reviews-filter">
+ <div class="reviews-filter">
         <button class="filter-btn active" data-filter="pending" style="font-family: 'Abril Fatface'">Függőben lévők</button>
         <button class="filter-btn" data-filter="edited" style="font-family: 'Abril Fatface'">Szerkesztések</button>
-        <button class="filter-btn" data-filter="all" style="font-family: 'Abril Fatface'">Összes</button>
+        <button class="filter-btn" data-filter="all" style="font-family: 'Abril Fatface'">Minden poszt</button>
     </div>
     
     <!-- Tartalom konténer -->
@@ -1016,11 +1010,11 @@ function updateDropdownContent(userData) {
                 </div>
             </div>
             <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item" id="view-profile-btn">
+            <a href="user-profile.html" class="dropdown-item" >
                 <ion-icon name="person-outline"></ion-icon>
                 <span>Profil megtekintése</span>
             </a>
-            <a href="settings.html" class="dropdown-item" id="edit-profile-btn">
+            <a href="settings.html" class="dropdown-item" >
                 <ion-icon name="create-outline"></ion-icon>
                 <span>Profil szerkesztése</span>
             </a>
@@ -1350,5 +1344,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 </script>
 
+
+<script>
+
+    
+</script>
 </body>
 </html>
