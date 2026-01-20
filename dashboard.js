@@ -4652,20 +4652,31 @@ await fetch('/api/post/edit', {
  * Poszt törlése
  */
 async function deleteReviewPost(pid) {
-
-    
-    
     try {
-
+        // 1. Megerősítés kérése
         const result = await showConfirmModal({
             title: 'Poszt törlése',
-            message: 'Biztosan törölni szeretnéd engedni ezt a posztot?',
-            subMessage: 'Törölve lesz az adatbázosból véglegesen.',
+            message: 'Biztosan törölni szeretnéd ezt a posztot?',
+            subMessage: 'Törölve lesz az adatbázisból véglegesen.',
             icon: 'trash-outline',
             confirmText: 'Igen, törlöm',
             cancelText: 'Mégse'
         });
+        
+        // 2. HA A FELHASZNÁLÓ MEGNYOMTA A "MÉGSE" GOMBOT, KILÉPÜNK
+        if (!result) {
+            console.log('Törlés megszakítva');
+            return; // Fontos: kilépünk a függvényből
+        }
+        
+        // 3. CSAK HA A "IGEN, TÖRLÖM" GOMBOT NYOMTA MEG, FOLYTATJUK
         const token = await getAuthToken();
+        if (!token) {
+            alert('Nem vagy bejelentkezve!');
+            return;
+        }
+        
+        console.log(`Törlés indítása PID: ${pid}`);
         
         const response = await fetch('/api/post/delete', {
             method: 'DELETE',
@@ -4678,18 +4689,45 @@ async function deleteReviewPost(pid) {
         
         if (response.ok) {
             const result = await response.json();
-            alert('Poszt sikeresen törölve!');
             
-            // Lista frissítése
-            loadPendingReviews();
+            // Sikeres üzenet modalban
+            await showConfirmModal({
+                title: 'Sikeres törlés',
+                message: 'A posztot sikeresen törölted!',
+                icon: 'checkmark-done-outline',
+                confirmText: 'Rendben',
+                cancelText: undefined,
+                onConfirm: function() {
+                    // Lista frissítése
+                    loadPendingReviews();
+                }
+            });
+            
         } else {
             const error = await response.text();
-            alert(`Hiba: ${error}`);
+            console.error('Törlési hiba:', error);
+            
+            // Hibaüzenet modalban
+            await showConfirmModal({
+                title: 'Törlési hiba',
+                message: `Hiba történt a törlés során: ${error.substring(0, 100)}...`,
+                icon: 'alert-circle-outline',
+                confirmText: 'Rendben',
+                cancelText: undefined
+            });
         }
         
     } catch (error) {
         console.error('Hiba a poszt törlése során:', error);
-        alert('Hiba történt a poszt törlése során!');
+        
+        await showConfirmModal({
+            title: 'Hálózati hiba',
+            message: 'Hálózati hiba történt a törlés során!',
+            subMessage: 'Kérjük, próbáld újra később.',
+            icon: 'wifi-outline',
+            confirmText: 'Rendben',
+            cancelText: undefined
+        });
     }
 }
 
